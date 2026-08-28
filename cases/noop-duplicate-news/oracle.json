@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "expectedAction": "NO_ACTION",
+  "requiredEvidenceIds": [
+    "obs-1",
+    "obs-2"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

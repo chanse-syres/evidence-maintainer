@@ -21,6 +21,7 @@ export const ApprovalLevelSchema = z.enum(["NONE", "SIMULATED_HUMAN"]);
 
 export const ProvenanceSchema = z.object({
   sourceId: z.string().min(1),
+  path: RelativePathSchema,
   url: z.url().optional(),
   sourceClass: z.enum(["PUBLIC", "SYNTHETIC", "EXPRESSLY_APPROVED"]),
   capturedAt: TimestampSchema,

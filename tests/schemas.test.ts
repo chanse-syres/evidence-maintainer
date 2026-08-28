@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import {
   ActionClassSchema,
+  CaseManifestSchema,
   ChallengerVerdictSchema,
   MaintainerProposalSchema,
   MutationOperationSchema,
@@ -102,6 +103,33 @@ test("challenger verdicts require evidence-linked reasons", () => {
   });
   assert.equal(verdict.verdict, "CONFIRM");
   assert.throws(() => ChallengerVerdictSchema.parse({ ...verdict, evidenceIds: [] }));
+});
+
+test("case provenance binds each hash to one agent-visible relative path", () => {
+  const manifest = {
+    schemaVersion: 1,
+    id: "noop-duplicate-news",
+    title: "Duplicate coverage is not a new event",
+    description: "Two articles report one already-canonical commitment.",
+    sourceClass: "SYNTHETIC",
+    createdFrom: "Public-data maintenance pattern",
+    agentVisibleFiles: ["workspace/input/canonical.json"],
+    allowedWritePaths: [],
+    requiredCommands: [],
+    provenance: [{
+      sourceId: "canonical-fixture",
+      path: "workspace/input/canonical.json",
+      sourceClass: "SYNTHETIC",
+      capturedAt: "2026-08-28T18:00:00.000Z",
+      transformation: "Synthetic fixture",
+      permissionBasis: "Created for this benchmark",
+      sha256: "a".repeat(64),
+    }],
+  };
+  assert.equal(CaseManifestSchema.parse(manifest).provenance[0].path, manifest.provenance[0].path);
+  const withoutPath = { ...manifest.provenance[0] } as Partial<typeof manifest.provenance[0]>;
+  Reflect.deleteProperty(withoutPath, "path");
+  assert.throws(() => CaseManifestSchema.parse({ ...manifest, provenance: [withoutPath] }));
 });
 
 test("schema generation writes the three public agent contracts", async () => {

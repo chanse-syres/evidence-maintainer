@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "expectedAction": "UPDATE_DATA",
+  "requiredEvidenceIds": [
+    "obs-official-commitment"
+  ],
+  "allowedChangedFiles": [
+    "input/canonical.json"
+  ],
+  "expectedRecords": [
+    {
+      "file": "input/canonical.json",
+      "recordId": "athlete-11",
+      "fields": {
+        "status": "committed",
+        "team": "Coastal State"
+      }
+    }
+  ],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}
