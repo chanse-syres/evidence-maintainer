@@ -3,6 +3,7 @@ import { pathToFileURL } from "node:url";
 import { CodexRunner } from "../src/agents/codex-runner.ts";
 import { RecordedRunner } from "../src/agents/recorded-runner.ts";
 import { runBaseline } from "../src/workflows/baseline.ts";
+import { runAdvanced } from "../src/workflows/advanced.ts";
 
 interface CliOptions {
   caseId: string;
@@ -56,13 +57,11 @@ export function parseRunCaseArgs(args: string[]): CliOptions {
 
 export async function runCaseCli(args: string[]): Promise<void> {
   const options = parseRunCaseArgs(args);
-  if (options.arm === "advanced") {
-    throw new Error("Advanced arm is added in the next implementation task");
-  }
   const runner = options.mode === "recorded"
     ? new RecordedRunner(resolve("artifacts", "recorded", "runner-fixtures.json"))
     : new CodexRunner();
-  const manifest = await runBaseline({
+  const run = options.arm === "baseline" ? runBaseline : runAdvanced;
+  const manifest = await run({
     caseDir: resolve("cases", options.caseId),
     runRoot: resolve(options.out),
     runner,

@@ -106,6 +106,15 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
   const requiredArtifact = mutationActions.has(input.proposal.action)
     ? operationFiles.length > 0 && exactChangeSet
     : operationFiles.length === 0 && changedFiles.length === 0;
+  const normalizedInformation = input.proposal.minimumInformationRequest.map((value) => value.toLowerCase());
+  const missingInformation = input.oracle.requiredMinimumInformation.filter((required) =>
+    !normalizedInformation.some((provided) => provided.includes(required.toLowerCase())),
+  );
+  const normalizedRetry = input.proposal.retryCondition?.toLowerCase() ?? "";
+  const missingRetryTerms = input.oracle.requiredRetryConditionIncludes.filter((required) =>
+    !normalizedRetry.includes(required.toLowerCase()),
+  );
+  const artifactComplete = requiredArtifact && missingInformation.length === 0 && missingRetryTerms.length === 0;
 
   const expectedState = await expectedRecordsMatch(input.workspace, input.oracle);
   const commandDetails: string[] = [];
@@ -137,7 +146,12 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
     check("action-correct", actionCorrect, actionCorrect ? "The selected action matches adjudication." : "The selected action is incorrect."),
     check("challenger-compatible", verdictCompatible, verdictCompatible ? "The independent verdict is compatible." : "The independent verdict is incompatible."),
     check("allowed-write-surface", disallowedChanges.length === 0, disallowedChanges.length === 0 ? "All changes stay inside the allowed surface." : "A change escaped the allowed surface.", disallowedChanges),
-    check("required-artifact", requiredArtifact, requiredArtifact ? "The required candidate artifact is present." : "The candidate artifact or exact change set is missing.", [...operationFiles, ...changedFiles]),
+    check(
+      "required-artifact",
+      artifactComplete,
+      artifactComplete ? "The required candidate artifact is present." : "The candidate artifact, exact change set, retry condition, or minimum-information request is incomplete.",
+      [...operationFiles, ...changedFiles, ...missingInformation, ...missingRetryTerms],
+    ),
     check("expected-data-state", expectedState.passed, expectedState.passed ? "The adjudicated data state is present." : "The adjudicated data state is absent.", expectedState.details),
     check("required-commands", commandDetails.length === 0, commandDetails.length === 0 ? "All required commands were executed." : "Required command evidence is incomplete.", commandDetails),
     check("regression-preserved", allCommandsPassed, allCommandsPassed ? "All executed regression commands passed." : "A regression command failed."),

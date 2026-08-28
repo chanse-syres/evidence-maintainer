@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-official-commitment"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The proposed fields are within the official source authority scope."
+}
