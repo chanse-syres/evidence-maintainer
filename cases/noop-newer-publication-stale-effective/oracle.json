@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "expectedAction": "NO_ACTION",
+  "requiredEvidenceIds": [
+    "obs-new-publication-old-state"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

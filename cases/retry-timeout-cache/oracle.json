@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "expectedAction": "RETRY_LATER",
+  "requiredEvidenceIds": [
+    "obs-timeout"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [
+    "15 minutes",
+    "cache"
+  ],
+  "expectedCommandExitCodes": {}
+}

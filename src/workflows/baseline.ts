@@ -33,8 +33,11 @@ async function writeJson(path: string, value: unknown): Promise<void> {
 }
 
 async function runCommand(command: string, workspace: string): Promise<CommandResult> {
+  const env = { ...process.env };
+  delete env.NODE_TEST_CONTEXT;
   const child = spawn(command, {
     cwd: workspace,
+    env,
     shell: true,
     windowsHide: true,
     stdio: ["ignore", "pipe", "pipe"],

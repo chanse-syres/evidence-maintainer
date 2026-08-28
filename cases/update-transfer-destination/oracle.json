@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-transfer-destination",
+  "expectedAction": "UPDATE_DATA",
+  "requiredEvidenceIds": [
+    "obs-official-destination"
+  ],
+  "allowedChangedFiles": [
+    "input/canonical.json"
+  ],
+  "expectedRecords": [
+    {
+      "file": "input/canonical.json",
+      "recordId": "athlete-21",
+      "fields": {
+        "destination": "Summit State",
+        "status": "transferred"
+      }
+    }
+  ],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

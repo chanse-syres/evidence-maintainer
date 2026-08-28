@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 60,
+  "retryLimit": 2,
+  "invariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable"
+  ],
+  "rules": [
+    "Support the documented envelope transition",
+    "Reject unrelated arrays"
+  ]
+}

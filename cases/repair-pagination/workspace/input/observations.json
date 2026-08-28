@@ -1,0 +1,21 @@
+[
+  {
+    "id": "obs-pagination-token",
+    "sourceId": "official-api",
+    "observedAt": "2026-08-26T12:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "pagination-contract"
+    ],
+    "subjectId": null,
+    "kind": "schema-change",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "cursor-pagination-v1",
+    "facts": {
+      "oldAddress": "integer page",
+      "newAddress": "nextPage token",
+      "expectedRecords": 3
+    }
+  }
+]

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "repair-json-nesting",
+  "title": "Repair a roster payload that moved under a stable semantic envelope",
+  "description": "Players move from a top-level array to data.roster while record semantics remain stable.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Observed public JSON nesting drift pattern",
+  "agentVisibleFiles": [
+    "workspace/adapter.test.ts",
+    "workspace/adapter.ts",
+    "workspace/fixtures/new.json",
+    "workspace/fixtures/old.json",
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "adapter.ts"
+  ],
+  "requiredCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "provenance": [
+    {
+      "sourceId": "fixture-adapter.test.ts",
+      "path": "workspace/adapter.test.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "7ec888d1c1366447e93196cfa2d53321601132b91d4b0a0bca6bdc1a7cb38177"
+    },
+    {
+      "sourceId": "fixture-adapter.ts",
+      "path": "workspace/adapter.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "82da9ce02780733d68d35e978d3b65d4b1524e671de09d1ea967e85d8b876fa6"
+    },
+    {
+      "sourceId": "fixture-fixtures-new.json",
+      "path": "workspace/fixtures/new.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "9fdc051003add22736219ae04a069a2a0160547645865cb94fa22adc45623905"
+    },
+    {
+      "sourceId": "fixture-fixtures-old.json",
+      "path": "workspace/fixtures/old.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "5afc059a28df709ea3e4d9e362b4ac8cfe1786065facda75a18530cbce958267"
+    },
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "dc3036f74a58a3949858c1f94e3214a2e6f07db25f7ac4da6ab9d42c2de0da10"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "1360793dd97d52d71464d24d7e3385278e836cffd4f184be684b594e453b9412"
+    }
+  ]
+}

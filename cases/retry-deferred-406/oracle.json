@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "expectedAction": "RETRY_LATER",
+  "requiredEvidenceIds": [
+    "obs-deferred-406"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [
+    "30 minutes",
+    "cache"
+  ],
+  "expectedCommandExitCodes": {}
+}
