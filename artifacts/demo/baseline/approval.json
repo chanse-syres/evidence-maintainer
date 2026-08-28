@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "requested": true,
+  "eligible": true,
+  "decision": "APPROVED",
+  "reason": "The deterministic gate passed and isolated application was requested.",
+  "recordedAt": "2026-08-28T23:41:53.776Z"
+}

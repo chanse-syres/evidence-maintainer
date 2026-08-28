@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-22T00:00:00.000Z",
+  "authorityByField": {
+    "status": "official-team",
+    "team": "official-team"
+  },
+  "freshnessWindowMinutes": 1440,
+  "retryLimit": 2,
+  "invariants": [
+    "Canonical event IDs remain unique",
+    "Syndicated coverage cannot create a second occurrence"
+  ],
+  "rules": [
+    "Match occurrences by subject, event type, effective time, and authoritative statement",
+    "Publication URL alone does not identify a new event"
+  ]
+}
