@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-official-commitment.",
+  "failureOwner": "canonical-data",
+  "evidenceUsed": [
+    "obs-official-commitment"
+  ],
+  "evidenceRejected": [
+    "obs-older-aggregator"
+  ],
+  "affectedEntities": [
+    "athlete-11"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-11",
+      "fields": {
+        "status": "committed",
+        "team": "Coastal State"
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "Stable athlete identity is preserved",
+    "Only an authoritative commitment source may set committed status"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports UPDATE_DATA while preserving declared invariants.",
+  "arm": "baseline",
+  "executedCommands": []
+}

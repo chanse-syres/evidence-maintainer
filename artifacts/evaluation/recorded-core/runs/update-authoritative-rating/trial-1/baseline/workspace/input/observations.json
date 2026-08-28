@@ -1,0 +1,36 @@
+[
+  {
+    "id": "obs-other-provider",
+    "sourceId": "RankGrid",
+    "observedAt": "2026-08-22T15:00:00.000Z",
+    "effectiveAt": "2026-08-15T12:00:00.000Z",
+    "authorityScope": [
+      "RankGrid.rating"
+    ],
+    "subjectId": "athlete-31",
+    "kind": "rating",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "rating-v1",
+    "facts": {
+      "rating": 91
+    }
+  },
+  {
+    "id": "obs-scoutmetric-rating",
+    "sourceId": "ScoutMetric",
+    "observedAt": "2026-08-25T18:00:00.000Z",
+    "effectiveAt": "2026-08-25T17:30:00.000Z",
+    "authorityScope": [
+      "ScoutMetric.rating"
+    ],
+    "subjectId": "athlete-31",
+    "kind": "rating",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "rating-v3",
+    "facts": {
+      "rating": 93
+    }
+  }
+]

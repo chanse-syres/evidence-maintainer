@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-timeout-cache",
+  "title": "Retry a transient timeout while retaining a fresh cache",
+  "description": "A single timeout occurs inside the bounded freshness window with no contradictory source evidence.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Public adapter timeout and cache fallback pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "20a79f9d53390da2b48a223f96260c46bdbca0a05bb8a633bebb23c562a58d1a"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "02b67c24102c8acaa333771aca58aa345c0fb679ed2de61a18ab74e08b4b7bfa"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "0a7eecdf79da1e49104333b393fae2a737ef92b25e555e9a9c10530e0636e739"
+    }
+  ]
+}

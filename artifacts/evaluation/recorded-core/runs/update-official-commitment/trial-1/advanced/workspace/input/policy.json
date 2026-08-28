@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-22T00:00:00.000Z",
+  "authorityByField": {
+    "status": "official-team",
+    "team": "official-team"
+  },
+  "freshnessWindowMinutes": 1440,
+  "retryLimit": 2,
+  "invariants": [
+    "Stable athlete identity is preserved",
+    "Only an authoritative commitment source may set committed status"
+  ],
+  "rules": [
+    "Prefer the latest effective authoritative observation at or before cutoff",
+    "A discovery aggregator cannot override official status"
+  ]
+}

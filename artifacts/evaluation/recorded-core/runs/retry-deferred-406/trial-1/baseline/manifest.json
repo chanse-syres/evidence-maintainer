@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "retry-deferred-406-baseline-1787961266264",
+  "caseId": "retry-deferred-406",
+  "arm": "baseline",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-28T23:54:26.264Z",
+  "finishedAt": "2026-08-28T23:54:26.269Z",
+  "durationMs": 5,
+  "timeoutMs": 300000,
+  "promptSha256": "8ad8dd9aa741fe851c877a67a2002afb6e9672aeb10a665e43f4273950b38e98",
+  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "caseSetSha256": "6d904bc00aad49ea80354c1a5c4417719fc418a012ab8c98e2636eba1e4db0ce",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "bd43feb9ce5922a10ca8994d74302d7457abfbb115b33327030c0bff42e46979",
+    "before-tree.json": "5371334caa8bcaa2319b3660f6c01bf5ed3fb3009779b8079f84ab18cd404409",
+    "after-tree.json": "5371334caa8bcaa2319b3660f6c01bf5ed3fb3009779b8079f84ab18cd404409",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "e0f2724652a15bedd5a35e24cb93287e018dc7113351232eeffb0499ff72510a",
+    "approval.json": "f775e037b67fc084734eb1ae2185dd15c47f8c8539474f2cd8ebec431dab5da4",
+    "trajectories/baseline.jsonl": "aedc9b66173caa2dea6d286c0659884e89a041450f358fd5c4b59df3bf487826"
+  },
+  "tokenUsage": null,
+  "outcome": "FAIL"
+}

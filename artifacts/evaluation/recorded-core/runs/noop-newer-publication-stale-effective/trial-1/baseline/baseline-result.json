@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-new-publication-old-state.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-new-publication-old-state"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-51"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-51",
+      "fields": {
+        "status": "offered"
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "Effective state never rolls backward because publication is newer"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The newest publication is treated as current state.",
+  "arm": "baseline",
+  "executedCommands": []
+}

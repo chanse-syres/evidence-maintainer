@@ -1,46 +1,718 @@
 {
-  "noop-duplicate-news:baseline": {
-    "schemaVersion": 1,
-    "caseId": "noop-duplicate-news",
-    "action": "NO_ACTION",
-    "firstMaterialDivergence": "The second URL repeats the same effective commitment occurrence.",
-    "failureOwner": "source-observation",
-    "evidenceUsed": ["obs-1", "obs-2"],
-    "evidenceRejected": [],
-    "affectedEntities": ["athlete-7"],
-    "affectedFiles": [],
-    "operations": [],
-    "preservedInvariants": ["Canonical event IDs remain unique"],
-    "unresolvedUncertainty": [],
-    "minimumInformationRequest": [],
-    "retryCondition": null,
-    "approvalLevel": "SIMULATED_HUMAN",
-    "summary": "The newer article is duplicate coverage, so no canonical mutation is justified.",
-    "arm": "baseline",
-    "executedCommands": []
-  },
   "update-official-commitment:baseline": {
     "schemaVersion": 1,
     "caseId": "update-official-commitment",
     "action": "UPDATE_DATA",
-    "firstMaterialDivergence": "The official team announcement supersedes the older discovery snapshot.",
+    "firstMaterialDivergence": "The first material divergence is established by obs-official-commitment.",
     "failureOwner": "canonical-data",
-    "evidenceUsed": ["obs-official-commitment"],
-    "evidenceRejected": ["obs-older-aggregator"],
-    "affectedEntities": ["athlete-11"],
-    "affectedFiles": ["input/canonical.json"],
-    "operations": [{
-      "kind": "SET_RECORD_FIELDS",
-      "file": "input/canonical.json",
-      "recordId": "athlete-11",
-      "fields": { "status": "committed", "team": "Coastal State" }
-    }],
-    "preservedInvariants": ["Stable athlete identity is preserved"],
+    "evidenceUsed": [
+      "obs-official-commitment"
+    ],
+    "evidenceRejected": [
+      "obs-older-aggregator"
+    ],
+    "affectedEntities": [
+      "athlete-11"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-11",
+        "fields": {
+          "status": "committed",
+          "team": "Coastal State"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Stable athlete identity is preserved",
+      "Only an authoritative commitment source may set committed status"
+    ],
     "unresolvedUncertainty": [],
     "minimumInformationRequest": [],
     "retryCondition": null,
     "approvalLevel": "SIMULATED_HUMAN",
-    "summary": "Apply the official commitment state.",
+    "summary": "Evidence supports UPDATE_DATA while preserving declared invariants.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "update-official-commitment:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "update-official-commitment",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-official-commitment.",
+    "failureOwner": "canonical-data",
+    "evidenceUsed": [
+      "obs-official-commitment"
+    ],
+    "evidenceRejected": [
+      "obs-older-aggregator"
+    ],
+    "affectedEntities": [
+      "athlete-11"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-11",
+        "fields": {
+          "status": "committed",
+          "team": "Coastal State"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Stable athlete identity is preserved",
+      "Only an authoritative commitment source may set committed status"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports UPDATE_DATA while preserving declared invariants."
+  },
+  "update-official-commitment:challenger": {
+    "schemaVersion": 1,
+    "caseId": "update-official-commitment",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-official-commitment"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "update-transfer-destination:baseline": {
+    "schemaVersion": 1,
+    "caseId": "update-transfer-destination",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-official-destination.",
+    "failureOwner": "canonical-data",
+    "evidenceUsed": [
+      "obs-transfer-rumor"
+    ],
+    "evidenceRejected": [
+      "obs-transfer-rumor"
+    ],
+    "affectedEntities": [
+      "athlete-21"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-21",
+        "fields": {
+          "destination": "Lakeside",
+          "status": "transferred"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Athlete identity remains stable",
+      "Rumors cannot resolve a destination"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The latest reported destination is applied directly.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "update-transfer-destination:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "update-transfer-destination",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-official-destination.",
+    "failureOwner": "canonical-data",
+    "evidenceUsed": [
+      "obs-official-destination"
+    ],
+    "evidenceRejected": [
+      "obs-transfer-rumor"
+    ],
+    "affectedEntities": [
+      "athlete-21"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-21",
+        "fields": {
+          "destination": "Summit State",
+          "status": "transferred"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Athlete identity remains stable",
+      "Rumors cannot resolve a destination"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports UPDATE_DATA while preserving declared invariants."
+  },
+  "update-transfer-destination:challenger": {
+    "schemaVersion": 1,
+    "caseId": "update-transfer-destination",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-official-destination"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "update-authoritative-rating:baseline": {
+    "schemaVersion": 1,
+    "caseId": "update-authoritative-rating",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-scoutmetric-rating.",
+    "failureOwner": "canonical-data",
+    "evidenceUsed": [
+      "obs-scoutmetric-rating"
+    ],
+    "evidenceRejected": [
+      "obs-other-provider"
+    ],
+    "affectedEntities": [
+      "athlete-31"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-31",
+        "fields": {
+          "rating": 93,
+          "ratingAsOf": "2026-08-25T17:30:00.000Z",
+          "otherProviderRating": 93
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Provider-specific ratings do not overwrite one another",
+      "Stable athlete identity is preserved"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The newest rating is copied into both visible rating fields.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "update-authoritative-rating:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "update-authoritative-rating",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-scoutmetric-rating.",
+    "failureOwner": "canonical-data",
+    "evidenceUsed": [
+      "obs-scoutmetric-rating"
+    ],
+    "evidenceRejected": [
+      "obs-other-provider"
+    ],
+    "affectedEntities": [
+      "athlete-31"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-31",
+        "fields": {
+          "rating": 93,
+          "ratingAsOf": "2026-08-25T17:30:00.000Z",
+          "otherProviderRating": 91
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Provider-specific ratings do not overwrite one another",
+      "Stable athlete identity is preserved"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports UPDATE_DATA while preserving declared invariants."
+  },
+  "update-authoritative-rating:challenger": {
+    "schemaVersion": 1,
+    "caseId": "update-authoritative-rating",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-scoutmetric-rating"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "repair-selector-drift:baseline": {
+    "schemaVersion": 1,
+    "caseId": "repair-selector-drift",
+    "action": "REPAIR_ADAPTER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-selector-drift.",
+    "failureOwner": "source-adapter",
+    "evidenceUsed": [
+      "obs-selector-drift"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "adapter.ts"
+    ],
+    "operations": [
+      {
+        "kind": "REPLACE_TEXT",
+        "file": "adapter.ts",
+        "find": "player-card",
+        "replace": "roster-person",
+        "expectedCount": 1
+      }
+    ],
+    "preservedInvariants": [
+      "Old and new fixtures return identical athlete identities",
+      "Presentation classes are not authority"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The old presentation class is replaced with the new class.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "repair-selector-drift:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "repair-selector-drift",
+    "action": "REPAIR_ADAPTER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-selector-drift.",
+    "failureOwner": "source-adapter",
+    "evidenceUsed": [
+      "obs-selector-drift"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "adapter.ts"
+    ],
+    "operations": [
+      {
+        "kind": "REPLACE_TEXT",
+        "file": "adapter.ts",
+        "find": "  const pattern = /<article class=\"player-card\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+        "replace": "  const pattern = /<article class=\"[^\"]+\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+        "expectedCount": 1
+      }
+    ],
+    "preservedInvariants": [
+      "Old and new fixtures return identical athlete identities",
+      "Presentation classes are not authority"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports REPAIR_ADAPTER while preserving declared invariants."
+  },
+  "repair-selector-drift:challenger": {
+    "schemaVersion": 1,
+    "caseId": "repair-selector-drift",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-selector-drift"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "repair-json-nesting:baseline": {
+    "schemaVersion": 1,
+    "caseId": "repair-json-nesting",
+    "action": "REPAIR_ADAPTER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-json-nesting.",
+    "failureOwner": "source-adapter",
+    "evidenceUsed": [
+      "obs-json-nesting"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "adapter.ts"
+    ],
+    "operations": [
+      {
+        "kind": "REPLACE_TEXT",
+        "file": "adapter.ts",
+        "find": ".players ?? []",
+        "replace": ".data?.roster ?? []",
+        "expectedCount": 1
+      }
+    ],
+    "preservedInvariants": [
+      "Old and new payloads produce the same normalized records",
+      "Record IDs remain stable"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The old path is replaced by the newly observed path.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "repair-json-nesting:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "repair-json-nesting",
+    "action": "REPAIR_ADAPTER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-json-nesting.",
+    "failureOwner": "source-adapter",
+    "evidenceUsed": [
+      "obs-json-nesting"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "adapter.ts"
+    ],
+    "operations": [
+      {
+        "kind": "REPLACE_TEXT",
+        "file": "adapter.ts",
+        "find": "  const players = (payload as { players?: Player[] }).players ?? [];",
+        "replace": "  const candidate = payload as { players?: Player[]; data?: { roster?: Player[] } };\n  const players = candidate.players ?? candidate.data?.roster ?? [];",
+        "expectedCount": 1
+      }
+    ],
+    "preservedInvariants": [
+      "Old and new payloads produce the same normalized records",
+      "Record IDs remain stable"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports REPAIR_ADAPTER while preserving declared invariants."
+  },
+  "repair-json-nesting:challenger": {
+    "schemaVersion": 1,
+    "caseId": "repair-json-nesting",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-json-nesting"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "repair-pagination:baseline": {
+    "schemaVersion": 1,
+    "caseId": "repair-pagination",
+    "action": "REPAIR_ADAPTER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-pagination-token.",
+    "failureOwner": "source-adapter",
+    "evidenceUsed": [
+      "obs-pagination-token"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "adapter.ts"
+    ],
+    "operations": [
+      {
+        "kind": "REPLACE_TEXT",
+        "file": "adapter.ts",
+        "find": "page <= 3",
+        "replace": "page <= 10",
+        "expectedCount": 1
+      }
+    ],
+    "preservedInvariants": [
+      "Every fixture record appears exactly once",
+      "Historical numeric pagination remains supported"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The numeric page bound is expanded.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "repair-pagination:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "repair-pagination",
+    "action": "REPAIR_ADAPTER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-pagination-token.",
+    "failureOwner": "source-adapter",
+    "evidenceUsed": [
+      "obs-pagination-token"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "adapter.ts"
+    ],
+    "operations": [
+      {
+        "kind": "REPLACE_TEXT",
+        "file": "adapter.ts",
+        "find": "export function collectPages(loadPage: (address: string) => Page, start: string): string[] {\n  const records: string[] = [];\n  let page = Number(start);\n  while (Number.isInteger(page) && page <= 3) {\n    records.push(...loadPage(String(page)).records);\n    page += 1;\n  }\n  return records;\n}",
+        "replace": "export function collectPages(loadPage: (address: string) => Page, start: string): string[] {\n  const records: string[] = [];\n  const seen = new Set<string>();\n  let address: string | null = start;\n  while (address !== null) {\n    if (seen.has(address)) throw new Error(\"Pagination cycle detected\");\n    seen.add(address);\n    const page = loadPage(address);\n    records.push(...page.records);\n    address = page.nextPage;\n  }\n  return [...new Set(records)];\n}",
+        "expectedCount": 1
+      }
+    ],
+    "preservedInvariants": [
+      "Every fixture record appears exactly once",
+      "Historical numeric pagination remains supported"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports REPAIR_ADAPTER while preserving declared invariants."
+  },
+  "repair-pagination:challenger": {
+    "schemaVersion": 1,
+    "caseId": "repair-pagination",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-pagination-token"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "retry-deferred-406:baseline": {
+    "schemaVersion": 1,
+    "caseId": "retry-deferred-406",
+    "action": "NO_ACTION",
+    "firstMaterialDivergence": "The first material divergence is established by obs-deferred-406.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-deferred-406"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "A deferred response cannot delete cached records",
+      "Retries are bounded"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The cached result is retained without a specific retry plan.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "retry-deferred-406:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "retry-deferred-406",
+    "action": "RETRY_LATER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-deferred-406.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-deferred-406"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "A deferred response cannot delete cached records",
+      "Retries are bounded"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": "Retry after 30 minutes while retaining cache.",
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports RETRY_LATER while preserving declared invariants."
+  },
+  "retry-deferred-406:challenger": {
+    "schemaVersion": 1,
+    "caseId": "retry-deferred-406",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-deferred-406"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "retry-timeout-cache:baseline": {
+    "schemaVersion": 1,
+    "caseId": "retry-timeout-cache",
+    "action": "NO_ACTION",
+    "firstMaterialDivergence": "The first material divergence is established by obs-timeout.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-timeout"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "A transient timeout cannot erase cached records",
+      "Retries are bounded"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The cached result is retained without a specific retry plan.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "retry-timeout-cache:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "retry-timeout-cache",
+    "action": "RETRY_LATER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-timeout.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-timeout"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "A transient timeout cannot erase cached records",
+      "Retries are bounded"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": "Retry after 15 minutes while retaining cache.",
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports RETRY_LATER while preserving declared invariants."
+  },
+  "retry-timeout-cache:challenger": {
+    "schemaVersion": 1,
+    "caseId": "retry-timeout-cache",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-timeout"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "retry-partial-document:baseline": {
+    "schemaVersion": 1,
+    "caseId": "retry-partial-document",
+    "action": "NO_ACTION",
+    "firstMaterialDivergence": "The first material divergence is established by obs-partial-document.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-partial-document"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Partial documents cannot replace complete state",
+      "Retries are bounded"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The cached result is retained without a specific retry plan.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "retry-partial-document:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "retry-partial-document",
+    "action": "RETRY_LATER",
+    "firstMaterialDivergence": "The first material divergence is established by obs-partial-document.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-partial-document"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Partial documents cannot replace complete state",
+      "Retries are bounded"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": "Retry after 20 minutes while retaining complete document.",
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports RETRY_LATER while preserving declared invariants."
+  },
+  "retry-partial-document:challenger": {
+    "schemaVersion": 1,
+    "caseId": "retry-partial-document",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-partial-document"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "noop-duplicate-news:baseline": {
+    "schemaVersion": 1,
+    "caseId": "noop-duplicate-news",
+    "action": "NO_ACTION",
+    "firstMaterialDivergence": "The first material divergence is established by obs-1, obs-2.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-1",
+      "obs-2"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [
+      "athlete-7"
+    ],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Canonical event IDs remain unique",
+      "Syndicated coverage cannot create a second occurrence"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports NO_ACTION while preserving declared invariants.",
     "arm": "baseline",
     "executedCommands": []
   },
@@ -48,59 +720,178 @@
     "schemaVersion": 1,
     "caseId": "noop-duplicate-news",
     "action": "NO_ACTION",
-    "firstMaterialDivergence": "obs-2 changes publication URL but not occurrence identity.",
+    "firstMaterialDivergence": "The first material divergence is established by obs-1, obs-2.",
     "failureOwner": "source-observation",
-    "evidenceUsed": ["obs-1", "obs-2"],
+    "evidenceUsed": [
+      "obs-1",
+      "obs-2"
+    ],
     "evidenceRejected": [],
-    "affectedEntities": ["athlete-7"],
+    "affectedEntities": [
+      "athlete-7"
+    ],
     "affectedFiles": [],
     "operations": [],
-    "preservedInvariants": ["Canonical event IDs remain unique"],
+    "preservedInvariants": [
+      "Canonical event IDs remain unique",
+      "Syndicated coverage cannot create a second occurrence"
+    ],
     "unresolvedUncertainty": [],
     "minimumInformationRequest": [],
     "retryCondition": null,
     "approvalLevel": "SIMULATED_HUMAN",
-    "summary": "No mutation is justified by duplicate coverage."
+    "summary": "Evidence supports NO_ACTION while preserving declared invariants."
   },
   "noop-duplicate-news:challenger": {
     "schemaVersion": 1,
     "caseId": "noop-duplicate-news",
     "verdict": "CONFIRM",
-    "evidenceIds": ["obs-1", "obs-2"],
+    "evidenceIds": [
+      "obs-1",
+      "obs-2"
+    ],
     "violations": [],
     "residualRisks": [],
-    "summary": "Both observations identify the same effective event."
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
   },
-  "update-official-commitment:maintainer": {
+  "noop-newer-publication-stale-effective:baseline": {
     "schemaVersion": 1,
-    "caseId": "update-official-commitment",
+    "caseId": "noop-newer-publication-stale-effective",
     "action": "UPDATE_DATA",
-    "firstMaterialDivergence": "The official team announcement supersedes the older discovery snapshot.",
-    "failureOwner": "canonical-data",
-    "evidenceUsed": ["obs-official-commitment"],
-    "evidenceRejected": ["obs-older-aggregator"],
-    "affectedEntities": ["athlete-11"],
-    "affectedFiles": ["input/canonical.json"],
-    "operations": [{
-      "kind": "SET_RECORD_FIELDS",
-      "file": "input/canonical.json",
-      "recordId": "athlete-11",
-      "fields": { "status": "committed", "team": "Coastal State" }
-    }],
-    "preservedInvariants": ["Stable athlete identity is preserved"],
+    "firstMaterialDivergence": "The first material divergence is established by obs-new-publication-old-state.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-new-publication-old-state"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [
+      "athlete-51"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-51",
+        "fields": {
+          "status": "offered"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Effective state never rolls backward because publication is newer"
+    ],
     "unresolvedUncertainty": [],
     "minimumInformationRequest": [],
     "retryCondition": null,
     "approvalLevel": "SIMULATED_HUMAN",
-    "summary": "Apply the official commitment state."
+    "summary": "The newest publication is treated as current state.",
+    "arm": "baseline",
+    "executedCommands": []
   },
-  "update-official-commitment:challenger": {
+  "noop-newer-publication-stale-effective:maintainer": {
     "schemaVersion": 1,
-    "caseId": "update-official-commitment",
+    "caseId": "noop-newer-publication-stale-effective",
+    "action": "NO_ACTION",
+    "firstMaterialDivergence": "The first material divergence is established by obs-new-publication-old-state.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-new-publication-old-state"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [
+      "athlete-51"
+    ],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Effective state never rolls backward because publication is newer"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports NO_ACTION while preserving declared invariants."
+  },
+  "noop-newer-publication-stale-effective:challenger": {
+    "schemaVersion": 1,
+    "caseId": "noop-newer-publication-stale-effective",
     "verdict": "CONFIRM",
-    "evidenceIds": ["obs-official-commitment"],
+    "evidenceIds": [
+      "obs-new-publication-old-state"
+    ],
     "violations": [],
     "residualRisks": [],
-    "summary": "The proposed fields are within the official source authority scope."
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "noop-filtered-removal:baseline": {
+    "schemaVersion": 1,
+    "caseId": "noop-filtered-removal",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-filtered-quarterbacks.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-filtered-quarterbacks"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-61",
+        "fields": {
+          "status": "removed"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Subset absence cannot delete an out-of-scope entity"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "An absent athlete is removed from canonical state.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "noop-filtered-removal:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "noop-filtered-removal",
+    "action": "NO_ACTION",
+    "firstMaterialDivergence": "The first material divergence is established by obs-filtered-quarterbacks.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-filtered-quarterbacks"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Subset absence cannot delete an out-of-scope entity"
+    ],
+    "unresolvedUncertainty": [],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "Evidence supports NO_ACTION while preserving declared invariants."
+  },
+  "noop-filtered-removal:challenger": {
+    "schemaVersion": 1,
+    "caseId": "noop-filtered-removal",
+    "verdict": "CONFIRM",
+    "evidenceIds": [
+      "obs-filtered-quarterbacks"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
   }
 }

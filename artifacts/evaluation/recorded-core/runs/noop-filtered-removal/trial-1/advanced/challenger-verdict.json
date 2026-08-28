@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-filtered-quarterbacks"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

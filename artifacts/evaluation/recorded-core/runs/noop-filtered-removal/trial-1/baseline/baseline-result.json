@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-filtered-quarterbacks.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-filtered-quarterbacks"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-61",
+      "fields": {
+        "status": "removed"
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "An absent athlete is removed from canonical state.",
+  "arm": "baseline",
+  "executedCommands": []
+}

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "update-authoritative-rating",
+  "title": "Update only the rating owned by its publishing authority",
+  "description": "One rating provider updates its scoped value while a separate provider remains unchanged and cannot override it.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Field-scoped public rating maintenance pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "input/canonical.json"
+  ],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "5b791a7973ca7d1647cb06feb2c2b84623202a1ad193be251efdd7c3e783941f"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "8973abd5dbf96e893a9230a00661ca3f5fe5ca0f29e6cc0cff83857058d4167c"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ddca99eb7f29973d7775fb4f94d33a114b3d8a2591ba9b29210107fa9730efe8"
+    }
+  ]
+}

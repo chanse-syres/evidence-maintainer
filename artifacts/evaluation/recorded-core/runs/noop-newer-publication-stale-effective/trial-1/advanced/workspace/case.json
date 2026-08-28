@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-newer-publication-stale-effective",
+  "title": "A newer publication can still describe older effective state",
+  "description": "A newly published retrospective article predates the canonical effective cutoff and cannot roll state backward.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Bitemporal public-data authority pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "71b81ecf4e2abe30944912ed02bc808cac4f650bdc991e0c11c795792b047889"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "86798b8be14eea2ca3c0ef8c678d5d1481b45ab6cb88660a929c4cc2ce1dba59"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "3994e41b43281defecbaba3647148ab1afc28857d79a67a2a43ee3d5cf27e38d"
+    }
+  ]
+}

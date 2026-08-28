@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "requested": true,
+  "eligible": true,
+  "decision": "APPROVED",
+  "reason": "The deterministic gate passed and isolated application was requested.",
+  "recordedAt": "2026-08-28T23:54:26.287Z"
+}

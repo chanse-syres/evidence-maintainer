@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "update-authoritative-rating-advanced-1787961265018",
+  "caseId": "update-authoritative-rating",
+  "arm": "advanced",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-28T23:54:25.018Z",
+  "finishedAt": "2026-08-28T23:54:25.025Z",
+  "durationMs": 7,
+  "timeoutMs": 300000,
+  "promptSha256": "730370de0938a2fab6442ff3d89b7c03ac2350a194b416c4fef7a486e0b44d71",
+  "outputSchemaSha256": "ee727e92e93501de527302b5368480bc85a17818cc6a5800c05d52db43604bb7",
+  "caseSetSha256": "75a9e3e8b3145790bf02f725b76d5418d6ce7c54208255defa7455883465b374",
+  "trajectoryPaths": [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl"
+  ],
+  "artifactSha256": {
+    "evidence.jsonl": "1b91fac2fb6aef40f11b2d7b163b0e7754c38aaad3b7efa8e74657c7df41ae79",
+    "maintainer-proposal.json": "57bd04f8715c29a6443eb162d3973be3eeed849703e4ba897151ab56447b9bde",
+    "candidate-diff.json": "455befbb225adea41ce69df3aa2418fe060c3078f2b4230824d5147866c59e6a",
+    "challenger-verdict.json": "0250aa9e02a79b59cf51ccd409bd31cbb9b410d5fdc3668e40ed3222e6400804",
+    "before-tree.json": "93d95f7f93be6560c4fe18a3eb1f36f109b47f13d67c3212c4ada58774d6fea7",
+    "after-tree.json": "bb9a84e3c230b0782eb6643fe2399ef1b412923f0899e8ffc9c6524a6e16218f",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "664bfcb059b9188f7182aad55bca3c0ddcd7a6f338b1fddc1cd75c10bfd9f661",
+    "approval.json": "c947e703c7721a46bb97f3fdd30b8c26bc57921e3699cd96df72fea8a528bf85",
+    "trajectories/maintainer.jsonl": "1ed6948e462bf53948e8a251b7aa03afb745580ce92167f4b94f2732c39b05cd",
+    "trajectories/challenger.jsonl": "7694745378c6e30137a4c5c7e9a415e094b5f08b90aec02b07119d13c87a5f1a"
+  },
+  "tokenUsage": null,
+  "outcome": "PASS"
+}

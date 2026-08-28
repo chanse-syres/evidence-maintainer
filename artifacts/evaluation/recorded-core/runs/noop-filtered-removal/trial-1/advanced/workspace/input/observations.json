@@ -1,0 +1,24 @@
+[
+  {
+    "id": "obs-filtered-quarterbacks",
+    "sourceId": "official-roster",
+    "observedAt": "2026-08-27T13:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "QB-subset"
+    ],
+    "subjectId": null,
+    "kind": "filtered-roster",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "roster-filter-v2",
+    "facts": {
+      "filter": "position=QB",
+      "returnedIds": [
+        "athlete-62",
+        "athlete-63"
+      ],
+      "omittedId": "athlete-61"
+    }
+  }
+]

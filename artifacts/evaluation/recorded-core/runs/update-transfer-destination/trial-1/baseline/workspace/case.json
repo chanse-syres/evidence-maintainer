@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "update-transfer-destination",
+  "title": "Resolve a transfer only from official destination evidence",
+  "description": "A destination institution confirms enrollment after earlier speculation and an outbound portal record.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Public recruiting transfer reconciliation pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "input/canonical.json"
+  ],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a07a7ffb90e90f9146afd8ef6c9ac0469ffeb2ede6ad86e986abad38b5623c37"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "70a8c040d3852bf1e6ce736ed20e84e554074077e98eea4bcebfe936bb26261c"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "f7ef39c6a79485dc29b76325117c24cbe4004497ad270e72051b3737e0470b92"
+    }
+  ]
+}

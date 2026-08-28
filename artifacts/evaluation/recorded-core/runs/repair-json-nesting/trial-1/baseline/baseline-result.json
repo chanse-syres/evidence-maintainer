@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The first material divergence is established by obs-json-nesting.",
+  "failureOwner": "source-adapter",
+  "evidenceUsed": [
+    "obs-json-nesting"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": ".players ?? []",
+      "replace": ".data?.roster ?? []",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The old path is replaced by the newly observed path.",
+  "arm": "baseline",
+  "executedCommands": []
+}

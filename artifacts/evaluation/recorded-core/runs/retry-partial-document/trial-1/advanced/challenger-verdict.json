@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-partial-document"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

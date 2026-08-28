@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-timeout"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-duplicate-news-baseline-1787961266368",
+  "caseId": "noop-duplicate-news",
+  "arm": "baseline",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-28T23:54:26.368Z",
+  "finishedAt": "2026-08-28T23:54:26.371Z",
+  "durationMs": 3,
+  "timeoutMs": 300000,
+  "promptSha256": "0a7ba7cd78c843f91f72e2cfd92d24d3b8792d408f986d83074bb260c2eb2574",
+  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "caseSetSha256": "e85ef8b9a7ed68878c83cf611829d0ee106e516b0529871ca5a88316beb91f54",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "a73a5c3c23ef0caa1f687152299583b9be92f0bf31be2b60bb3669d6eac716da",
+    "before-tree.json": "a9fc54900846fce0526d34e4229824c40f8445decfba846f0b3342f22e460669",
+    "after-tree.json": "a9fc54900846fce0526d34e4229824c40f8445decfba846f0b3342f22e460669",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
+    "approval.json": "5649c30b84069f1d45e4aa3b1536e50809ae8c014c71ca9f8c52cb55dbbdca7d",
+    "trajectories/baseline.jsonl": "b2a65fd784bef4dda252bb9df0f5a1f3f1ceedd5bf9379bec34ff5ff0af708c2"
+  },
+  "tokenUsage": null,
+  "outcome": "PASS"
+}

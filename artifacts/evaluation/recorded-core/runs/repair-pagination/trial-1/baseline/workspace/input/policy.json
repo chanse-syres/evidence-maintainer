@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 60,
+  "retryLimit": 2,
+  "invariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "rules": [
+    "Follow the response-provided continuation address",
+    "Terminate only on a null continuation"
+  ]
+}

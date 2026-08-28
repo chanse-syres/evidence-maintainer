@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, readdir } from "node:fs/promises";
+import { mkdtemp, readFile, readdir } from "node:fs/promises";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../src/core/case-loader.ts";
+import { BaselineResultSchema, ChallengerVerdictSchema, MaintainerProposalSchema } from "../src/core/schemas.ts";
 
 export const CORE_CASE_IDS = [
   "update-official-commitment",
@@ -69,5 +70,16 @@ test("each untouched adapter case passes its old fixture and fails exactly its n
     assert.notEqual(result.code, 0, `${caseId} must begin broken on its new fixture`);
     assert.match(result.output, /pass 1/i);
     assert.match(result.output, /fail 1/i);
+  }
+});
+
+test("recorded offline fixtures cover every core case and all three agent roles", async () => {
+  const fixtures = JSON.parse(
+    await readFile(resolve("artifacts", "recorded", "runner-fixtures.json"), "utf8"),
+  ) as Record<string, unknown>;
+  for (const caseId of CORE_CASE_IDS) {
+    BaselineResultSchema.parse(fixtures[`${caseId}:baseline`]);
+    MaintainerProposalSchema.parse(fixtures[`${caseId}:maintainer`]);
+    ChallengerVerdictSchema.parse(fixtures[`${caseId}:challenger`]);
   }
 });

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The first material divergence is established by obs-selector-drift.",
+  "failureOwner": "source-adapter",
+  "evidenceUsed": [
+    "obs-selector-drift"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "player-card",
+      "replace": "roster-person",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The old presentation class is replaced with the new class.",
+  "arm": "baseline",
+  "executedCommands": []
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The first material divergence is established by obs-selector-drift.",
+  "failureOwner": "source-adapter",
+  "evidenceUsed": [
+    "obs-selector-drift"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "  const pattern = /<article class=\"player-card\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+      "replace": "  const pattern = /<article class=\"[^\"]+\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports REPAIR_ADAPTER while preserving declared invariants."
+}
