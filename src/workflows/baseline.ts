@@ -1,13 +1,13 @@
-import { spawn } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
-import { once } from "node:events";
 import type { AgentRunner } from "../agents/runner.ts";
 import { ModelExecutionError } from "../agents/runner.ts";
 import { loadPrompt } from "../agents/prompt-loader.ts";
 import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
+import { validateCandidateOperations } from "../core/candidate-validation.ts";
+import { runHiddenProbeIsolated, runRequiredCommandIsolated } from "../core/isolated-command-runner.ts";
 import { runDeterministicGate, type CommandResult } from "../core/deterministic-gate.ts";
 import { applyOperations, MutationApplicationError } from "../core/mutation-engine.ts";
 import {
@@ -19,6 +19,7 @@ import {
 } from "../core/schemas.ts";
 import { snapshotTree } from "../core/tree-snapshot.ts";
 import { PROJECT_ID } from "../core/project.ts";
+import { buildTokenUsageAccounting } from "../evaluation/token-usage-accounting.ts";
 import { recordApproval } from "./approval.ts";
 
 export interface RunBaselineInput {
@@ -34,35 +35,22 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
-async function runCommand(command: string, workspace: string): Promise<CommandResult> {
-  const env = { ...process.env };
-  delete env.NODE_TEST_CONTEXT;
-  const child = spawn(command, {
-    cwd: workspace,
-    env,
-    shell: true,
-    windowsHide: true,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  const stdout: Buffer[] = [];
-  const stderr: Buffer[] = [];
-  child.stdout.on("data", (chunk: Buffer) => stdout.push(chunk));
-  child.stderr.on("data", (chunk: Buffer) => stderr.push(chunk));
-  const [code] = await once(child, "close") as [number | null, NodeJS.Signals | null];
-  return {
-    exitCode: code ?? 1,
-    stdout: Buffer.concat(stdout).toString("utf8"),
-    stderr: Buffer.concat(stderr).toString("utf8"),
-  };
-}
-
 export async function runRequiredCommands(
   workspace: string,
   commands: readonly string[],
+  hiddenProbePath?: string | null,
+  caseDir?: string,
 ): Promise<Record<string, CommandResult>> {
   const results: Record<string, CommandResult> = {};
   for (const command of commands) {
-    results[command] = await runCommand(command, workspace);
+    results[command] = await runRequiredCommandIsolated(command, workspace);
+  }
+  if (hiddenProbePath) {
+    if (!caseDir) throw new Error("Hidden verifier execution requires the case directory");
+    results[`hidden:${hiddenProbePath}`] = await runHiddenProbeIsolated(
+      workspace,
+      resolve(caseDir, ...hiddenProbePath.split("/")),
+    );
   }
   return results;
 }
@@ -79,6 +67,7 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
   const runRoot = resolve(input.runRoot);
   await mkdir(join(runRoot, "trajectories"), { recursive: true });
   const loadedCase = await loadPublicCase(input.caseDir);
+  const oracle = await loadOracle(input.caseDir);
   const workspace = await copyCaseWorkspace(input.caseDir, join(runRoot, "workspace"));
   const before = await snapshotTree(workspace);
   await writeJson(join(runRoot, "before-tree.json"), before);
@@ -121,24 +110,18 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     parse: (value) => BaselineResultSchema.parse(value),
   });
   await writeJson(join(runRoot, "baseline-result.json"), agent.output);
-  const proposal = MaintainerProposalSchema.parse({
-    schemaVersion: agent.output.schemaVersion,
-    caseId: agent.output.caseId,
-    action: agent.output.action,
-    firstMaterialDivergence: agent.output.firstMaterialDivergence,
-    failureOwner: agent.output.failureOwner,
-    evidenceUsed: agent.output.evidenceUsed,
-    evidenceRejected: agent.output.evidenceRejected,
-    affectedEntities: agent.output.affectedEntities,
-    affectedFiles: agent.output.affectedFiles,
-    operations: agent.output.operations,
-    preservedInvariants: agent.output.preservedInvariants,
-    unresolvedUncertainty: agent.output.unresolvedUncertainty,
-    minimumInformationRequest: agent.output.minimumInformationRequest,
-    retryCondition: agent.output.retryCondition,
-    approvalLevel: agent.output.approvalLevel,
-    summary: agent.output.summary,
-  });
+  const { arm: _arm, executedCommands: _executedCommands, ...proposalFields } = agent.output;
+  void _arm;
+  void _executedCommands;
+  const proposal = MaintainerProposalSchema.parse(proposalFields);
+  const operationErrors = validateCandidateOperations(
+    proposal,
+    loadedCase.manifest.allowedWritePaths,
+    oracle,
+  );
+  if (operationErrors.length > 0) {
+    throw new ModelExecutionError("INVALID_OPERATION", operationErrors.join(" "));
+  }
   try {
     await applyOperations(workspace, proposal.operations);
   } catch (error) {
@@ -147,17 +130,21 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     }
     throw error;
   }
-  const commandResults = await runRequiredCommands(workspace, loadedCase.manifest.requiredCommands);
+  const commandResults = await runRequiredCommands(
+    workspace,
+    loadedCase.manifest.requiredCommands,
+    oracle.hiddenProbePath,
+    input.caseDir,
+  );
   await writeJson(join(runRoot, "command-results.json"), commandResults);
   const after = await snapshotTree(workspace);
   await writeJson(join(runRoot, "after-tree.json"), after);
 
-  const oracle = await loadOracle(input.caseDir);
   const evaluatorVerdict: ChallengerVerdict = {
     schemaVersion: 1,
     caseId: loadedCase.manifest.id,
     verdict: oracle.requiredChallengerVerdict,
-    evidenceIds: oracle.requiredEvidenceIds,
+    evidenceIds: oracle.requiredChallengerEvidenceIds,
     violations: [],
     residualRisks: [],
     summary: "Evaluator-only adjudication used after the direct-agent session completed.",
@@ -192,8 +179,25 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     "approval.json",
     "trajectories/baseline.jsonl",
   ];
+  const proxyLedgerPaths = agent.proxyLedgerPath
+    ? [relative(runRoot, agent.proxyLedgerPath).replaceAll("\\", "/")]
+    : [];
+  artifactPaths.push(...proxyLedgerPaths);
+  const usageAccounting = agent.proxyRequestUsageCoverage
+    ? buildTokenUsageAccounting([{
+        role: "baseline",
+        usage: agent.tokenUsage,
+        source: agent.tokenUsageSource,
+        trajectoryPath: relative(runRoot, trajectoryPath).replaceAll("\\", "/"),
+        proxyLedgerPath: agent.proxyLedgerPath
+          ? relative(runRoot, agent.proxyLedgerPath).replaceAll("\\", "/")
+          : undefined,
+        trajectoryAggregateCaptured: agent.trajectoryAggregateCaptured ?? false,
+        proxyRequestCoverage: agent.proxyRequestUsageCoverage,
+      }])
+    : null;
   const manifest = RunManifestSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     projectId: PROJECT_ID,
     runId,
     caseId: loadedCase.manifest.id,
@@ -208,13 +212,12 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     outputSchemaSha256: sha256Text(outputContract),
     caseSetSha256: sha256Json({ caseId: loadedCase.manifest.id, workspaceHash: loadedCase.workspaceHash }),
     trajectoryPaths: [relative(runRoot, trajectoryPath).replaceAll("\\", "/")],
+    proxyLedgerPaths,
     artifactSha256: await hashArtifacts(runRoot, artifactPaths),
-    tokenUsage: agent.tokenUsage
-      ? {
-          input: agent.tokenUsage.input,
-          cachedInput: agent.tokenUsage.cachedInput,
-          output: agent.tokenUsage.output,
-        }
+    tokenUsage: usageAccounting?.tokenUsage ?? null,
+    tokenUsageAccounting: usageAccounting?.tokenUsageAccounting ?? null,
+    runtimeImages: agent.runtimeImageId
+      ? [{ role: "baseline", imageId: agent.runtimeImageId.replace(/^sha256:/, "") }]
       : null,
     outcome: gate.status,
   });

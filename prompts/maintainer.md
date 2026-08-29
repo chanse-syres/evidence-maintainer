@@ -42,9 +42,21 @@ material divergence and failure owner, stay inside the allowed surface, name
 preserved invariants, and expose unresolved uncertainty. A safe abstention is a
 successful result when evidence cannot justify a mutation.
 
-For `evidenceUsed` and `evidenceRejected`, cite either an exact observation or
-file ID from an event's `evidenceIds` array, or the enclosing `evt-*` event ID.
-Never write prose citations.
+Assess evidence at the narrowest relevant field path. Use only exact observation
+IDs from the ledger. Use `$` only when the complete observation is genuinely
+indivisible; otherwise cite top-level metadata or `facts.<field>`. `SUPPORT`
+means the field supports the action, `REJECT` means it is unsafe as authority,
+and `CONTEXT` means it matters without resolving the decision.
+
+For `HUMAN_REVIEW`, request only the specific resolving fields through
+`reviewRequest`, and bind that request to the exact evidence observation that
+must be clarified or supplemented. Report only the decision-bearing evidence
+assessments; ancillary or speculative assessments are not part of the proof.
+For `RETRY_LATER`, encode the bounded time, attempt limit,
+preserved canonical records, required cross-artifact agreement, and any exact
+field values that must hold before retry in
+`retryPlan`. Other actions must leave those fields null. The output schema is
+the complete action-field contract.
 
 Return only a final JSON value matching this contract:
 

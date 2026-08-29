@@ -1,15 +1,95 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "noop-duplicate-news",
   "expectedAction": "NO_ACTION",
-  "requiredEvidenceIds": [
-    "obs-1",
-    "obs-2"
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-1",
+        "factPath": "facts.eventId",
+        "disposition": "SUPPORT",
+        "reason": "The official report establishes the already-canonical occurrence identity."
+      },
+      {
+        "evidenceId": "obs-2",
+        "factPath": "facts.eventId",
+        "disposition": "CONTEXT",
+        "reason": "The syndicated story points to the same occurrence and cannot create another."
+      }
+    ],
+    [
+      {
+        "evidenceId": "obs-2",
+        "factPath": "facts.eventId",
+        "disposition": "SUPPORT",
+        "reason": "The observation uses the canonical event identifier, supporting that it is duplicate coverage rather than a new occurrence."
+      },
+      {
+        "evidenceId": "obs-2",
+        "factPath": "facts.articleUrl",
+        "disposition": "REJECT",
+        "reason": "A distinct publication URL is not authoritative evidence of a distinct occurrence."
+      }
+    ],
+    [
+      {
+        "evidenceId": "obs-1",
+        "factPath": "facts.eventId",
+        "disposition": "SUPPORT",
+        "reason": "The official report establishes the already-canonical occurrence identity."
+      },
+      {
+        "evidenceId": "obs-2",
+        "factPath": "facts.eventId",
+        "disposition": "SUPPORT",
+        "reason": "The observation uses the canonical event identifier, supporting that it is duplicate coverage rather than a new occurrence."
+      }
+    ]
   ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-1",
+      "factPath": "facts.eventId",
+      "disposition": "SUPPORT",
+      "reason": "The official report establishes the already-canonical occurrence identity."
+    },
+    {
+      "evidenceId": "obs-2",
+      "factPath": "facts.eventId",
+      "disposition": "CONTEXT",
+      "reason": "The syndicated story points to the same occurrence and cannot create another."
+    },
+    {
+      "evidenceId": "obs-2",
+      "factPath": "facts.eventId",
+      "disposition": "SUPPORT",
+      "reason": "The observation uses the canonical event identifier, supporting that it is duplicate coverage rather than a new occurrence."
+    },
+    {
+      "evidenceId": "obs-2",
+      "factPath": "facts.articleUrl",
+      "disposition": "REJECT",
+      "reason": "A distinct publication URL is not authoritative evidence of a distinct occurrence."
+    },
+    {
+      "evidenceId": "obs-2",
+      "factPath": "authorityScope",
+      "disposition": "REJECT",
+      "reason": "Coverage authority cannot establish a second commitment occurrence or override the authoritative occurrence identity."
+    },
+    {
+      "evidenceId": "obs-2",
+      "factPath": "facts.status",
+      "disposition": "REJECT",
+      "reason": "A coverage-only source cannot establish a canonical status change."
+    }
+  ],
+  "requiredChallengerEvidenceIds": ["obs-1", "obs-2"],
   "allowedChangedFiles": [],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

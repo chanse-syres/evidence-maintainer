@@ -5,8 +5,9 @@ import { join } from "node:path";
 import test from "node:test";
 import { ModelExecutionError } from "../src/agents/runner.ts";
 import { aggregateRows, median, wilsonInterval } from "../src/evaluation/aggregate.ts";
-import { combineEvaluationSources } from "../src/evaluation/combine-evaluations.ts";
+import { combineEvaluationSources, reconstructUsage } from "../src/evaluation/combine-evaluations.ts";
 import { estimateUsageCost } from "../src/evaluation/cost.ts";
+import { buildTokenUsageAccounting } from "../src/evaluation/token-usage-accounting.ts";
 import { resolveCaseSelection, runEvaluation } from "../src/evaluation/run-evaluation.ts";
 import { scoreRun } from "../src/evaluation/score-run.ts";
 import { parseEvaluateArgs } from "../scripts/evaluate.ts";
@@ -43,8 +44,42 @@ async function makeRun(input: {
 }) {
   const root = await mkdtemp(join(tmpdir(), "evidence-score-run-"));
   await mkdir(root, { recursive: true });
+  const trajectoryPaths = input.tokenUsage
+    ? input.arm === "baseline"
+      ? ["trajectories/baseline.jsonl"]
+      : ["trajectories/maintainer.jsonl", "trajectories/challenger.jsonl"]
+    : ["trajectories/one.jsonl"];
+  const usageAccounting = input.tokenUsage
+    ? buildTokenUsageAccounting(input.arm === "baseline"
+      ? [{
+          role: "baseline",
+          usage: input.tokenUsage,
+          source: "TRAJECTORY_TURN_COMPLETED",
+          trajectoryPath: trajectoryPaths[0],
+          trajectoryAggregateCaptured: true,
+          proxyRequestCoverage: { requestCount: 1, accountedRequestCount: 0, complete: false },
+        }]
+      : [
+          {
+            role: "maintainer",
+            usage: input.tokenUsage,
+            source: "TRAJECTORY_TURN_COMPLETED",
+            trajectoryPath: trajectoryPaths[0],
+            trajectoryAggregateCaptured: true,
+            proxyRequestCoverage: { requestCount: 1, accountedRequestCount: 0, complete: false },
+          },
+          {
+            role: "challenger",
+            usage: { input: 0, cachedInput: 0, output: 0 },
+            source: "TRAJECTORY_TURN_COMPLETED",
+            trajectoryPath: trajectoryPaths[1],
+            trajectoryAggregateCaptured: true,
+            proxyRequestCoverage: { requestCount: 1, accountedRequestCount: 0, complete: false },
+          },
+        ])
+    : null;
   const manifest = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     projectId: "evidence-maintainer",
     runId: `${input.arm}-run`,
     caseId: "case-1",
@@ -58,9 +93,12 @@ async function makeRun(input: {
     promptSha256: "a".repeat(64),
     outputSchemaSha256: "b".repeat(64),
     caseSetSha256: "c".repeat(64),
-    trajectoryPaths: ["trajectories/one.jsonl"],
+    trajectoryPaths,
+    proxyLedgerPaths: [],
     artifactSha256: {},
-    tokenUsage: input.tokenUsage ?? null,
+    tokenUsage: usageAccounting?.tokenUsage ?? null,
+    tokenUsageAccounting: usageAccounting?.tokenUsageAccounting ?? null,
+    runtimeImages: null,
     outcome: (input.failures?.length ?? 0) === 0 ? "PASS" : "FAIL",
   };
   const gate = {
@@ -225,6 +263,27 @@ test("cost estimates separate cached input from uncached input", () => {
   assert.ok(Math.abs(estimate.estimatedCostUsd - 0.0000644) < 1e-15);
 });
 
+test("combined usage is unknown when any model trajectory lacks a usage receipt", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-partial-usage-"));
+  await mkdir(join(root, "trajectories"));
+  await writeFile(
+    join(root, "trajectories", "maintainer.jsonl"),
+    `${JSON.stringify({ usage: { input_tokens: 100, cached_input_tokens: 40, output_tokens: 10 } })}\n`,
+    "utf8",
+  );
+  await writeFile(
+    join(root, "trajectories", "challenger.jsonl"),
+    `${JSON.stringify({ type: "run.failed", message: "invalid output" })}\n`,
+    "utf8",
+  );
+
+  const usage = await reconstructUsage(root, [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl",
+  ]);
+  assert.equal(usage, null);
+});
+
 test("recorded evaluation preserves one run directory per arm, case, and trial", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-evaluation-run-"));
   const summary = await runEvaluation({
@@ -337,10 +396,15 @@ test("evaluation CLI and case selection support an isolated holdout root", async
   assert.equal(parsed.lock, join(root, "FREEZE.json"));
 });
 
-test("model execution errors remain SDR failures but do not become zero-cost runs", async () => {
+test("model execution errors retain trajectory usage instead of becoming zero-cost runs", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-evaluation-error-"));
   const runner = {
-    async run(): Promise<never> {
+    async run(request: { trajectoryPath: string }): Promise<never> {
+      await writeFile(
+        request.trajectoryPath,
+        `${JSON.stringify({ usage: { input_tokens: 100, cached_input_tokens: 40, output_tokens: 10 } })}\n`,
+        "utf8",
+      );
       throw new ModelExecutionError("INVALID_OUTPUT", "model produced an invalid mutation");
     },
   };
@@ -356,7 +420,8 @@ test("model execution errors remain SDR failures but do not become zero-cost run
   assert.equal(summary.rows.length, 2);
   assert.ok(summary.rows.every((row) => row.safeDecision === false));
   assert.ok(summary.rows.every((row) => row.durationMs === null));
-  assert.ok(summary.rows.every((row) => row.totalTokens === null));
+  assert.ok(summary.rows.every((row) => row.totalTokens === 110));
+  assert.ok(summary.rows.every((row) => row.cachedInputTokens === 40));
   assert.ok(summary.rows.every((row) => row.expectedAction === "REPAIR_ADAPTER"));
   assert.ok(summary.rows.every((row) => row.reviewReady === false));
 });

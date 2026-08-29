@@ -78,6 +78,13 @@ interface RunManifest {
   artifactSha256: Record<string, string>;
 }
 
+interface RunErrorReceipt {
+  caseId: string;
+  arm: string;
+  classification: "MODEL_EXECUTION";
+  kind: string;
+}
+
 interface DemoManifest {
   caseSetHash: string;
   sourceMode: string;
@@ -121,13 +128,15 @@ async function listFiles(root: string): Promise<string[]> {
 async function verifyRunBundle(
   root: string,
   expectedMode: "live" | "recorded",
-): Promise<{ manifests: RunManifest[]; trajectories: string[] }> {
+): Promise<{ manifests: RunManifest[]; errors: RunErrorReceipt[]; trajectories: string[] }> {
   const files = await listFiles(root);
   const manifestPaths = files.filter((path) => basename(path) === "manifest.json");
+  const errorPaths = files.filter((path) => basename(path) === "error.json");
   const trajectories = files.filter(
     (path) => extname(path) === ".jsonl" && basename(dirname(path)) === "trajectories",
   );
   const manifests: RunManifest[] = [];
+  const errors: RunErrorReceipt[] = [];
 
   for (const manifestPath of manifestPaths) {
     const manifest = await readJson<RunManifest>(manifestPath);
@@ -149,7 +158,20 @@ async function verifyRunBundle(
     manifests.push(manifest);
   }
 
-  return { manifests, trajectories };
+  for (const errorPath of errorPaths) {
+    const receipt = await readJson<RunErrorReceipt>(errorPath);
+    if (
+      receipt.classification !== "MODEL_EXECUTION" ||
+      !receipt.caseId ||
+      !["baseline", "advanced"].includes(receipt.arm) ||
+      !receipt.kind
+    ) {
+      throw new Error(`Invalid typed model-error receipt: ${errorPath}`);
+    }
+    errors.push(receipt);
+  }
+
+  return { manifests, errors, trajectories };
 }
 
 async function verifyMarkdown(root: string): Promise<void> {
@@ -293,8 +315,11 @@ export async function verifySubmission(
     resolve(absoluteRoot, "artifacts/evaluation/recorded-all"),
     "recorded",
   );
-  if (live.manifests.length !== 30 || recorded.manifests.length !== 30) {
-    throw new Error("Expected 30 run manifests in both live and recorded evaluations");
+  if (
+    live.manifests.length + live.errors.length !== 30 ||
+    recorded.manifests.length + recorded.errors.length !== 30
+  ) {
+    throw new Error("Expected 30 completed run slots in both live and recorded evaluations");
   }
   if (live.trajectories.length !== 45 || recorded.trajectories.length < 45) {
     throw new Error("Agent trajectory bundles are incomplete");

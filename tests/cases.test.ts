@@ -59,7 +59,10 @@ test("the full suite contains fifteen hash-verified cases with a balanced action
     if (oracle.expectedAction !== "RETRY_LATER") {
       const cutoffMs = new Date(loaded.policy.cutoff).getTime();
       const freshnessMs = loaded.policy.freshnessWindowMinutes * 60_000;
-      for (const evidenceId of oracle.requiredEvidenceIds) {
+      const requiredEvidenceIds = new Set(
+        oracle.evidenceAssessmentBundles.flat().map((assessment) => assessment.evidenceId),
+      );
+      for (const evidenceId of requiredEvidenceIds) {
         const observation = loaded.observations.find((entry) => entry.id === evidenceId);
         if (observation) {
           assert.ok(
@@ -122,7 +125,17 @@ test("the checked-in untouched holdout is byte-identical to the generator output
   assert.deepEqual(checkedIn, generated);
 });
 
-test("human-review cases require escalation, exact missing information, and zero mutation", async () => {
+test("the holdout release-skew case is inside its visible transient window", async () => {
+  const loaded = await loadPublicCase(resolve("holdout", "cases", "retry-release-generation-skew"));
+  const cutoff = new Date(loaded.policy.cutoff).getTime();
+  const earliestAllowed = cutoff - loaded.policy.freshnessWindowMinutes * 60_000;
+  assert.ok(
+    loaded.observations.every((observation) => new Date(observation.observedAt).getTime() >= earliestAllowed),
+    "every release-skew observation must be inside the policy's visible freshness window",
+  );
+});
+
+test("human-review cases require an exact resolving-information request and zero mutation", async () => {
   for (const caseId of [
     "review-conflicting-authorities",
     "review-name-collision",
@@ -133,9 +146,12 @@ test("human-review cases require escalation, exact missing information, and zero
     const oracle = await loadOracle(caseDir);
     assert.deepEqual(loaded.manifest.allowedWritePaths, []);
     assert.equal(oracle.expectedAction, "HUMAN_REVIEW");
-    assert.equal(oracle.requiredChallengerVerdict, "ESCALATE");
+    assert.equal(oracle.requiredChallengerVerdict, "CONFIRM");
     assert.deepEqual(oracle.allowedChangedFiles, []);
-    assert.ok(oracle.requiredMinimumInformation.length >= 2);
+    assert.ok(oracle.acceptableReviewRequests.length >= 1);
+    assert.ok(oracle.acceptableReviewRequests.every((request) => request.requestedFactPaths.length >= 1));
+    assert.ok(oracle.acceptableReviewRequests.every((request) => request.targetEvidenceId.length >= 1));
+    assert.equal(oracle.expectedRetryPlan, null);
   }
 });
 

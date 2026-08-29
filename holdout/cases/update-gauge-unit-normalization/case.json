@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "update-gauge-unit-normalization",
-  "title": "Normalize an authoritative gauge reading without widening its scope",
-  "description": "An approved river-gauge observation changes stage height in feet while canonical storage uses meters.",
+  "title": "River-gauge publication reconciliation",
+  "description": "A canonical river-gauge record and a newly published official reading require a maintenance decision.",
   "sourceClass": "SYNTHETIC",
   "createdFrom": "Synthetic public-data unit-normalization maintenance pattern",
   "agentVisibleFiles": [

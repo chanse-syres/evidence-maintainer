@@ -38,7 +38,9 @@
       ],
       "crs": null,
       "positionalAccuracyMeters": null,
-      "assumedWgs84DistanceInsideMeters": 1.2
+      "distanceComputationCrsAssumption": "EPSG:4326",
+      "distanceInsideUnderAssumptionMeters": 1.2,
+      "signedJurisdictionDetermination": null
     }
   }
 ]

@@ -13,6 +13,7 @@
   ],
   "rules": [
     "Numeric coordinate shape is not evidence of a coordinate reference system",
+    "An assumed-CRS distance may establish possible boundary overlap but cannot establish jurisdiction",
     "Request reference and accuracy evidence when the possible location overlaps the boundary"
   ]
 }

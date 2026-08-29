@@ -1,17 +1,42 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "retry-partial-document",
   "expectedAction": "RETRY_LATER",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-partial-document",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-partial-document",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-partial-document"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [
-    "20 minutes",
-    "complete document"
-  ],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": {
+    "notBefore": "2026-08-28T17:15:00.000Z",
+    "maxAttempts": 2,
+    "escalateAfterAttempt": 2,
+    "preserveRecordIds": [
+      "source-43"
+    ],
+    "agreementChecks": [],
+    "valueChecks": []
+  },
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

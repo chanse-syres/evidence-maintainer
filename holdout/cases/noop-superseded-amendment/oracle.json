@@ -1,15 +1,184 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "noop-superseded-amendment",
   "expectedAction": "NO_ACTION",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-amendment-42",
+        "factPath": "facts.revision",
+        "disposition": "CONTEXT",
+        "reason": "Revision 42 is a traversed but nonterminal authority occurrence."
+      },
+      {
+        "evidenceId": "obs-amendment-42",
+        "factPath": "facts.supersedes",
+        "disposition": "CONTEXT",
+        "reason": "Revision 42 links the prior state into the explicit chain."
+      },
+      {
+        "evidenceId": "obs-rescission-43",
+        "factPath": "effectiveAt",
+        "disposition": "SUPPORT",
+        "reason": "The terminal rescission is effective before the policy cutoff."
+      },
+      {
+        "evidenceId": "obs-rescission-43",
+        "factPath": "facts.revision",
+        "disposition": "SUPPORT",
+        "reason": "Revision 43 is the terminal authority occurrence materialized in canonical state."
+      },
+      {
+        "evidenceId": "obs-rescission-43",
+        "factPath": "facts.supersedes",
+        "disposition": "SUPPORT",
+        "reason": "The rescission explicitly supersedes revision 42."
+      },
+      {
+        "evidenceId": "obs-rescission-43",
+        "factPath": "facts.restoresRevision",
+        "disposition": "SUPPORT",
+        "reason": "The terminal revision restores the state already materialized in canonical data."
+      },
+      {
+        "evidenceId": "obs-rescission-43",
+        "factPath": "facts.deadline",
+        "disposition": "SUPPORT",
+        "reason": "The terminal deadline matches canonical state."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "facts.revision",
+      "disposition": "CONTEXT",
+      "reason": "Revision 42 is a traversed but nonterminal authority occurrence."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "facts.supersedes",
+      "disposition": "CONTEXT",
+      "reason": "Revision 42 links the prior state into the explicit chain."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "The terminal rescission is effective before the policy cutoff."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "facts.revision",
+      "disposition": "SUPPORT",
+      "reason": "Revision 43 is the terminal authority occurrence materialized in canonical state."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "facts.supersedes",
+      "disposition": "SUPPORT",
+      "reason": "The rescission explicitly supersedes revision 42."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "facts.restoresRevision",
+      "disposition": "SUPPORT",
+      "reason": "The terminal revision restores the state already materialized in canonical data."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "facts.deadline",
+      "disposition": "SUPPORT",
+      "reason": "The terminal deadline matches canonical state."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The publication time is relevant chain context."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "effectiveAt",
+      "disposition": "CONTEXT",
+      "reason": "The intermediate revision is effective before the terminal rescission."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "facts.deadline",
+      "disposition": "CONTEXT",
+      "reason": "The intermediate deadline matters only as superseded context."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "facts.deadline",
+      "disposition": "REJECT",
+      "reason": "The intermediate deadline is unsafe as current authority."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The publication time is relevant terminal-revision context."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The procurement register owns the revision chain."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "The occurrence is bound to the solicitation identity."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The scope covers deadline and revision-chain facts."
+    },
+    {
+      "evidenceId": "obs-amendment-42",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The record kind identifies its role in the chain."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The procurement register owns the revision chain."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "The occurrence is bound to the solicitation identity."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The scope covers deadline and revision-chain facts."
+    },
+    {
+      "evidenceId": "obs-rescission-43",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The record kind identifies its role in the chain."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-amendment-42",
     "obs-rescission-43"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "retry-release-generation-skew",
-  "title": "Defer a complete payload that belongs to the wrong release generation",
-  "description": "A signed manifest and a schema-valid payload are individually healthy but belong to adjacent release generations.",
+  "title": "Release publication reconciliation",
+  "description": "A signed manifest, a schema-valid payload, and the current cache require one bounded maintenance decision.",
   "sourceClass": "SYNTHETIC",
   "createdFrom": "Synthetic multi-artifact publication-skew pattern",
   "agentVisibleFiles": [
@@ -29,7 +29,7 @@
       "capturedAt": "2026-08-28T23:30:00.000Z",
       "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
       "permissionBasis": "Created for this benchmark",
-      "sha256": "32ef6eaa695c562cbc32d10ee4940db238e787fef17cca41c36a8010846b21fa"
+      "sha256": "474dab882e457b0e324cbf4324b5d7d372ad367b5907b830a0174ec9166edcaa"
     },
     {
       "sourceId": "holdout-input-policy.json",
@@ -38,7 +38,7 @@
       "capturedAt": "2026-08-28T23:30:00.000Z",
       "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
       "permissionBasis": "Created for this benchmark",
-      "sha256": "e165d5f6153aa4062d44836decbf9886dde410bf6a9c084ab90cb1841863cca9"
+      "sha256": "88ee1ab2c9b7fc7d4937bc6e9f139947bf84a8c6ef33888a5b97bea83f841441"
     }
   ]
 }

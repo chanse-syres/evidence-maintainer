@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "repair-offset-transition",
-  "title": "Repair per-endpoint offsets across a civil-time fallback",
-  "description": "A transit feed moves from UTC timestamps to local wall-clock values with an offset on each endpoint.",
+  "title": "Transit closure timestamp transition",
+  "description": "A transit feed changes its timestamp contract while historical and current closure records remain in scope.",
   "sourceClass": "SYNTHETIC",
   "createdFrom": "Synthetic public-transit timestamp-contract transition",
   "agentVisibleFiles": [

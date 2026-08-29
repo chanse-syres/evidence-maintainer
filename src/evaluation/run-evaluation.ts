@@ -12,6 +12,7 @@ import { runAdvanced } from "../workflows/advanced.ts";
 import { runBaseline } from "../workflows/baseline.ts";
 import { aggregateRows, type AggregateSummary } from "./aggregate.ts";
 import { scoreRun, type EvaluationRow } from "./score-run.ts";
+import { reconstructAvailableUsage, type TrajectoryUsage } from "./trajectory-usage.ts";
 
 export interface RunEvaluationConfig {
   caseIds: string[];
@@ -60,7 +61,9 @@ interface EvaluationLock {
 
 const EXECUTION_PATHS = [
   "package.json",
+  "package-lock.json",
   "scripts/evaluate.ts",
+  "docker",
   "src/agents",
   "src/core",
   "src/evaluation",
@@ -140,8 +143,10 @@ export function createExecutionErrorRow(input: {
   runPath: string;
   expectedAction: string;
   trial: number;
+  tokenUsage?: TrajectoryUsage | null;
 }): EvaluationRow {
   const requiredReview = input.expectedAction === "HUMAN_REVIEW";
+  const tokenUsage = input.tokenUsage ?? null;
   return {
     runId: `${input.caseId}-${input.arm}-trial-${input.trial}-error`,
     caseId: input.caseId,
@@ -165,10 +170,10 @@ export function createExecutionErrorRow(input: {
     avoidableHumanIntervention: !requiredReview,
     estimatedHumanTouch: true,
     durationMs: null,
-    inputTokens: null,
-    cachedInputTokens: null,
-    outputTokens: null,
-    totalTokens: null,
+    inputTokens: tokenUsage?.input ?? null,
+    cachedInputTokens: tokenUsage?.cachedInput ?? null,
+    outputTokens: tokenUsage?.output ?? null,
+    totalTokens: tokenUsage ? tokenUsage.input + tokenUsage.output : null,
     changedFiles: [],
     runPath: input.runPath,
   };
@@ -244,6 +249,7 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
           });
           if (!(error instanceof ModelExecutionError)) throw error;
           modelExecutionErrors += 1;
+          const tokenUsage = await reconstructAvailableUsage(runPath);
           rows.push(createExecutionErrorRow({
             caseId,
             arm,
@@ -252,6 +258,7 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
             runPath: relative(outDir, runPath).replaceAll("\\", "/"),
             expectedAction: expectedActions.get(caseId)!,
             trial,
+            tokenUsage,
           }));
         }
       }

@@ -48,7 +48,7 @@ export default async function CasePage({ params }: { params: Promise<{ caseId: s
         <article className="evidence-card">
           <div className="card-heading"><div><span className="step-number">02</span><h2>Maintainer proposal</h2></div><span className={`action-badge tone-${detail.actionBadge.tone}`}>{detail.actionBadge.label}</span></div>
           <p className="lead-text">{detail.proposal.firstMaterialDivergence}</p>
-          <dl className="fact-list"><div><dt>Failure owner</dt><dd>{detail.proposal.failureOwner}</dd></div><div><dt>Evidence used</dt><dd>{detail.proposal.evidenceUsed.join(", ")}</dd></div><div><dt>Preserved invariants</dt><dd>{detail.proposal.preservedInvariants.join(" · ")}</dd></div></dl>
+          <dl className="fact-list"><div><dt>Failure owner</dt><dd>{detail.proposal.failureOwner}</dd></div><div><dt>Evidence used</dt><dd>{detail.proposal.evidenceAssessments.map((assessment) => `${assessment.evidenceId}:${assessment.factPath}`).join(", ")}</dd></div><div><dt>Preserved invariants</dt><dd>{detail.proposal.preservedInvariants.join(" · ")}</dd></div></dl>
         </article>
 
         <article className="evidence-card">

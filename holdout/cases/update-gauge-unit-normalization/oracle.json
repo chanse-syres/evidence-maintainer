@@ -1,8 +1,110 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "update-gauge-unit-normalization",
   "expectedAction": "UPDATE_DATA",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "sourceId",
+        "disposition": "SUPPORT",
+        "reason": "The official gauge is the scoped authority."
+      },
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "subjectId",
+        "disposition": "SUPPORT",
+        "reason": "The observation is bound to the canonical gauge identity."
+      },
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "effectiveAt",
+        "disposition": "SUPPORT",
+        "reason": "The effective time controls the canonical measurement timestamp."
+      },
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "authorityScope",
+        "disposition": "SUPPORT",
+        "reason": "The scope limits the update to stage height and measurement time."
+      },
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "facts.stageValue",
+        "disposition": "SUPPORT",
+        "reason": "The approved numeric reading supplies the new stage."
+      },
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "facts.stageUnit",
+        "disposition": "SUPPORT",
+        "reason": "The source unit determines the required normalization."
+      },
+      {
+        "evidenceId": "obs-approved-stage-feet",
+        "factPath": "facts.qualityCode",
+        "disposition": "SUPPORT",
+        "reason": "Only an approved reading may control canonical state."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The official gauge is the scoped authority."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "The observation is bound to the canonical gauge identity."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "The effective time controls the canonical measurement timestamp."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The scope limits the update to stage height and measurement time."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "facts.stageValue",
+      "disposition": "SUPPORT",
+      "reason": "The approved numeric reading supplies the new stage."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "facts.stageUnit",
+      "disposition": "SUPPORT",
+      "reason": "The source unit determines the required normalization."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "facts.qualityCode",
+      "disposition": "SUPPORT",
+      "reason": "Only an approved reading may control canonical state."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The capture time is relevant publication context."
+    },
+    {
+      "evidenceId": "obs-approved-stage-feet",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The observation kind identifies an approved reading."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-approved-stage-feet"
   ],
   "allowedChangedFiles": [
@@ -21,7 +123,8 @@
     }
   ],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

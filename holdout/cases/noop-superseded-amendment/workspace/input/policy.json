@@ -12,7 +12,7 @@
     "Superseded intermediate values do not survive materialization"
   ],
   "rules": [
-    "Follow the explicit supersession chain through the cutoff",
+    "Follow the explicit supersession chain whose effectiveAt is at or before the cutoff",
     "Do not write canonical state when the terminal revision already matches it"
   ]
 }

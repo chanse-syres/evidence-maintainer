@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "imageTag": "evidence-maintainer-codex:0.150.0-alpha.8",
+  "imageId": "sha256:1aede06b3e83a7816241abcee33302a0363b09eca39b5ae3d0baf84b36b2c5f5",
+  "baseImage": "node@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d",
+  "codexVersion": "0.150.0-alpha.8",
+  "dockerfileSha256": "9bf4e7c51c43fe8e43306d2eca50d65929ee5d5cd3c44d0f089f9732927fcf3e",
+  "credentialProxySha256": "6aba6f286ac4a3f9f485c981b1611ce1fa976507d1b17c35c17e45199b71ea3c",
+  "credentialProxyCoreSha256": "ab7f1c14bae9b1f4b3b1c866786c5751bf2babadc1ceab732a2b3b542ff436b4"
+}

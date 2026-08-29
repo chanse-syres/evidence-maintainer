@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "noop-superseded-amendment",
-  "title": "Materialize the terminal amendment rather than an intermediate change",
-  "description": "An official deadline extension is explicitly rescinded by the next authoritative revision before cutoff.",
+  "title": "Procurement amendment reconciliation",
+  "description": "Two ordered official revisions and the current canonical solicitation require a maintenance decision.",
   "sourceClass": "SYNTHETIC",
   "createdFrom": "Synthetic ordered-amendment materialization pattern",
   "agentVisibleFiles": [
@@ -38,7 +38,7 @@
       "capturedAt": "2026-08-28T23:30:00.000Z",
       "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
       "permissionBasis": "Created for this benchmark",
-      "sha256": "f02e79e60b59f56b1442668203ce0bc0ff4a5eed11ae254497bff17d798ac3c8"
+      "sha256": "7894f6448b28d17d2e712242da76648721ec176564c9d2b5cee619e78b77291c"
     }
   ]
 }

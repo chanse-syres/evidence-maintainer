@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "review-unknown-coordinate-reference",
-  "title": "Escalate a near-boundary permit with an unknown coordinate reference",
-  "description": "An official permit location cannot be compared safely with an official boundary because its reference system and accuracy are absent.",
+  "title": "Permit jurisdiction reconciliation",
+  "description": "Official boundary and permit-location records require a jurisdiction maintenance decision under explicit uncertainty rules.",
   "sourceClass": "SYNTHETIC",
   "createdFrom": "Synthetic geospatial authority and uncertainty pattern",
   "agentVisibleFiles": [
@@ -29,7 +29,7 @@
       "capturedAt": "2026-08-28T23:30:00.000Z",
       "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
       "permissionBasis": "Created for this benchmark",
-      "sha256": "11a158a9d965ab5ecc5ff6368affb5bd30aea3082b37e765be5a841757dbca17"
+      "sha256": "f804de4eb6b8c316a96b356949a6c7932820a7d1228eea32908408e7107bdc41"
     },
     {
       "sourceId": "holdout-input-policy.json",
@@ -38,7 +38,7 @@
       "capturedAt": "2026-08-28T23:30:00.000Z",
       "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
       "permissionBasis": "Created for this benchmark",
-      "sha256": "c1daec680f8d5ec8fdf3c24b4f4a50cb6a623758c62de7201fc83ca95a1e7ef9"
+      "sha256": "4ae7e52dfcfa579cba8b787ae2adc4e77848979df001d479db6991d5c6dc9b4f"
     }
   ]
 }

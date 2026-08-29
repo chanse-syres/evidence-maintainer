@@ -2,7 +2,7 @@
   {
     "id": "obs-manifest-generation-88",
     "sourceId": "official-release-manifest",
-    "observedAt": "2026-08-28T16:54:00.000Z",
+    "observedAt": "2026-08-28T22:54:00.000Z",
     "effectiveAt": null,
     "authorityScope": [
       "release-generation",
@@ -22,7 +22,7 @@
   {
     "id": "obs-payload-generation-87",
     "sourceId": "official-release-payload",
-    "observedAt": "2026-08-28T16:55:00.000Z",
+    "observedAt": "2026-08-28T22:55:00.000Z",
     "effectiveAt": null,
     "authorityScope": [
       "release-payload"

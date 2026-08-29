@@ -1,6 +1,12 @@
 export type AgentRole = "baseline" | "maintainer" | "challenger";
 
-export type ModelExecutionFailureKind = "TIMEOUT" | "INVALID_OUTPUT" | "INVALID_OPERATION";
+export type ModelExecutionFailureKind =
+  | "TIMEOUT"
+  | "INVALID_OUTPUT"
+  | "INVALID_OPERATION"
+  | "BUDGET_EXHAUSTED"
+  | "RESOURCE_EXHAUSTED"
+  | "AGENT_EXIT";
 
 export class ModelExecutionError extends Error {
   readonly kind: ModelExecutionFailureKind;
@@ -32,6 +38,14 @@ export interface AgentRequest<T> {
   parse: (value: unknown) => T;
 }
 
+export type TokenUsageSource = "PROXY_REQUEST_SUM" | "TRAJECTORY_TURN_COMPLETED";
+
+export interface ProxyRequestUsageCoverage {
+  requestCount: number;
+  accountedRequestCount: number;
+  complete: boolean;
+}
+
 export interface AgentResult<T> {
   mode: "live" | "recorded";
   role: AgentRole;
@@ -43,6 +57,11 @@ export interface AgentResult<T> {
   output: T;
   trajectoryPath: string;
   tokenUsage?: { input: number; cachedInput: number; output: number };
+  tokenUsageSource?: TokenUsageSource;
+  trajectoryAggregateCaptured?: boolean;
+  proxyRequestUsageCoverage?: ProxyRequestUsageCoverage;
+  proxyLedgerPath?: string;
+  runtimeImageId?: string;
 }
 
 export interface AgentRunner {

@@ -1,48 +1,21 @@
 import assert from "node:assert/strict";
-import { cp, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import type { AgentRequest, AgentResult, AgentRunner } from "../src/agents/runner.ts";
-import type { ChallengerVerdict, MaintainerProposal } from "../src/core/schemas.ts";
+import { ChallengerVerdictSchema, MaintainerProposalSchema } from "../src/core/schemas.ts";
 import { runAdvanced } from "../src/workflows/advanced.ts";
 
-const updateProposal: MaintainerProposal = {
-  schemaVersion: 1,
-  caseId: "update-official-commitment",
-  action: "UPDATE_DATA",
-  firstMaterialDivergence: "The official announcement supersedes discovery data.",
-  failureOwner: "canonical-data",
-  evidenceUsed: ["obs-official-commitment"],
-  evidenceRejected: ["obs-older-aggregator"],
-  affectedEntities: ["athlete-11"],
-  affectedFiles: ["input/canonical.json"],
-  operations: [{
-    kind: "SET_RECORD_FIELDS",
-    file: "input/canonical.json",
-    recordId: "athlete-11",
-    assignments: [
-      { field: "status", value: "committed" },
-      { field: "team", value: "Coastal State" },
-    ],
-  }],
-  preservedInvariants: ["Stable athlete identity is preserved"],
-  unresolvedUncertainty: [],
-  minimumInformationRequest: [],
-  retryCondition: null,
-  approvalLevel: "SIMULATED_HUMAN",
-  summary: "Apply the official commitment state.",
-};
-
-const confirmUpdate: ChallengerVerdict = {
-  schemaVersion: 1,
-  caseId: "update-official-commitment",
-  verdict: "CONFIRM",
-  evidenceIds: ["obs-official-commitment"],
-  violations: [],
-  residualRisks: [],
-  summary: "The official source owns both changed fields.",
-};
+const recordedFixtures = JSON.parse(
+  await readFile(resolve("artifacts", "recorded", "runner-fixtures.json"), "utf8"),
+) as Record<string, unknown>;
+const updateProposal = MaintainerProposalSchema.parse(
+  recordedFixtures["update-official-commitment:maintainer"],
+);
+const confirmUpdate = ChallengerVerdictSchema.parse(
+  recordedFixtures["update-official-commitment:challenger"],
+);
 
 class SequenceRunner implements AgentRunner {
   readonly roles: string[] = [];
@@ -68,6 +41,7 @@ class SequenceRunner implements AgentRunner {
     const output = request.parse(this.outputs.shift());
     const at = "2026-08-28T20:00:00.000Z";
     await writeFile(request.trajectoryPath, `${JSON.stringify({ type: "run.started", mode: "recorded" })}\n${JSON.stringify({ type: "run.completed", mode: "recorded", output })}\n`, "utf8");
+    const tokenUsage = this.usages.shift();
     return {
       mode: "recorded",
       role: request.role,
@@ -78,7 +52,18 @@ class SequenceRunner implements AgentRunner {
       exitCode: 0,
       output,
       trajectoryPath: request.trajectoryPath,
-      tokenUsage: this.usages.shift(),
+      tokenUsage,
+      ...(tokenUsage
+        ? {
+            tokenUsageSource: "TRAJECTORY_TURN_COMPLETED" as const,
+            trajectoryAggregateCaptured: true,
+            proxyRequestUsageCoverage: {
+              requestCount: 1,
+              accountedRequestCount: 0,
+              complete: false,
+            },
+          }
+        : {}),
     };
   }
 }
@@ -108,6 +93,29 @@ test("advanced workflow runs Maintainer then Challenger and approves a verified 
   assert.equal(canonical[0].status, "committed");
   assert.ok(gate.checks.every((check: { passed: boolean }) => check.passed));
   assert.equal(approval.decision, "APPROVED");
+});
+
+test("advanced workflow rejects any Challenger workspace mutation", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-advanced-challenger-write-"));
+  const runner = new SequenceRunner(
+    [updateProposal, confirmUpdate],
+    async (request) => {
+      if (request.role === "challenger") {
+        await writeFile(join(request.workspace, "input", "canonical.json"), "[]\n", "utf8");
+      }
+    },
+  );
+  await assert.rejects(
+    () => runAdvanced({
+      caseDir: resolve("cases", "update-official-commitment"),
+      runRoot: root,
+      runner,
+      model: "recorded-fixture",
+      timeoutMs: 30_000,
+      approve: true,
+    }),
+    /Challenger modified the candidate workspace/,
+  );
 });
 
 test("advanced workflow sums input, cached input, and output usage across both agents", async () => {
@@ -177,7 +185,13 @@ test("a Challenger rejection prevents approval", async () => {
 
 test("unknown evidence IDs fail the evidence-supported gate", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-advanced-unknown-"));
-  const proposal = { ...updateProposal, evidenceUsed: ["invented-evidence"] };
+  const proposal = {
+    ...updateProposal,
+    evidenceAssessments: updateProposal.evidenceAssessments.map((entry) => ({
+      ...entry,
+      evidenceId: "invented-evidence",
+    })),
+  };
   const verdict = { ...confirmUpdate, evidenceIds: ["invented-evidence"] };
   await runAdvanced({
     caseDir: resolve("cases", "update-official-commitment"),
@@ -213,42 +227,12 @@ test("an unrelated direct workspace modification is caught", async () => {
   assert.ok(gate.checks.some((check: { id: string; passed: boolean }) => check.id === "allowed-write-surface" && !check.passed));
 });
 
-test("Challenger escalation passes only for a no-mutation human review with minimum information", async () => {
-  const source = resolve("cases", "noop-duplicate-news");
-  const caseRoot = await mkdtemp(join(tmpdir(), "evidence-review-case-"));
-  await cp(source, caseRoot, { recursive: true });
-  await writeFile(join(caseRoot, "oracle.json"), `${JSON.stringify({
-    schemaVersion: 1,
-    caseId: "noop-duplicate-news",
-    expectedAction: "HUMAN_REVIEW",
-    requiredEvidenceIds: ["obs-1", "obs-2"],
-    allowedChangedFiles: [],
-    expectedRecords: [],
-    requiredChallengerVerdict: "ESCALATE",
-    requiredMinimumInformation: ["stable roster ID"],
-    requiredRetryConditionIncludes: [],
-    expectedCommandExitCodes: {},
-  }, null, 2)}\n`, "utf8");
-  const proposal: MaintainerProposal = {
-    ...updateProposal,
-    caseId: "noop-duplicate-news",
-    action: "HUMAN_REVIEW",
-    evidenceUsed: ["obs-1", "obs-2"],
-    affectedEntities: ["athlete-7"],
-    affectedFiles: [],
-    operations: [],
-    minimumInformationRequest: ["stable roster ID"],
-    summary: "Occurrence identity needs review.",
-  };
-  const verdict: ChallengerVerdict = {
-    ...confirmUpdate,
-    caseId: "noop-duplicate-news",
-    verdict: "ESCALATE",
-    evidenceIds: ["obs-1", "obs-2"],
-  };
-  const root = await mkdtemp(join(tmpdir(), "evidence-advanced-escalate-"));
+test("human review accepts an adjudicated resolving-information bundle and rejects a vague substitute", async () => {
+  const proposal = MaintainerProposalSchema.parse(recordedFixtures["review-name-collision:maintainer"]);
+  const verdict = ChallengerVerdictSchema.parse(recordedFixtures["review-name-collision:challenger"]);
+  const root = await mkdtemp(join(tmpdir(), "evidence-advanced-review-"));
   const run = await runAdvanced({
-    caseDir: caseRoot,
+    caseDir: resolve("cases", "review-name-collision"),
     runRoot: root,
     runner: new SequenceRunner([proposal, verdict]),
     model: "recorded-fixture",
@@ -257,30 +241,45 @@ test("Challenger escalation passes only for a no-mutation human review with mini
   });
   assert.equal(run.outcome, "PASS");
 
-  const confirmRoot = await mkdtemp(join(tmpdir(), "evidence-advanced-confirm-review-"));
-  const confirmRun = await runAdvanced({
-    caseDir: caseRoot,
-    runRoot: confirmRoot,
-    runner: new SequenceRunner([proposal, { ...verdict, verdict: "CONFIRM" }]),
+  const alternateRoot = await mkdtemp(join(tmpdir(), "evidence-advanced-review-alternate-"));
+  const alternate = MaintainerProposalSchema.parse({
+    ...proposal,
+    reviewRequest: {
+      subjectId: "Jordan Lee",
+      targetEvidenceId: "obs-name-only-award",
+      requestedFactPaths: ["facts.program", "facts.graduationYear"],
+    },
+  });
+  const alternateRun = await runAdvanced({
+    caseDir: resolve("cases", "review-name-collision"),
+    runRoot: alternateRoot,
+    runner: new SequenceRunner([alternate, verdict]),
     model: "recorded-fixture",
     timeoutMs: 30_000,
     approve: true,
   });
-  assert.equal(confirmRun.outcome, "PASS");
+  assert.equal(alternateRun.outcome, "PASS");
 
-  const missingRoot = await mkdtemp(join(tmpdir(), "evidence-advanced-escalate-missing-"));
-  const missingInformation = { ...proposal, minimumInformationRequest: [] };
-  const missingRun = await runAdvanced({
-    caseDir: caseRoot,
-    runRoot: missingRoot,
-    runner: new SequenceRunner([missingInformation, verdict]),
+  const vagueRoot = await mkdtemp(join(tmpdir(), "evidence-advanced-review-vague-"));
+  const vague = MaintainerProposalSchema.parse({
+    ...proposal,
+    reviewRequest: {
+      subjectId: "Unknown Jordan Lee",
+      targetEvidenceId: "obs-name-only-award",
+      requestedFactPaths: ["facts.stableId"],
+    },
+  });
+  const vagueRun = await runAdvanced({
+    caseDir: resolve("cases", "review-name-collision"),
+    runRoot: vagueRoot,
+    runner: new SequenceRunner([vague, verdict]),
     model: "recorded-fixture",
     timeoutMs: 30_000,
     approve: true,
   });
-  assert.equal(missingRun.outcome, "FAIL");
-  const missingGate = JSON.parse(await readFile(join(missingRoot, "gate.json"), "utf8"));
-  assert.ok(missingGate.checks.some(
+  assert.equal(vagueRun.outcome, "FAIL");
+  const vagueGate = JSON.parse(await readFile(join(vagueRoot, "gate.json"), "utf8"));
+  assert.ok(vagueGate.checks.some(
     (check: { id: string; passed: boolean }) => check.id === "required-artifact" && !check.passed,
   ));
 });

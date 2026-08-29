@@ -7,10 +7,13 @@ import {
   type CaseOracle,
   type ChallengerVerdict,
   type CheckResult,
+  type EvidenceAssessment,
   type MaintainerProposal,
+  type RetryPlan,
+  type ReviewRequest,
 } from "./schemas.ts";
 import type { LoadedPublicCase } from "./case-loader.ts";
-import { buildEvidenceLedger } from "./evidence-ledger.ts";
+import { canonicalJson } from "./canonical-json.ts";
 import { diffTrees, type TreeSnapshot } from "./tree-snapshot.ts";
 
 export interface CommandResult {
@@ -43,80 +46,188 @@ function check(id: string, passed: boolean, summary: string, details: string[] =
   return CheckResultSchema.parse({ id, passed, summary, details });
 }
 
-const REQUIREMENT_STOP_WORDS = new Set(["a", "an", "and", "for", "of", "or", "the", "to"]);
-
-function normalizeRequirementText(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/graduation[-\s]+year/g, "graduation year")
-    .replace(/\bcrs\b/g, "coordinate reference system")
-    .replace(/\bids?\b/g, "identifier")
-    .replace(/\b(?:3|3rd|three)\b/g, "third")
-    .replace(/\bcached?\b/g, "cache")
-    .replace(/\bcanonical\s+(?:record|data)\b/g, "cache")
-    .replace(/\bfull\b/g, "complete")
-    .replace(/[^a-z0-9:+.\-]+/g, " ")
-    .trim();
+function assessmentKey(value: Pick<EvidenceAssessment, "evidenceId" | "factPath" | "disposition">): string {
+  return `${value.evidenceId}\u0000${value.factPath}\u0000${value.disposition}`;
 }
 
-function candidateHasComputedRetryBoundary(
-  candidate: string,
-  requirement: string,
+function pathExists(value: unknown, path: string): boolean {
+  if (path === "$") return true;
+  const segments = path.split(".");
+  let cursor: unknown = value;
+  for (const segment of segments) {
+    if (typeof cursor !== "object" || cursor === null || Array.isArray(cursor)) return false;
+    if (!Object.hasOwn(cursor, segment)) return false;
+    cursor = (cursor as Record<string, unknown>)[segment];
+  }
+  return true;
+}
+
+function evidenceMatches(
   loadedCase: LoadedPublicCase,
-): boolean {
-  const minutesMatch = /^(\d+)\s+minutes?$/.exec(normalizeRequirementText(requirement));
-  if (!minutesMatch) return false;
-  const minutes = Number.parseInt(minutesMatch[1], 10);
-  if (new RegExp(`\\b${minutes}\\s+minutes?\\b`).test(candidate)) return true;
-  const observedTimes = loadedCase.observations
-    .map((observation) => new Date(observation.observedAt).getTime())
-    .filter(Number.isFinite);
-  if (observedTimes.length === 0) return false;
-  const notBefore = Math.max(...observedTimes) + minutes * 60_000;
-  const timestamps = candidate.match(/\d{4}-\d{2}-\d{2}t\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?z/g) ?? [];
-  return timestamps.some((value) => {
-    const parsed = new Date(value).getTime();
-    return Number.isFinite(parsed) && parsed >= notBefore;
-  });
-}
-
-function requirementSatisfied(
-  rawCandidate: string,
-  requirement: string,
-  loadedCase: LoadedPublicCase,
-): boolean {
-  const candidate = normalizeRequirementText(rawCandidate);
-  const normalizedRequirement = normalizeRequirementText(requirement);
-  if (candidate.includes(normalizedRequirement)) return true;
-  if (candidateHasComputedRetryBoundary(candidate, requirement, loadedCase)) return true;
-  return requirement.toLowerCase().split(/\s+or\s+/).some((alternative) => {
-    const tokens = normalizeRequirementText(alternative)
-      .split(/\s+/)
-      .filter((token) => token && !REQUIREMENT_STOP_WORDS.has(token));
-    return tokens.length > 0 && tokens.every((token) => candidate.split(/\s+/).includes(token));
-  });
-}
-
-async function expectedRecordsMatch(workspace: string, oracle: CaseOracle): Promise<{ passed: boolean; details: string[] }> {
+  proposal: MaintainerProposal,
+  oracle: CaseOracle,
+): { passed: boolean; details: string[] } {
+  const observations = new Map(loadedCase.observations.map((entry) => [entry.id, entry]));
   const details: string[] = [];
-  for (const expectation of oracle.expectedRecords) {
-    const parsed: unknown = JSON.parse(await readFile(resolve(workspace, ...expectation.file.split("/")), "utf8"));
-    if (!Array.isArray(parsed)) {
-      details.push(`${expectation.file} is not an array`);
-      continue;
+  const allowedKeys = new Set<string>();
+  for (const allowed of oracle.allowedEvidenceAssessments) {
+    const observation = observations.get(allowed.evidenceId);
+    if (!observation || !pathExists(observation, allowed.factPath)) {
+      throw new Error(`Evaluator oracle contains an invalid allowed assessment: ${allowed.evidenceId}:${allowed.factPath}`);
     }
-    const record = parsed.find(
-      (entry): entry is Record<string, unknown> =>
-        typeof entry === "object" && entry !== null && !Array.isArray(entry) && entry.id === expectation.recordId,
-    );
-    if (!record) {
-      details.push(`${expectation.recordId} is absent from ${expectation.file}`);
-      continue;
+    const key = assessmentKey(allowed);
+    if (allowedKeys.has(key)) {
+      throw new Error(`Evaluator oracle contains a duplicate allowed assessment: ${allowed.evidenceId}:${allowed.factPath}:${allowed.disposition}`);
     }
-    for (const [field, expected] of Object.entries(expectation.fields)) {
-      if (JSON.stringify(record[field]) !== JSON.stringify(expected)) {
-        details.push(`${expectation.recordId}.${field} does not match the adjudicated value`);
+    allowedKeys.add(key);
+  }
+  for (const bundle of oracle.evidenceAssessmentBundles) {
+    for (const required of bundle) {
+      if (!allowedKeys.has(assessmentKey(required))) {
+        throw new Error(`Evaluator oracle evidence bundle is outside its allowlist: ${required.evidenceId}:${required.factPath}:${required.disposition}`);
       }
+    }
+  }
+  const exact = new Set<string>();
+  const dispositions = new Map<string, Set<string>>();
+  for (const assessment of proposal.evidenceAssessments) {
+    const observation = observations.get(assessment.evidenceId);
+    if (!observation) {
+      details.push(`Unknown observation: ${assessment.evidenceId}`);
+      continue;
+    }
+    if (!pathExists(observation, assessment.factPath)) {
+      details.push(`Unknown fact path: ${assessment.evidenceId}:${assessment.factPath}`);
+    }
+    const key = assessmentKey(assessment);
+    if (exact.has(key)) details.push(`Duplicate assessment: ${assessment.evidenceId}:${assessment.factPath}`);
+    exact.add(key);
+    const target = `${assessment.evidenceId}\u0000${assessment.factPath}`;
+    const seen = dispositions.get(target) ?? new Set<string>();
+    seen.add(assessment.disposition);
+    dispositions.set(target, seen);
+  }
+  for (const [target, seen] of dispositions) {
+    if (seen.size > 1) details.push(`Conflicting dispositions for ${target.replace("\u0000", ":")}`);
+  }
+  const bundleMatches = oracle.evidenceAssessmentBundles.map((bundle) => (
+    bundle.every((required) => exact.has(assessmentKey(required)))
+  ));
+  if (!bundleMatches.some(Boolean)) {
+    const missingByBundle = oracle.evidenceAssessmentBundles.map((bundle, index) => {
+      const missing = bundle.filter((required) => !exact.has(assessmentKey(required)));
+      return `Bundle ${index + 1}: ${missing.map((entry) => `${entry.evidenceId}:${entry.factPath}:${entry.disposition}`).join(", ")}`;
+    });
+    details.push("No complete adjudicated evidence bundle was supplied.", ...missingByBundle);
+  }
+  for (const assessment of proposal.evidenceAssessments) {
+    if (!allowedKeys.has(assessmentKey(assessment))) {
+      details.push(`Unexpected assessment: ${assessment.evidenceId}:${assessment.factPath}:${assessment.disposition}`);
+    }
+  }
+  return { passed: details.length === 0, details };
+}
+
+function normalizedReviewRequest(value: ReviewRequest): string {
+  return canonicalJson({
+    subjectId: value.subjectId,
+    targetEvidenceId: value.targetEvidenceId,
+    requestedFactPaths: [...value.requestedFactPaths].sort(),
+  });
+}
+
+function reviewRequestMatches(proposal: MaintainerProposal, oracle: CaseOracle): boolean {
+  if (proposal.action !== "HUMAN_REVIEW") return oracle.acceptableReviewRequests.length === 0;
+  const candidate = normalizedReviewRequest(proposal.reviewRequest);
+  return oracle.acceptableReviewRequests.some((acceptable) => (
+    normalizedReviewRequest(acceptable) === candidate
+  ));
+}
+
+function normalizedAgreementCheck(entry: RetryPlan["agreementChecks"][number]): string {
+    const left = `${entry.leftEvidenceId}\u0000${entry.leftFactPath}`;
+    const right = `${entry.rightEvidenceId}\u0000${entry.rightFactPath}`;
+    return canonicalJson(left <= right
+      ? { leftEvidenceId: entry.leftEvidenceId, leftFactPath: entry.leftFactPath, rightEvidenceId: entry.rightEvidenceId, rightFactPath: entry.rightFactPath }
+      : { leftEvidenceId: entry.rightEvidenceId, leftFactPath: entry.rightFactPath, rightEvidenceId: entry.leftEvidenceId, rightFactPath: entry.leftFactPath });
+}
+
+function normalizedRetryPlan(value: RetryPlan): string {
+  const agreementChecks = value.agreementChecks.map(normalizedAgreementCheck).sort();
+  const valueChecks = value.valueChecks.map((entry) => canonicalJson(entry)).sort();
+  return canonicalJson({
+    notBefore: new Date(value.notBefore).toISOString(),
+    maxAttempts: value.maxAttempts,
+    escalateAfterAttempt: value.escalateAfterAttempt,
+    preserveRecordIds: [...value.preserveRecordIds].sort(),
+    agreementChecks,
+    valueChecks,
+  });
+}
+
+function retryPlanMatches(proposal: MaintainerProposal, oracle: CaseOracle): boolean {
+  if (proposal.action !== "RETRY_LATER") return oracle.expectedRetryPlan === null;
+  if (oracle.expectedRetryPlan === null) return false;
+  return normalizedRetryPlan(proposal.retryPlan) === normalizedRetryPlan(oracle.expectedRetryPlan);
+}
+
+function cloneJson<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+async function expectedRecordsMatch(
+  workspace: string,
+  loadedCase: LoadedPublicCase,
+  oracle: CaseOracle,
+): Promise<{ passed: boolean; details: string[] }> {
+  const details: string[] = [];
+  const byFile = new Map<string, typeof oracle.expectedRecords>();
+  for (const expectation of oracle.expectedRecords) {
+    const entries = byFile.get(expectation.file) ?? [];
+    entries.push(expectation);
+    byFile.set(expectation.file, entries);
+  }
+  for (const [file, expectations] of byFile) {
+    let original: unknown;
+    let candidate: unknown;
+    try {
+      original = JSON.parse(await readFile(resolve(loadedCase.caseDir, "workspace", ...file.split("/")), "utf8"));
+      candidate = JSON.parse(await readFile(resolve(workspace, ...file.split("/")), "utf8"));
+    } catch (error) {
+      details.push(`${file} is not valid readable JSON: ${error instanceof Error ? error.message : String(error)}`);
+      continue;
+    }
+    if (!Array.isArray(original) || !Array.isArray(candidate)) {
+      details.push(`${file} must retain its array root`);
+      continue;
+    }
+    const expected = cloneJson(original) as unknown[];
+    const originalIds = original.map((entry) => (
+      typeof entry === "object" && entry !== null && !Array.isArray(entry)
+        ? (entry as Record<string, unknown>).id
+        : undefined
+    ));
+    if (new Set(originalIds).size !== originalIds.length || originalIds.some((id) => typeof id !== "string")) {
+      details.push(`${file} has an invalid evaluator-owned identity set`);
+      continue;
+    }
+    for (const expectation of expectations) {
+      const matches = expected.filter((entry) => (
+        typeof entry === "object" && entry !== null && !Array.isArray(entry) &&
+        (entry as Record<string, unknown>).id === expectation.recordId
+      )) as Record<string, unknown>[];
+      if (matches.length !== 1) {
+        details.push(`${expectation.recordId} is not uniquely present in evaluator-owned ${file}`);
+        continue;
+      }
+      Object.assign(matches[0], expectation.fields);
+    }
+    try {
+      if (canonicalJson(candidate) !== canonicalJson(expected)) {
+        details.push(`${file} does not exactly match the adjudicated canonical artifact`);
+      }
+    } catch (error) {
+      details.push(`${file} cannot be canonicalized: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   return { passed: details.length === 0, details };
@@ -141,110 +252,77 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
 
   const actionCorrect = input.proposal.action === input.oracle.expectedAction;
   const expectedVerdict = input.oracle.requiredChallengerVerdict;
-  const verdictCompatible = (
-    input.challenger.verdict === expectedVerdict && (
-      input.challenger.verdict === "CONFIRM" ||
-      (input.challenger.verdict === "ESCALATE" && input.proposal.action === "HUMAN_REVIEW")
-    )
-  ) || (
-    expectedVerdict === "ESCALATE" &&
-    input.proposal.action === "HUMAN_REVIEW" &&
-    input.challenger.verdict === "CONFIRM"
-  );
+  const verdictCompatible = input.challenger.verdict === expectedVerdict &&
+    (input.challenger.verdict !== "CONFIRM" || (
+      input.challenger.violations.length === 0 && input.challenger.residualRisks.length === 0
+    ));
 
   const allowed = new Set(input.loadedCase.manifest.allowedWritePaths);
   const oracleAllowed = new Set(input.oracle.allowedChangedFiles);
   const disallowedChanges = changedFiles.filter((path) => !allowed.has(path) || !oracleAllowed.has(path));
   const expectedChangeSet = [...oracleAllowed].sort();
-  const exactChangeSet = JSON.stringify(changedFiles) === JSON.stringify(expectedChangeSet);
+  const exactChangeSet = canonicalJson(changedFiles) === canonicalJson(expectedChangeSet);
 
-  const mutationActions = new Set(["UPDATE_DATA", "REPAIR_ADAPTER"]);
-  const operationFiles = input.proposal.operations
-    .filter((operation) => operation.kind !== "NO_MUTATION")
-    .map((operation) => "file" in operation ? operation.file : "")
-    .filter(Boolean)
-    .sort();
-  const requiredArtifact = mutationActions.has(input.proposal.action)
-    ? operationFiles.length > 0 && exactChangeSet
+  const operationFiles = input.proposal.operations.map((operation) => operation.file).sort();
+  const uniqueOperationFiles = [...new Set(operationFiles)].sort();
+  const operationFilesAllowed = operationFiles.every((file) => allowed.has(file) && oracleAllowed.has(file));
+  const mutationAction = input.proposal.action === "UPDATE_DATA" || input.proposal.action === "REPAIR_ADAPTER";
+  const requiredArtifact = mutationAction
+    ? operationFiles.length > 0 && operationFilesAllowed &&
+      canonicalJson(uniqueOperationFiles) === canonicalJson(expectedChangeSet) && exactChangeSet
     : operationFiles.length === 0 && changedFiles.length === 0;
-  const hasActionableInformationRequest = input.proposal.minimumInformationRequest.some(
-    (value) => value.trim().length > 0,
-  );
-  const hasRetryPlan = (input.proposal.retryCondition?.trim().length ?? 0) > 0;
-  const informationText = input.proposal.minimumInformationRequest.join(" ");
-  const missingInformationRequirements = input.oracle.requiredMinimumInformation.filter(
-    (requirement) => !requirementSatisfied(informationText, requirement, input.loadedCase),
-  );
-  const missingRetryRequirements = input.oracle.requiredRetryConditionIncludes.filter(
-    (requirement) => !requirementSatisfied(input.proposal.retryCondition ?? "", requirement, input.loadedCase),
-  );
-  const artifactDetails = [...operationFiles, ...changedFiles];
-  if (input.proposal.action === "HUMAN_REVIEW" && !hasActionableInformationRequest) {
-    artifactDetails.push("HUMAN_REVIEW requires an actionable minimum-information request");
-  }
-  if (input.proposal.action === "RETRY_LATER" && !hasRetryPlan) {
-    artifactDetails.push("RETRY_LATER requires a bounded retry condition");
-  }
-  artifactDetails.push(
-    ...missingInformationRequirements.map((requirement) => `Missing requested information concept: ${requirement}`),
-    ...missingRetryRequirements.map((requirement) => `Missing retry condition concept: ${requirement}`),
-  );
-  const artifactComplete = requiredArtifact &&
-    (input.proposal.action !== "HUMAN_REVIEW" || (
-      hasActionableInformationRequest && missingInformationRequirements.length === 0
-    )) &&
-    (input.proposal.action !== "RETRY_LATER" || (
-      hasRetryPlan && missingRetryRequirements.length === 0
-    ));
 
-  const expectedState = await expectedRecordsMatch(input.workspace, input.oracle);
+  const reviewMatches = reviewRequestMatches(input.proposal, input.oracle);
+  const retryMatches = retryPlanMatches(input.proposal, input.oracle);
+  const artifactDetails = [
+    ...(operationFilesAllowed ? [] : ["An operation target is outside both declared allowlists"]),
+    ...(reviewMatches ? [] : ["Structured review request does not match an adjudicated resolving-information bundle"]),
+    ...(retryMatches ? [] : ["Structured retry plan does not match the bounded adjudicated plan"]),
+  ];
+  const artifactComplete = requiredArtifact && reviewMatches && retryMatches;
+
+  const expectedState = await expectedRecordsMatch(input.workspace, input.loadedCase, input.oracle);
   const commandDetails: string[] = [];
   for (const command of input.loadedCase.manifest.requiredCommands) {
-    if (!(command in input.commandResults)) {
-      commandDetails.push(`Missing required command: ${command}`);
-    }
+    if (!(command in input.commandResults)) commandDetails.push(`Missing required command: ${command}`);
   }
   for (const [command, expectedExitCode] of Object.entries(input.oracle.expectedCommandExitCodes)) {
     if (input.commandResults[command]?.exitCode !== expectedExitCode) {
       commandDetails.push(`Unexpected exit code for ${command}`);
     }
   }
+  const hiddenCommandKey = input.oracle.hiddenProbePath ? `hidden:${input.oracle.hiddenProbePath}` : null;
+  if (hiddenCommandKey && input.commandResults[hiddenCommandKey]?.exitCode !== 0) {
+    commandDetails.push(`Private generalization probe failed: ${input.oracle.hiddenProbePath}`);
+  }
   const allCommandsPassed = Object.values(input.commandResults).every((result) => result.exitCode === 0);
 
-  const evidenceUniverse = new Set([
-    ...input.loadedCase.observations.map((observation) => observation.id),
-    ...input.loadedCase.workspaceFiles.map((file) => file.path),
-  ]);
-  const ledgerById = new Map(
-    buildEvidenceLedger(input.loadedCase).map((event) => [event.id, event.evidenceIds]),
-  );
-  const expandCitations = (ids: readonly string[]) => ids.flatMap(
-    (id) => ledgerById.get(id) ?? [id],
-  );
-  const proposalEvidence = new Set(expandCitations(input.proposal.evidenceUsed));
-  const challengerEvidence = new Set(expandCitations(input.challenger.evidenceIds));
-  const missingRequiredEvidence = input.oracle.requiredEvidenceIds.filter(
-    (id) => !proposalEvidence.has(id) || !challengerEvidence.has(id),
-  );
-  const unknownEvidence = [...input.proposal.evidenceUsed, ...input.challenger.evidenceIds]
-    .filter((id) => !evidenceUniverse.has(id) && !ledgerById.has(id));
-  const evidenceSupported = missingRequiredEvidence.length === 0 && unknownEvidence.length === 0;
+  const evidence = evidenceMatches(input.loadedCase, input.proposal, input.oracle);
+  const requiredEvidenceIds = input.oracle.requiredChallengerEvidenceIds;
+  const observationIds = new Set(input.loadedCase.observations.map((entry) => entry.id));
+  const challengerIds = new Set(input.challenger.evidenceIds);
+  for (const id of requiredEvidenceIds) {
+    if (!observationIds.has(id)) throw new Error(`Evaluator oracle requires an unknown Challenger observation: ${id}`);
+  }
+  const challengerDetails = [
+    ...requiredEvidenceIds.filter((id) => !challengerIds.has(id)).map((id) => `Missing Challenger evidence: ${id}`),
+    ...input.challenger.evidenceIds.filter((id) => !observationIds.has(id)).map((id) => `Unknown Challenger evidence: ${id}`),
+    ...input.challenger.evidenceIds.filter((id) => observationIds.has(id) && !requiredEvidenceIds.includes(id))
+      .map((id) => `Unexpected Challenger evidence: ${id}`),
+    ...(challengerIds.size === input.challenger.evidenceIds.length ? [] : ["Duplicate Challenger evidence IDs are not allowed"]),
+  ];
 
   const checks = [
     check("schema-complete", schemaComplete, schemaComplete ? "Structured outputs are complete." : "Structured output validation failed.", schemaDetails),
     check("action-correct", actionCorrect, actionCorrect ? "The selected action matches adjudication." : "The selected action is incorrect."),
     check("challenger-compatible", verdictCompatible, verdictCompatible ? "The independent verdict is compatible." : "The independent verdict is incompatible."),
     check("allowed-write-surface", disallowedChanges.length === 0, disallowedChanges.length === 0 ? "All changes stay inside the allowed surface." : "A change escaped the allowed surface.", disallowedChanges),
-    check(
-      "required-artifact",
-      artifactComplete,
-      artifactComplete ? "The required candidate artifact is present." : "The candidate artifact, exact change set, retry condition, or minimum-information request is incomplete.",
-      artifactDetails,
-    ),
-    check("expected-data-state", expectedState.passed, expectedState.passed ? "The adjudicated data state is present." : "The adjudicated data state is absent.", expectedState.details),
+    check("required-artifact", artifactComplete, artifactComplete ? "The required candidate artifact is exact." : "The candidate artifact is incomplete or structurally incorrect.", artifactDetails),
+    check("expected-data-state", expectedState.passed, expectedState.passed ? "The complete adjudicated data artifact is exact." : "The complete adjudicated data artifact is incorrect.", expectedState.details),
     check("required-commands", commandDetails.length === 0, commandDetails.length === 0 ? "All required commands were executed." : "Required command evidence is incomplete.", commandDetails),
-    check("regression-preserved", allCommandsPassed, allCommandsPassed ? "All executed regression commands passed." : "A regression command failed."),
-    check("evidence-supported", evidenceSupported, evidenceSupported ? "Claims cite known required evidence." : "Evidence support is incomplete.", [...missingRequiredEvidence, ...unknownEvidence]),
+    check("regression-preserved", allCommandsPassed, allCommandsPassed ? "All isolated regression commands passed." : "An isolated regression command failed."),
+    check("evidence-supported", evidence.passed, evidence.passed ? "Field-level evidence assessments match adjudication." : "Field-level evidence support is incomplete.", evidence.details),
+    check("challenger-evidence-supported", challengerDetails.length === 0, challengerDetails.length === 0 ? "The Challenger cites exact required observations." : "Challenger evidence support is incomplete.", challengerDetails),
     check("no-live-write", input.submissionMode && !input.liveWriteAttempted, input.submissionMode && !input.liveWriteAttempted ? "Submission remained sandbox-only." : "A live-write boundary was violated."),
   ];
 

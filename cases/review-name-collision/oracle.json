@@ -1,17 +1,49 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "review-name-collision",
   "expectedAction": "HUMAN_REVIEW",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-name-only-award",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-name-only-award",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-name-only-award"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
-  "requiredChallengerVerdict": "ESCALATE",
-  "requiredMinimumInformation": [
-    "stable source identifier",
-    "program or graduation year"
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [
+    {
+      "subjectId": "Jordan Lee",
+      "targetEvidenceId": "obs-name-only-award",
+      "requestedFactPaths": [
+        "facts.stableId"
+      ]
+    },
+    {
+      "subjectId": "Jordan Lee",
+      "targetEvidenceId": "obs-name-only-award",
+      "requestedFactPaths": [
+        "facts.program",
+        "facts.graduationYear"
+      ]
+    }
   ],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

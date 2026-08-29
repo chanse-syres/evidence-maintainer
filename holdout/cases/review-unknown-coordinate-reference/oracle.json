@@ -1,18 +1,187 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "review-unknown-coordinate-reference",
   "expectedAction": "HUMAN_REVIEW",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-official-boundary-2026",
+        "factPath": "facts.boundaryVersion",
+        "disposition": "SUPPORT",
+        "reason": "The signed boundary version controls the comparison geometry."
+      },
+      {
+        "evidenceId": "obs-official-boundary-2026",
+        "factPath": "facts.crs",
+        "disposition": "SUPPORT",
+        "reason": "The official boundary explicitly declares its coordinate reference system."
+      },
+      {
+        "evidenceId": "obs-permit-location",
+        "factPath": "facts.crs",
+        "disposition": "CONTEXT",
+        "reason": "The null CRS is decisive unresolved context."
+      },
+      {
+        "evidenceId": "obs-permit-location",
+        "factPath": "facts.positionalAccuracyMeters",
+        "disposition": "CONTEXT",
+        "reason": "The missing positional accuracy is decisive unresolved context."
+      },
+      {
+        "evidenceId": "obs-permit-location",
+        "factPath": "facts.distanceComputationCrsAssumption",
+        "disposition": "REJECT",
+        "reason": "The undeclared CRS assumption is not authoritative evidence."
+      },
+      {
+        "evidenceId": "obs-permit-location",
+        "factPath": "facts.distanceInsideUnderAssumptionMeters",
+        "disposition": "CONTEXT",
+        "reason": "The assumed distance establishes possible boundary overlap without resolving jurisdiction."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "facts.boundaryVersion",
+      "disposition": "SUPPORT",
+      "reason": "The signed boundary version controls the comparison geometry."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "facts.crs",
+      "disposition": "SUPPORT",
+      "reason": "The official boundary explicitly declares its coordinate reference system."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "facts.crs",
+      "disposition": "CONTEXT",
+      "reason": "The null CRS is decisive unresolved context."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "facts.positionalAccuracyMeters",
+      "disposition": "CONTEXT",
+      "reason": "The missing positional accuracy is decisive unresolved context."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "facts.distanceComputationCrsAssumption",
+      "disposition": "REJECT",
+      "reason": "The undeclared CRS assumption is not authoritative evidence."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "facts.distanceInsideUnderAssumptionMeters",
+      "disposition": "CONTEXT",
+      "reason": "The assumed distance establishes possible boundary overlap without resolving jurisdiction."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "facts.coordinates",
+      "disposition": "CONTEXT",
+      "reason": "Coordinate values are relevant but uninterpretable without a declared CRS."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "facts.geometrySha256",
+      "disposition": "SUPPORT",
+      "reason": "The geometry hash identifies the controlled boundary artifact."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The official source owns its scoped record."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "The record is bound to the permit identity."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The scope identifies the authoritative fields."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The record kind identifies its decision role."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The capture time is relevant case context."
+    },
+    {
+      "evidenceId": "obs-official-boundary-2026",
+      "factPath": "effectiveAt",
+      "disposition": "CONTEXT",
+      "reason": "The effective time is relevant case context."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The official source owns its scoped record."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "The record is bound to the permit identity."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The scope identifies the authoritative fields."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The record kind identifies its decision role."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The capture time is relevant case context."
+    },
+    {
+      "evidenceId": "obs-permit-location",
+      "factPath": "effectiveAt",
+      "disposition": "CONTEXT",
+      "reason": "The effective time is relevant case context."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-official-boundary-2026",
     "obs-permit-location"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
-  "requiredChallengerVerdict": "ESCALATE",
-  "requiredMinimumInformation": [
-    "permit coordinate CRS or datum",
-    "positional accuracy or signed jurisdiction determination"
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [
+    {
+      "subjectId": "permit-204",
+      "targetEvidenceId": "obs-permit-location",
+      "requestedFactPaths": [
+        "facts.crs",
+        "facts.positionalAccuracyMeters"
+      ]
+    }
   ],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

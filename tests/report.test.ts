@@ -1,11 +1,25 @@
 import assert from "node:assert/strict";
-import { resolve } from "node:path";
-import test from "node:test";
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import test, { before } from "node:test";
+import { runEvaluation } from "../src/evaluation/run-evaluation.ts";
 import { renderDecisionReport } from "../src/reports/render-decision-report.ts";
 
-const recordedRun = resolve(
-  "artifacts/evaluation/recorded-all/runs/update-official-commitment/trial-1/advanced",
-);
+let recordedRun: string;
+
+before(async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-report-v2-"));
+  await runEvaluation({
+    caseIds: ["update-official-commitment"],
+    trials: 1,
+    mode: "recorded",
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    outDir: root,
+  });
+  recordedRun = join(root, "runs", "update-official-commitment", "trial-1", "advanced");
+});
 
 test("decision report renders every evidence and approval section", async () => {
   const html = await renderDecisionReport(recordedRun);

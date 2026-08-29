@@ -1,8 +1,74 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "repair-offset-transition",
   "expectedAction": "REPAIR_ADAPTER",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-local-offset-contract",
+        "factPath": "sourceId",
+        "disposition": "SUPPORT",
+        "reason": "The official transit API owns the timestamp contract."
+      },
+      {
+        "evidenceId": "obs-local-offset-contract",
+        "factPath": "facts.legacyEncoding",
+        "disposition": "SUPPORT",
+        "reason": "Legacy UTC compatibility must be preserved."
+      },
+      {
+        "evidenceId": "obs-local-offset-contract",
+        "factPath": "facts.currentEncoding",
+        "disposition": "SUPPORT",
+        "reason": "The current contract requires independent endpoint offsets."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The official transit API owns the timestamp contract."
+    },
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "facts.legacyEncoding",
+      "disposition": "SUPPORT",
+      "reason": "Legacy UTC compatibility must be preserved."
+    },
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "facts.currentEncoding",
+      "disposition": "SUPPORT",
+      "reason": "The current contract requires independent endpoint offsets."
+    },
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The authority scope covers timestamp encoding."
+    },
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The observation time supplies contract-version context."
+    },
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The source identifies the record as a schema change."
+    },
+    {
+      "evidenceId": "obs-local-offset-contract",
+      "factPath": "schemaFingerprint",
+      "disposition": "SUPPORT",
+      "reason": "The fingerprint identifies the current timestamp contract."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-local-offset-contract"
   ],
   "allowedChangedFiles": [
@@ -10,9 +76,10 @@
   ],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
   "expectedCommandExitCodes": {
     "node --experimental-strip-types --test adapter.test.ts": 0
-  }
+  },
+  "hiddenProbePath": "verifier/hidden-probes.json"
 }

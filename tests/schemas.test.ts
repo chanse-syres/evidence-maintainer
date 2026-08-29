@@ -14,21 +14,24 @@ import { canonicalJson, sha256Json } from "../src/core/canonical-json.ts";
 import { writeSchemas } from "../scripts/generate-schemas.ts";
 
 const validProposal = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   caseId: "noop-duplicate-news",
   action: "NO_ACTION",
   firstMaterialDivergence: "obs-2 duplicates event evt-1",
   failureOwner: "source-observation",
-  evidenceUsed: ["obs-1", "obs-2"],
-  evidenceRejected: [],
+  evidenceAssessments: [{
+    evidenceId: "obs-1",
+    factPath: "facts.eventId",
+    disposition: "SUPPORT",
+    reason: "The event identity is authoritative.",
+  }],
   affectedEntities: ["athlete-7"],
   affectedFiles: [],
   operations: [],
   preservedInvariants: ["canonical event IDs remain unique"],
   unresolvedUncertainty: [],
-  minimumInformationRequest: [],
-  retryCondition: null,
-  approvalLevel: "SIMULATED_HUMAN",
+  reviewRequest: null,
+  retryPlan: null,
   summary: "No canonical change is justified.",
 };
 
@@ -61,7 +64,16 @@ test("canonical JSON rejects values that cannot be represented deterministically
 test("maintainer proposals require a valid action and evidence-linked contract", () => {
   assert.deepEqual(MaintainerProposalSchema.parse(validProposal), validProposal);
   assert.throws(() => MaintainerProposalSchema.parse({ ...validProposal, action: "DELETE" }));
-  assert.throws(() => MaintainerProposalSchema.parse({ ...validProposal, evidenceUsed: [] }));
+  assert.throws(() => MaintainerProposalSchema.parse({ ...validProposal, evidenceAssessments: [] }));
+  assert.throws(() => MaintainerProposalSchema.parse({
+    ...validProposal,
+    evidenceAssessments: [{
+      evidenceId: "obs-1",
+      factPath: "not-a-fact-path",
+      disposition: "SUPPORT",
+      reason: "Invalid path.",
+    }],
+  }));
 });
 
 test("mutation operations reject traversal and accept bounded repair operations", () => {
@@ -149,5 +161,19 @@ test("schema generation writes the three public agent contracts", async () => {
       `${name} must stay inside the Codex structured-output schema subset`,
     );
     assert.match(hash, /^[a-f0-9]{64}$/);
+  }
+});
+
+test("generated contracts encode required empty arrays without empty tuple schemas", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-empty-array-schema-"));
+  await writeSchemas(root);
+  for (const name of [
+    "baseline-result.schema.json",
+    "maintainer-proposal.schema.json",
+    "challenger-verdict.schema.json",
+  ]) {
+    const document = await readFile(join(root, name), "utf8");
+    assert.equal(document.includes('"prefixItems": []'), false);
+    assert.equal((JSON.parse(document) as { type?: string }).type, "object");
   }
 });

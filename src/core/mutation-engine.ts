@@ -66,9 +66,6 @@ function countOccurrences(content: string, needle: string): number {
 export async function applyOperations(workspace: string, operations: readonly MutationOperation[]): Promise<void> {
   for (const rawOperation of operations) {
     const operation = MutationOperationSchema.parse(rawOperation);
-    if (operation.kind === "NO_MUTATION") {
-      continue;
-    }
     const path = containedPath(workspace, operation.file);
     await assertRegularFile(path);
 
@@ -91,7 +88,14 @@ export async function applyOperations(workspace: string, operations: readonly Mu
     if (Object.hasOwn(fields, "id")) {
       throw new MutationApplicationError("Stable record identity cannot be mutated");
     }
-    const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(await readFile(path, "utf8"));
+    } catch (error) {
+      throw new MutationApplicationError(
+        `SET_RECORD_FIELDS requires valid JSON in ${operation.file}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
     if (!Array.isArray(parsed)) {
       throw new MutationApplicationError(`SET_RECORD_FIELDS requires an array JSON root: ${operation.file}`);
     }

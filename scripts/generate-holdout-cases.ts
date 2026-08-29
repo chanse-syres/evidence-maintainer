@@ -1,8 +1,13 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { sha256Text } from "../src/core/canonical-json.ts";
-import type { ActionClass } from "../src/core/schemas.ts";
+import type {
+  ActionClass,
+  EvidenceAssessment,
+  RetryPlan,
+  ReviewRequest,
+} from "../src/core/schemas.ts";
 
 interface HoldoutDefinition {
   id: string;
@@ -12,15 +17,21 @@ interface HoldoutDefinition {
   allowedWritePaths: string[];
   requiredCommands: string[];
   files: Record<string, string>;
+  verifierFiles?: Record<string, string>;
   oracle: {
     expectedAction: ActionClass;
     requiredEvidenceIds: string[];
     allowedChangedFiles: string[];
     expectedRecords: Array<{ file: string; recordId: string; fields: Record<string, unknown> }>;
     requiredChallengerVerdict: "CONFIRM" | "REJECT" | "ESCALATE";
-    requiredMinimumInformation?: string[];
-    requiredRetryConditionIncludes?: string[];
+    requiredEvidenceAssessments?: EvidenceAssessment[];
+    evidenceAssessmentBundles?: EvidenceAssessment[][];
+    allowedEvidenceAssessments?: EvidenceAssessment[];
+    requiredChallengerEvidenceIds?: string[];
+    acceptableReviewRequests?: ReviewRequest[];
+    expectedRetryPlan?: RetryPlan | null;
     expectedCommandExitCodes?: Record<string, number>;
+    hiddenProbePath?: string | null;
   };
 }
 
@@ -78,8 +89,8 @@ function observation(input: {
 const definitions: HoldoutDefinition[] = [
   {
     id: "update-gauge-unit-normalization",
-    title: "Normalize an authoritative gauge reading without widening its scope",
-    description: "An approved river-gauge observation changes stage height in feet while canonical storage uses meters.",
+    title: "River-gauge publication reconciliation",
+    description: "A canonical river-gauge record and a newly published official reading require a maintenance decision.",
     createdFrom: "Synthetic public-data unit-normalization maintenance pattern",
     allowedWritePaths: ["input/canonical.json"],
     requiredCommands: [],
@@ -122,6 +133,26 @@ const definitions: HoldoutDefinition[] = [
     oracle: {
       expectedAction: "UPDATE_DATA",
       requiredEvidenceIds: ["obs-approved-stage-feet"],
+      requiredEvidenceAssessments: [
+        { evidenceId: "obs-approved-stage-feet", factPath: "sourceId", disposition: "SUPPORT", reason: "The official gauge is the scoped authority." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "subjectId", disposition: "SUPPORT", reason: "The observation is bound to the canonical gauge identity." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "effectiveAt", disposition: "SUPPORT", reason: "The effective time controls the canonical measurement timestamp." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "authorityScope", disposition: "SUPPORT", reason: "The scope limits the update to stage height and measurement time." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "facts.stageValue", disposition: "SUPPORT", reason: "The approved numeric reading supplies the new stage." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "facts.stageUnit", disposition: "SUPPORT", reason: "The source unit determines the required normalization." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "facts.qualityCode", disposition: "SUPPORT", reason: "Only an approved reading may control canonical state." },
+      ],
+      allowedEvidenceAssessments: [
+        { evidenceId: "obs-approved-stage-feet", factPath: "sourceId", disposition: "SUPPORT", reason: "The official gauge is the scoped authority." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "subjectId", disposition: "SUPPORT", reason: "The observation is bound to the canonical gauge identity." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "effectiveAt", disposition: "SUPPORT", reason: "The effective time controls the canonical measurement timestamp." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "authorityScope", disposition: "SUPPORT", reason: "The scope limits the update to stage height and measurement time." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "facts.stageValue", disposition: "SUPPORT", reason: "The approved numeric reading supplies the new stage." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "facts.stageUnit", disposition: "SUPPORT", reason: "The source unit determines the required normalization." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "facts.qualityCode", disposition: "SUPPORT", reason: "Only an approved reading may control canonical state." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "observedAt", disposition: "CONTEXT", reason: "The capture time is relevant publication context." },
+        { evidenceId: "obs-approved-stage-feet", factPath: "kind", disposition: "SUPPORT", reason: "The observation kind identifies an approved reading." },
+      ],
       allowedChangedFiles: ["input/canonical.json"],
       expectedRecords: [{
         file: "input/canonical.json",
@@ -138,8 +169,8 @@ const definitions: HoldoutDefinition[] = [
   },
   {
     id: "repair-offset-transition",
-    title: "Repair per-endpoint offsets across a civil-time fallback",
-    description: "A transit feed moves from UTC timestamps to local wall-clock values with an offset on each endpoint.",
+    title: "Transit closure timestamp transition",
+    description: "A transit feed changes its timestamp contract while historical and current closure records remain in scope.",
     createdFrom: "Synthetic public-transit timestamp-contract transition",
     allowedWritePaths: ["adapter.ts"],
     requiredCommands: [adapterCommand],
@@ -246,19 +277,53 @@ test("each current endpoint uses its declared offset", () => {
         },
       ]),
     },
+    verifierFiles: {
+      "hidden-probes.json": json({
+        schemaVersion: 1,
+        exportName: "normalizeClosures",
+        cases: [{
+          id: "unseen-offsets",
+          args: [[
+            { id: "unseen-east", start: "2027-03-14T03:05:00", startOffsetMinutes: -240, end: "2027-03-14T04:20:00", endOffsetMinutes: -240 },
+            { id: "unseen-legacy", start: "2027-01-02T00:00:00.000Z", end: "2027-01-02T00:30:00.000Z" },
+            { id: "unseen-fallback", start: "2027-10-31T12:00:00", startOffsetMinutes: 330, end: "2027-10-31T11:45:00", endOffsetMinutes: 270 },
+          ]],
+          expected: [
+            { id: "unseen-east", startUtc: "2027-03-14T07:05:00.000Z", endUtc: "2027-03-14T08:20:00.000Z" },
+            { id: "unseen-legacy", startUtc: "2027-01-02T00:00:00.000Z", endUtc: "2027-01-02T00:30:00.000Z" },
+            { id: "unseen-fallback", startUtc: "2027-10-31T06:30:00.000Z", endUtc: "2027-10-31T07:15:00.000Z" },
+          ],
+        }],
+      }),
+    },
     oracle: {
       expectedAction: "REPAIR_ADAPTER",
       requiredEvidenceIds: ["obs-local-offset-contract"],
+      requiredEvidenceAssessments: [
+        { evidenceId: "obs-local-offset-contract", factPath: "sourceId", disposition: "SUPPORT", reason: "The official transit API owns the timestamp contract." },
+        { evidenceId: "obs-local-offset-contract", factPath: "facts.legacyEncoding", disposition: "SUPPORT", reason: "Legacy UTC compatibility must be preserved." },
+        { evidenceId: "obs-local-offset-contract", factPath: "facts.currentEncoding", disposition: "SUPPORT", reason: "The current contract requires independent endpoint offsets." },
+      ],
+      allowedEvidenceAssessments: [
+        { evidenceId: "obs-local-offset-contract", factPath: "sourceId", disposition: "SUPPORT", reason: "The official transit API owns the timestamp contract." },
+        { evidenceId: "obs-local-offset-contract", factPath: "facts.legacyEncoding", disposition: "SUPPORT", reason: "Legacy UTC compatibility must be preserved." },
+        { evidenceId: "obs-local-offset-contract", factPath: "facts.currentEncoding", disposition: "SUPPORT", reason: "The current contract requires independent endpoint offsets." },
+        { evidenceId: "obs-local-offset-contract", factPath: "authorityScope", disposition: "SUPPORT", reason: "The authority scope covers timestamp encoding." },
+        { evidenceId: "obs-local-offset-contract", factPath: "observedAt", disposition: "CONTEXT", reason: "The observation time supplies contract-version context." },
+        { evidenceId: "obs-local-offset-contract", factPath: "kind", disposition: "SUPPORT", reason: "The source identifies the record as a schema change." },
+        { evidenceId: "obs-local-offset-contract", factPath: "schemaFingerprint", disposition: "SUPPORT", reason: "The fingerprint identifies the current timestamp contract." },
+      ],
       allowedChangedFiles: ["adapter.ts"],
       expectedRecords: [],
       requiredChallengerVerdict: "CONFIRM",
       expectedCommandExitCodes: { [adapterCommand]: 0 },
+      hiddenProbePath: "verifier/hidden-probes.json",
     },
   },
   {
     id: "retry-release-generation-skew",
-    title: "Defer a complete payload that belongs to the wrong release generation",
-    description: "A signed manifest and a schema-valid payload are individually healthy but belong to adjacent release generations.",
+    title: "Release publication reconciliation",
+    description: "A signed manifest, a schema-valid payload, and the current cache require one bounded maintenance decision.",
     createdFrom: "Synthetic multi-artifact publication-skew pattern",
     allowedWritePaths: [],
     requiredCommands: [],
@@ -273,7 +338,7 @@ test("each current endpoint uses its declared offset", () => {
         observation({
           id: "obs-manifest-generation-88",
           sourceId: "official-release-manifest",
-          observedAt: "2026-08-28T16:54:00.000Z",
+          observedAt: "2026-08-28T22:54:00.000Z",
           authorityScope: ["release-generation", "payload-hash"],
           subjectId: "catalog-release",
           kind: "signed-manifest",
@@ -289,7 +354,7 @@ test("each current endpoint uses its declared offset", () => {
         observation({
           id: "obs-payload-generation-87",
           sourceId: "official-release-payload",
-          observedAt: "2026-08-28T16:55:00.000Z",
+          observedAt: "2026-08-28T22:55:00.000Z",
           authorityScope: ["release-payload"],
           subjectId: "catalog-release",
           kind: "dataset",
@@ -313,23 +378,87 @@ test("each current endpoint uses its declared offset", () => {
         ],
         rules: [
           "Proceed only when manifest generation, payload generation, and payload hash agree",
-          "Publication skew inside the window is transient: retry after 10 minutes and escalate after three unsuccessful attempts",
+          "Publication skew inside the window is transient: measure the retry delay from the most recent relevant artifact observation, retry 10 minutes after that timestamp, and escalate after three unsuccessful attempts",
         ],
       })),
     },
     oracle: {
       expectedAction: "RETRY_LATER",
       requiredEvidenceIds: ["obs-manifest-generation-88", "obs-payload-generation-87"],
+      requiredEvidenceAssessments: [
+        { evidenceId: "obs-manifest-generation-88", factPath: "observedAt", disposition: "CONTEXT", reason: "The manifest observation remains inside the transient publication window." },
+        { evidenceId: "obs-manifest-generation-88", factPath: "facts.generation", disposition: "SUPPORT", reason: "The manifest generation must agree with the payload." },
+        { evidenceId: "obs-manifest-generation-88", factPath: "facts.payloadSha256", disposition: "SUPPORT", reason: "The signed manifest binds the expected payload hash." },
+        { evidenceId: "obs-manifest-generation-88", factPath: "facts.signatureValid", disposition: "SUPPORT", reason: "The manifest must retain a valid signature before atomic publication can proceed." },
+        { evidenceId: "obs-payload-generation-87", factPath: "observedAt", disposition: "CONTEXT", reason: "The payload observation remains inside the transient publication window." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.generation", disposition: "SUPPORT", reason: "The payload generation disagrees with the signed manifest." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.payloadSha256", disposition: "SUPPORT", reason: "The payload hash disagrees with the signed manifest." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.schemaValid", disposition: "SUPPORT", reason: "A retry may publish only a schema-valid payload." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.complete", disposition: "SUPPORT", reason: "A retry may publish only a complete payload." },
+      ],
+      allowedEvidenceAssessments: [
+        { evidenceId: "obs-manifest-generation-88", factPath: "observedAt", disposition: "CONTEXT", reason: "The manifest observation remains inside the transient publication window." },
+        { evidenceId: "obs-manifest-generation-88", factPath: "facts.generation", disposition: "SUPPORT", reason: "The manifest generation must agree with the payload." },
+        { evidenceId: "obs-manifest-generation-88", factPath: "facts.payloadSha256", disposition: "SUPPORT", reason: "The signed manifest binds the expected payload hash." },
+        { evidenceId: "obs-manifest-generation-88", factPath: "facts.signatureValid", disposition: "SUPPORT", reason: "The manifest must retain a valid signature before atomic publication can proceed." },
+        { evidenceId: "obs-payload-generation-87", factPath: "observedAt", disposition: "CONTEXT", reason: "The payload observation remains inside the transient publication window." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.generation", disposition: "SUPPORT", reason: "The payload generation disagrees with the signed manifest." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.payloadSha256", disposition: "SUPPORT", reason: "The payload hash disagrees with the signed manifest." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.schemaValid", disposition: "SUPPORT", reason: "A retry may publish only a schema-valid payload." },
+        { evidenceId: "obs-payload-generation-87", factPath: "facts.complete", disposition: "SUPPORT", reason: "A retry may publish only a complete payload." },
+        ...["obs-manifest-generation-88", "obs-payload-generation-87"].flatMap((evidenceId) => ([
+          { evidenceId, factPath: "sourceId", disposition: "SUPPORT" as const, reason: "The official release source owns its artifact." },
+          { evidenceId, factPath: "subjectId", disposition: "SUPPORT" as const, reason: "Both artifacts are bound to the same release identity." },
+          { evidenceId, factPath: "authorityScope", disposition: "SUPPORT" as const, reason: "The declared scope identifies the controlled artifact fields." },
+          { evidenceId, factPath: "kind", disposition: "SUPPORT" as const, reason: "The artifact kind distinguishes manifest from payload." },
+        ])),
+      ],
       allowedChangedFiles: [],
       expectedRecords: [],
       requiredChallengerVerdict: "CONFIRM",
-      requiredRetryConditionIncludes: ["10 minutes", "generation 88", "third"],
+      expectedRetryPlan: {
+        notBefore: "2026-08-28T23:05:00.000Z",
+        maxAttempts: 3,
+        escalateAfterAttempt: 3,
+        preserveRecordIds: ["catalog-cache"],
+        agreementChecks: [
+          {
+            leftEvidenceId: "obs-manifest-generation-88",
+            leftFactPath: "facts.generation",
+            rightEvidenceId: "obs-payload-generation-87",
+            rightFactPath: "facts.generation",
+          },
+          {
+            leftEvidenceId: "obs-manifest-generation-88",
+            leftFactPath: "facts.payloadSha256",
+            rightEvidenceId: "obs-payload-generation-87",
+            rightFactPath: "facts.payloadSha256",
+          },
+        ],
+        valueChecks: [
+          {
+            evidenceId: "obs-manifest-generation-88",
+            factPath: "facts.signatureValid",
+            expectedValue: true,
+          },
+          {
+            evidenceId: "obs-payload-generation-87",
+            factPath: "facts.schemaValid",
+            expectedValue: true,
+          },
+          {
+            evidenceId: "obs-payload-generation-87",
+            factPath: "facts.complete",
+            expectedValue: true,
+          },
+        ],
+      },
     },
   },
   {
     id: "noop-superseded-amendment",
-    title: "Materialize the terminal amendment rather than an intermediate change",
-    description: "An official deadline extension is explicitly rescinded by the next authoritative revision before cutoff.",
+    title: "Procurement amendment reconciliation",
+    description: "Two ordered official revisions and the current canonical solicitation require a maintenance decision.",
     createdFrom: "Synthetic ordered-amendment materialization pattern",
     allowedWritePaths: [],
     requiredCommands: [],
@@ -388,7 +517,7 @@ test("each current endpoint uses its declared offset", () => {
           "Superseded intermediate values do not survive materialization",
         ],
         rules: [
-          "Follow the explicit supersession chain through the cutoff",
+          "Follow the explicit supersession chain whose effectiveAt is at or before the cutoff",
           "Do not write canonical state when the terminal revision already matches it",
         ],
       })),
@@ -399,12 +528,41 @@ test("each current endpoint uses its declared offset", () => {
       allowedChangedFiles: [],
       expectedRecords: [],
       requiredChallengerVerdict: "CONFIRM",
+      requiredEvidenceAssessments: [
+        { evidenceId: "obs-amendment-42", factPath: "facts.revision", disposition: "CONTEXT", reason: "Revision 42 is a traversed but nonterminal authority occurrence." },
+        { evidenceId: "obs-amendment-42", factPath: "facts.supersedes", disposition: "CONTEXT", reason: "Revision 42 links the prior state into the explicit chain." },
+        { evidenceId: "obs-rescission-43", factPath: "effectiveAt", disposition: "SUPPORT", reason: "The terminal rescission is effective before the policy cutoff." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.revision", disposition: "SUPPORT", reason: "Revision 43 is the terminal authority occurrence materialized in canonical state." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.supersedes", disposition: "SUPPORT", reason: "The rescission explicitly supersedes revision 42." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.restoresRevision", disposition: "SUPPORT", reason: "The terminal revision restores the state already materialized in canonical data." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.deadline", disposition: "SUPPORT", reason: "The terminal deadline matches canonical state." },
+      ],
+      allowedEvidenceAssessments: [
+        { evidenceId: "obs-amendment-42", factPath: "facts.revision", disposition: "CONTEXT", reason: "Revision 42 is a traversed but nonterminal authority occurrence." },
+        { evidenceId: "obs-amendment-42", factPath: "facts.supersedes", disposition: "CONTEXT", reason: "Revision 42 links the prior state into the explicit chain." },
+        { evidenceId: "obs-rescission-43", factPath: "effectiveAt", disposition: "SUPPORT", reason: "The terminal rescission is effective before the policy cutoff." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.revision", disposition: "SUPPORT", reason: "Revision 43 is the terminal authority occurrence materialized in canonical state." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.supersedes", disposition: "SUPPORT", reason: "The rescission explicitly supersedes revision 42." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.restoresRevision", disposition: "SUPPORT", reason: "The terminal revision restores the state already materialized in canonical data." },
+        { evidenceId: "obs-rescission-43", factPath: "facts.deadline", disposition: "SUPPORT", reason: "The terminal deadline matches canonical state." },
+        { evidenceId: "obs-amendment-42", factPath: "observedAt", disposition: "CONTEXT", reason: "The publication time is relevant chain context." },
+        { evidenceId: "obs-amendment-42", factPath: "effectiveAt", disposition: "CONTEXT", reason: "The intermediate revision is effective before the terminal rescission." },
+        { evidenceId: "obs-amendment-42", factPath: "facts.deadline", disposition: "CONTEXT", reason: "The intermediate deadline matters only as superseded context." },
+        { evidenceId: "obs-amendment-42", factPath: "facts.deadline", disposition: "REJECT", reason: "The intermediate deadline is unsafe as current authority." },
+        { evidenceId: "obs-rescission-43", factPath: "observedAt", disposition: "CONTEXT", reason: "The publication time is relevant terminal-revision context." },
+        ...["obs-amendment-42", "obs-rescission-43"].flatMap((evidenceId) => ([
+          { evidenceId, factPath: "sourceId", disposition: "SUPPORT" as const, reason: "The procurement register owns the revision chain." },
+          { evidenceId, factPath: "subjectId", disposition: "SUPPORT" as const, reason: "The occurrence is bound to the solicitation identity." },
+          { evidenceId, factPath: "authorityScope", disposition: "SUPPORT" as const, reason: "The scope covers deadline and revision-chain facts." },
+          { evidenceId, factPath: "kind", disposition: "SUPPORT" as const, reason: "The record kind identifies its role in the chain." },
+        ])),
+      ],
     },
   },
   {
     id: "review-unknown-coordinate-reference",
-    title: "Escalate a near-boundary permit with an unknown coordinate reference",
-    description: "An official permit location cannot be compared safely with an official boundary because its reference system and accuracy are absent.",
+    title: "Permit jurisdiction reconciliation",
+    description: "Official boundary and permit-location records require a jurisdiction maintenance decision under explicit uncertainty rules.",
     createdFrom: "Synthetic geospatial authority and uncertainty pattern",
     allowedWritePaths: [],
     requiredCommands: [],
@@ -448,7 +606,9 @@ test("each current endpoint uses its declared offset", () => {
             coordinates: [-122.67648, 45.52317],
             crs: null,
             positionalAccuracyMeters: null,
-            assumedWgs84DistanceInsideMeters: 1.2,
+            distanceComputationCrsAssumption: "EPSG:4326",
+            distanceInsideUnderAssumptionMeters: 1.2,
+            signedJurisdictionDetermination: null,
           },
         }),
       ]),
@@ -463,6 +623,7 @@ test("each current endpoint uses its declared offset", () => {
         ],
         rules: [
           "Numeric coordinate shape is not evidence of a coordinate reference system",
+          "An assumed-CRS distance may establish possible boundary overlap but cannot establish jurisdiction",
           "Request reference and accuracy evidence when the possible location overlaps the boundary",
         ],
       })),
@@ -472,10 +633,54 @@ test("each current endpoint uses its declared offset", () => {
       requiredEvidenceIds: ["obs-official-boundary-2026", "obs-permit-location"],
       allowedChangedFiles: [],
       expectedRecords: [],
-      requiredChallengerVerdict: "ESCALATE",
-      requiredMinimumInformation: [
-        "permit coordinate CRS or datum",
-        "positional accuracy or signed jurisdiction determination",
+      requiredChallengerVerdict: "CONFIRM",
+      evidenceAssessmentBundles: [[
+        { evidenceId: "obs-official-boundary-2026", factPath: "facts.boundaryVersion", disposition: "SUPPORT", reason: "The signed boundary version controls the comparison geometry." },
+        { evidenceId: "obs-official-boundary-2026", factPath: "facts.crs", disposition: "SUPPORT", reason: "The official boundary explicitly declares its coordinate reference system." },
+        {
+          evidenceId: "obs-permit-location",
+          factPath: "facts.crs",
+          disposition: "CONTEXT",
+          reason: "The null CRS is decisive unresolved context.",
+        },
+        {
+          evidenceId: "obs-permit-location",
+          factPath: "facts.positionalAccuracyMeters",
+          disposition: "CONTEXT",
+          reason: "The missing positional accuracy is decisive unresolved context.",
+        },
+        {
+          evidenceId: "obs-permit-location",
+          factPath: "facts.distanceComputationCrsAssumption",
+          disposition: "REJECT",
+          reason: "The undeclared CRS assumption is not authoritative evidence.",
+        },
+        { evidenceId: "obs-permit-location", factPath: "facts.distanceInsideUnderAssumptionMeters", disposition: "CONTEXT", reason: "The assumed distance establishes possible boundary overlap without resolving jurisdiction." },
+      ]],
+      allowedEvidenceAssessments: [
+        { evidenceId: "obs-official-boundary-2026", factPath: "facts.boundaryVersion", disposition: "SUPPORT", reason: "The signed boundary version controls the comparison geometry." },
+        { evidenceId: "obs-official-boundary-2026", factPath: "facts.crs", disposition: "SUPPORT", reason: "The official boundary explicitly declares its coordinate reference system." },
+        { evidenceId: "obs-permit-location", factPath: "facts.crs", disposition: "CONTEXT", reason: "The null CRS is decisive unresolved context." },
+        { evidenceId: "obs-permit-location", factPath: "facts.positionalAccuracyMeters", disposition: "CONTEXT", reason: "The missing positional accuracy is decisive unresolved context." },
+        { evidenceId: "obs-permit-location", factPath: "facts.distanceComputationCrsAssumption", disposition: "REJECT", reason: "The undeclared CRS assumption is not authoritative evidence." },
+        { evidenceId: "obs-permit-location", factPath: "facts.distanceInsideUnderAssumptionMeters", disposition: "CONTEXT", reason: "The assumed distance establishes possible boundary overlap without resolving jurisdiction." },
+        { evidenceId: "obs-permit-location", factPath: "facts.coordinates", disposition: "CONTEXT", reason: "Coordinate values are relevant but uninterpretable without a declared CRS." },
+        { evidenceId: "obs-official-boundary-2026", factPath: "facts.geometrySha256", disposition: "SUPPORT", reason: "The geometry hash identifies the controlled boundary artifact." },
+        ...["obs-official-boundary-2026", "obs-permit-location"].flatMap((evidenceId) => ([
+          { evidenceId, factPath: "sourceId", disposition: "SUPPORT" as const, reason: "The official source owns its scoped record." },
+          { evidenceId, factPath: "subjectId", disposition: "SUPPORT" as const, reason: "The record is bound to the permit identity." },
+          { evidenceId, factPath: "authorityScope", disposition: "SUPPORT" as const, reason: "The scope identifies the authoritative fields." },
+          { evidenceId, factPath: "kind", disposition: "SUPPORT" as const, reason: "The record kind identifies its decision role." },
+          { evidenceId, factPath: "observedAt", disposition: "CONTEXT" as const, reason: "The capture time is relevant case context." },
+          { evidenceId, factPath: "effectiveAt", disposition: "CONTEXT" as const, reason: "The effective time is relevant case context." },
+        ])),
+      ],
+      acceptableReviewRequests: [
+        {
+          subjectId: "permit-204",
+          targetEvidenceId: "obs-permit-location",
+          requestedFactPaths: ["facts.crs", "facts.positionalAccuracyMeters"],
+        },
       ],
     },
   },
@@ -485,6 +690,7 @@ export const HOLDOUT_CASE_IDS = definitions.map((definition) => definition.id) a
 
 async function writeCase(root: string, definition: HoldoutDefinition): Promise<void> {
   const caseDir = resolve(root, definition.id);
+  await rm(caseDir, { recursive: true, force: true });
   const provenance = [];
   const agentVisibleFiles = [];
   for (const [relativePath, content] of Object.entries(definition.files).sort(([a], [b]) => a.localeCompare(b))) {
@@ -503,6 +709,11 @@ async function writeCase(root: string, definition: HoldoutDefinition): Promise<v
       sha256: sha256Text(content),
     });
   }
+  for (const [relativePath, content] of Object.entries(definition.verifierFiles ?? {}).sort(([a], [b]) => a.localeCompare(b))) {
+    const fullPath = resolve(caseDir, "verifier", ...relativePath.split("/"));
+    await mkdir(resolve(fullPath, ".."), { recursive: true });
+    await writeFile(fullPath, content, "utf8");
+  }
   await writeFile(resolve(caseDir, "case.json"), json({
     schemaVersion: 1,
     id: definition.id,
@@ -515,17 +726,31 @@ async function writeCase(root: string, definition: HoldoutDefinition): Promise<v
     requiredCommands: definition.requiredCommands,
     provenance,
   }), "utf8");
+  const defaultEvidenceAssessments = definition.oracle.requiredEvidenceAssessments ??
+    definition.oracle.requiredEvidenceIds.map((evidenceId) => ({
+      evidenceId,
+      factPath: "$",
+      disposition: "SUPPORT" as const,
+      reason: "This observation is required by the adjudicated causal route.",
+    }));
+  const evidenceAssessmentBundles = definition.oracle.evidenceAssessmentBundles ?? [defaultEvidenceAssessments];
+  const allowedEvidenceAssessments = definition.oracle.allowedEvidenceAssessments ??
+    evidenceAssessmentBundles.flat();
   await writeFile(resolve(caseDir, "oracle.json"), json({
-    schemaVersion: 1,
+    schemaVersion: 2,
     caseId: definition.id,
     expectedAction: definition.oracle.expectedAction,
-    requiredEvidenceIds: definition.oracle.requiredEvidenceIds,
+    evidenceAssessmentBundles,
+    allowedEvidenceAssessments,
+    requiredChallengerEvidenceIds: definition.oracle.requiredChallengerEvidenceIds ??
+      definition.oracle.requiredEvidenceIds,
     allowedChangedFiles: definition.oracle.allowedChangedFiles,
     expectedRecords: definition.oracle.expectedRecords,
     requiredChallengerVerdict: definition.oracle.requiredChallengerVerdict,
-    requiredMinimumInformation: definition.oracle.requiredMinimumInformation ?? [],
-    requiredRetryConditionIncludes: definition.oracle.requiredRetryConditionIncludes ?? [],
+    acceptableReviewRequests: definition.oracle.acceptableReviewRequests ?? [],
+    expectedRetryPlan: definition.oracle.expectedRetryPlan ?? null,
     expectedCommandExitCodes: definition.oracle.expectedCommandExitCodes ?? {},
+    hiddenProbePath: definition.oracle.hiddenProbePath ?? null,
   }), "utf8");
 }
 

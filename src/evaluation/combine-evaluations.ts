@@ -6,6 +6,9 @@ import { RunManifestSchema } from "../core/schemas.ts";
 import { aggregateRows, type AggregateSummary } from "./aggregate.ts";
 import { createExecutionErrorRow } from "./run-evaluation.ts";
 import { scoreRun, type EvaluationRow } from "./score-run.ts";
+import { readTrajectoryUsage, reconstructUsage, type TrajectoryUsage } from "./trajectory-usage.ts";
+
+export { reconstructUsage } from "./trajectory-usage.ts";
 
 export interface EvaluationSource {
   label: string;
@@ -77,11 +80,7 @@ interface SourceSummary {
   rows: Array<EvaluationRow & { runPath: string }>;
 }
 
-interface Usage {
-  input: number;
-  cachedInput: number;
-  output: number;
-}
+type Usage = TrajectoryUsage;
 
 function parseRunPath(runPath: string): {
   caseId: string;
@@ -95,50 +94,6 @@ function parseRunPath(runPath: string): {
     caseId: match[1],
     trial: Number.parseInt(match[2], 10),
     arm: match[3] as "baseline" | "advanced",
-  };
-}
-
-function usageFromEvent(value: unknown): Usage | null {
-  if (!value || typeof value !== "object") return null;
-  const usage = (value as { usage?: unknown }).usage;
-  if (!usage || typeof usage !== "object") return null;
-  const raw = usage as Record<string, unknown>;
-  const input = raw.input_tokens;
-  const cachedInput = raw.cached_input_tokens;
-  const output = raw.output_tokens;
-  if (
-    typeof input !== "number" || !Number.isInteger(input) || input < 0 ||
-    typeof cachedInput !== "number" || !Number.isInteger(cachedInput) || cachedInput < 0 ||
-    typeof output !== "number" || !Number.isInteger(output) || output < 0 ||
-    cachedInput > input
-  ) return null;
-  return { input, cachedInput, output };
-}
-
-async function readTrajectoryUsage(path: string): Promise<Usage | null> {
-  const lines = (await readFile(path, "utf8")).split(/\r?\n/).filter(Boolean);
-  let latest: Usage | null = null;
-  for (const line of lines) {
-    try {
-      latest = usageFromEvent(JSON.parse(line)) ?? latest;
-    } catch {
-      // Non-JSON diagnostic lines cannot contribute trusted usage.
-    }
-  }
-  return latest;
-}
-
-async function reconstructUsage(runPath: string, trajectoryPaths: readonly string[]): Promise<Usage | null> {
-  const usages = [];
-  for (const trajectoryPath of trajectoryPaths) {
-    const usage = await readTrajectoryUsage(join(runPath, ...trajectoryPath.split("/")));
-    if (usage) usages.push(usage);
-  }
-  if (usages.length === 0) return null;
-  return {
-    input: usages.reduce((sum, usage) => sum + usage.input, 0),
-    cachedInput: usages.reduce((sum, usage) => sum + usage.cachedInput, 0),
-    output: usages.reduce((sum, usage) => sum + usage.output, 0),
   };
 }
 

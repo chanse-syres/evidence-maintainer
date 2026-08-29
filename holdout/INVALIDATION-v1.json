@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "status": "INVALID_EVALUATOR_ABORTED_NO_SCORE",
+  "campaign": "holdout-v1",
+  "invalidatedAt": "2026-08-29T06:39:48.7936366Z",
+  "freezeTag": "holdout-freeze-v1",
+  "freezeCommit": "2e876ef3189eef5dc6103ab5714d4c2ffba6a2b8",
+  "freezeLockSha256": "9232e1f07d56662963db671ad455f2f585bf0ad4c28d63b96d0f16fccb456ef8",
+  "reason": "The campaign exposed evaluator defects: the gate ignored adjudicated evidence in evidenceRejected, treated file-level citations promised by the baseline contract as insufficient, leaked Challenger citation failures into a metric documented as proposal-only, imposed hidden field-location and lexical requirements, and included a retry case outside its visible freshness window.",
+  "plannedWorkflowRuns": 30,
+  "completedWorkflowRuns": 16,
+  "partialWorkflowRuns": 1,
+  "errorArtifacts": 0,
+  "lastArtifactWriteAt": "2026-08-29T06:32:51.4989218Z",
+  "aggregatePublished": false,
+  "score": null,
+  "disposition": "Preserve the partial artifacts as diagnostic evidence. Do not aggregate, compare, or cite them as model performance. Correct the evaluator and case definition, create a new immutable freeze, and run a new holdout campaign."
+}

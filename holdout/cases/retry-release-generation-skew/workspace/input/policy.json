@@ -10,6 +10,6 @@
   ],
   "rules": [
     "Proceed only when manifest generation, payload generation, and payload hash agree",
-    "Publication skew inside the window is transient: retry after 10 minutes and escalate after three unsuccessful attempts"
+    "Publication skew inside the window is transient: measure the retry delay from the most recent relevant artifact observation, retry 10 minutes after that timestamp, and escalate after three unsuccessful attempts"
   ]
 }

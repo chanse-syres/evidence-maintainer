@@ -5,6 +5,7 @@ import { loadPrompt } from "../agents/prompt-loader.ts";
 import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
+import { validateCandidateOperations } from "../core/candidate-validation.ts";
 import { runDeterministicGate } from "../core/deterministic-gate.ts";
 import { buildEvidenceLedger } from "../core/evidence-ledger.ts";
 import { applyOperations, MutationApplicationError } from "../core/mutation-engine.ts";
@@ -16,6 +17,7 @@ import {
   type RunManifest,
 } from "../core/schemas.ts";
 import { diffTrees, snapshotTree } from "../core/tree-snapshot.ts";
+import { buildTokenUsageAccounting } from "../evaluation/token-usage-accounting.ts";
 import { recordApproval } from "./approval.ts";
 import { runRequiredCommands, type RunBaselineInput } from "./baseline.ts";
 
@@ -35,6 +37,7 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
   const runRoot = resolve(input.runRoot);
   await mkdir(join(runRoot, "trajectories"), { recursive: true });
   const loadedCase = await loadPublicCase(input.caseDir);
+  const oracle = await loadOracle(input.caseDir);
   const workspace = await copyCaseWorkspace(input.caseDir, join(runRoot, "workspace"));
   const before = await snapshotTree(workspace);
   await writeJson(join(runRoot, "before-tree.json"), before);
@@ -80,6 +83,14 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     parse: (value) => MaintainerProposalSchema.parse(value),
   });
   await writeJson(join(runRoot, "maintainer-proposal.json"), maintainer.output);
+  const operationErrors = validateCandidateOperations(
+    maintainer.output,
+    loadedCase.manifest.allowedWritePaths,
+    oracle,
+  );
+  if (operationErrors.length > 0) {
+    throw new ModelExecutionError("INVALID_OPERATION", operationErrors.join(" "));
+  }
   try {
     await applyOperations(workspace, maintainer.output.operations);
   } catch (error) {
@@ -88,7 +99,12 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     }
     throw error;
   }
-  const commandResults = await runRequiredCommands(workspace, loadedCase.manifest.requiredCommands);
+  const commandResults = await runRequiredCommands(
+    workspace,
+    loadedCase.manifest.requiredCommands,
+    oracle.hiddenProbePath,
+    input.caseDir,
+  );
   await writeJson(join(runRoot, "command-results.json"), commandResults);
   const after = await snapshotTree(workspace);
   await writeJson(join(runRoot, "after-tree.json"), after);
@@ -126,14 +142,25 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     throw new Error("Maintainer and Challenger modes must match");
   }
   await writeJson(join(runRoot, "challenger-verdict.json"), challenger.output);
+  const postChallenger = await snapshotTree(workspace);
+  const challengerDiff = diffTrees(after, postChallenger);
+  if (
+    challengerDiff.added.length > 0 ||
+    challengerDiff.removed.length > 0 ||
+    challengerDiff.modified.length > 0
+  ) {
+    throw new ModelExecutionError(
+      "INVALID_OPERATION",
+      "Challenger modified the candidate workspace despite its read-only role.",
+    );
+  }
 
-  const oracle = await loadOracle(input.caseDir);
   const gate = await runDeterministicGate({
     loadedCase,
     oracle,
     workspace,
     before,
-    after,
+    after: postChallenger,
     proposal: maintainer.output,
     challenger: challenger.output,
     commandResults,
@@ -162,11 +189,38 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     "trajectories/maintainer.jsonl",
     "trajectories/challenger.jsonl",
   ];
-  const usages = [maintainer.tokenUsage, challenger.tokenUsage].filter(
-    (usage): usage is { input: number; cachedInput: number; output: number } => Boolean(usage),
-  );
+  const proxyLedgerPaths = [maintainer.proxyLedgerPath, challenger.proxyLedgerPath]
+    .filter((path): path is string => Boolean(path))
+    .map((path) => relative(runRoot, path).replaceAll("\\", "/"));
+  artifactPaths.push(...proxyLedgerPaths);
+  const usageAccounting = maintainer.proxyRequestUsageCoverage && challenger.proxyRequestUsageCoverage
+    ? buildTokenUsageAccounting([
+        {
+          role: "maintainer",
+          usage: maintainer.tokenUsage,
+          source: maintainer.tokenUsageSource,
+          trajectoryPath: relative(runRoot, maintainerTrajectory).replaceAll("\\", "/"),
+          proxyLedgerPath: maintainer.proxyLedgerPath
+            ? relative(runRoot, maintainer.proxyLedgerPath).replaceAll("\\", "/")
+            : undefined,
+          trajectoryAggregateCaptured: maintainer.trajectoryAggregateCaptured ?? false,
+          proxyRequestCoverage: maintainer.proxyRequestUsageCoverage,
+        },
+        {
+          role: "challenger",
+          usage: challenger.tokenUsage,
+          source: challenger.tokenUsageSource,
+          trajectoryPath: relative(runRoot, challengerTrajectory).replaceAll("\\", "/"),
+          proxyLedgerPath: challenger.proxyLedgerPath
+            ? relative(runRoot, challenger.proxyLedgerPath).replaceAll("\\", "/")
+            : undefined,
+          trajectoryAggregateCaptured: challenger.trajectoryAggregateCaptured ?? false,
+          proxyRequestCoverage: challenger.proxyRequestUsageCoverage,
+        },
+      ])
+    : null;
   const manifest = RunManifestSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     projectId: PROJECT_ID,
     runId,
     caseId: loadedCase.manifest.id,
@@ -183,13 +237,15 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     trajectoryPaths: [maintainerTrajectory, challengerTrajectory].map((path) =>
       relative(runRoot, path).replaceAll("\\", "/"),
     ),
+    proxyLedgerPaths,
     artifactSha256: await hashArtifacts(runRoot, artifactPaths),
-    tokenUsage: usages.length > 0
-      ? {
-          input: usages.reduce((sum, usage) => sum + usage.input, 0),
-          cachedInput: usages.reduce((sum, usage) => sum + usage.cachedInput, 0),
-          output: usages.reduce((sum, usage) => sum + usage.output, 0),
-        }
+    tokenUsage: usageAccounting?.tokenUsage ?? null,
+    tokenUsageAccounting: usageAccounting?.tokenUsageAccounting ?? null,
+    runtimeImages: maintainer.runtimeImageId && challenger.runtimeImageId
+      ? [
+          { role: "maintainer", imageId: maintainer.runtimeImageId.replace(/^sha256:/, "") },
+          { role: "challenger", imageId: challenger.runtimeImageId.replace(/^sha256:/, "") },
+        ]
       : null,
     outcome: gate.status,
   });
