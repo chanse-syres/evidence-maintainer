@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 3
+    },
+    "caseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "firstMaterialDivergence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "failureOwner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceAssessments": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "factPath": {
+            "type": "string",
+            "pattern": "^(?:\\$|sourceId|observedAt|effectiveAt|authorityScope|subjectId|kind|status|contentType|schemaFingerprint|facts(?:\\.[A-Za-z0-9_-]+)+)$"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "SUPPORT",
+              "REJECT",
+              "CONTEXT"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidenceId",
+          "factPath",
+          "disposition",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "affectedEntities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "affectedFiles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "preservedInvariants": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "unresolvedUncertainty": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "UPDATE_DATA",
+        "REPAIR_ADAPTER",
+        "RETRY_LATER",
+        "NO_ACTION",
+        "HUMAN_REVIEW"
+      ]
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "SET_RECORD_FIELDS"
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1
+              },
+              "recordId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "assignments": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "file",
+              "recordId",
+              "assignments"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "REPLACE_TEXT"
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1
+              },
+              "find": {
+                "type": "string",
+                "minLength": 1
+              },
+              "replace": {
+                "type": "string"
+              },
+              "expectedCount": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "kind",
+              "file",
+              "find",
+              "replace",
+              "expectedCount"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "reviewRequest": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "subjectId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "targetEvidenceId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "requestedFactPaths": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^facts(?:\\.[A-Za-z0-9_-]+)+$"
+              }
+            }
+          },
+          "required": [
+            "subjectId",
+            "targetEvidenceId",
+            "requestedFactPaths"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retryPlan": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "notBefore": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "maxAttempts": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "escalateAfterAttempt": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "preserveRecordIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "acceptanceConditions": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "object",
+                    "properties": {
+                      "sourceId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "subjectId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "factPath": {
+                        "type": "string",
+                        "pattern": "^facts(?:\\.[A-Za-z0-9_-]+)+$"
+                      }
+                    },
+                    "required": [
+                      "sourceId",
+                      "subjectId",
+                      "factPath"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": [
+                      "EQUALS",
+                      "NOT_EQUALS",
+                      "GREATER_THAN_OR_EQUAL",
+                      "LESS_THAN_OR_EQUAL",
+                      "EXISTS"
+                    ]
+                  },
+                  "expectedValue": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "selector",
+                  "operator"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "notBefore",
+            "maxAttempts",
+            "escalateAfterAttempt",
+            "preserveRecordIds",
+            "acceptanceConditions"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "firstMaterialDivergence",
+    "failureOwner",
+    "evidenceAssessments",
+    "affectedEntities",
+    "affectedFiles",
+    "preservedInvariants",
+    "unresolvedUncertainty",
+    "summary",
+    "action",
+    "operations",
+    "reviewRequest",
+    "retryPlan"
+  ],
+  "additionalProperties": false,
+  "title": "decision-package"
+}

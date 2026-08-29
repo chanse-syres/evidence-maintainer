@@ -55,11 +55,44 @@ export const SourceObservationSchema = z.object({
   facts: z.record(z.string(), z.json()),
 }).strict();
 
+// V1-V3 evidence remains readable during the V4 migration. New V4 cases must
+// use PolicyV4Schema; this legacy schema is not a V4 execution contract.
 export const PolicySchema = z.object({
   schemaVersion: z.literal(1),
   cutoff: TimestampSchema,
   authorityByField: z.record(z.string(), z.string().min(1)),
   freshnessWindowMinutes: z.number().int().nonnegative(),
+  retryLimit: z.number().int().nonnegative(),
+  invariants: z.array(z.string().min(1)).min(1),
+  rules: z.array(z.string().min(1)).min(1),
+}).strict();
+
+export const AuthorityValiditySchema = z.discriminatedUnion("mode", [
+  z.object({
+    mode: z.literal("SNAPSHOT_MAX_AGE"),
+    sourceId: z.string().min(1),
+    authorityScope: z.string().min(1),
+    maxAgeMinutes: z.number().int().nonnegative(),
+  }).strict(),
+  z.object({
+    mode: z.literal("EFFECTIVE_UNTIL_SUPERSEDED"),
+    sourceId: z.string().min(1),
+    authorityScope: z.string().min(1),
+    applicabilityFactPath: z.string().regex(/^facts(?:\.[A-Za-z0-9_-]+)+$/),
+  }).strict(),
+  z.object({
+    mode: z.literal("EVENT_AT_CUTOFF"),
+    sourceId: z.string().min(1),
+    authorityScope: z.string().min(1),
+    eventFactPath: z.string().regex(/^facts(?:\.[A-Za-z0-9_-]+)+$/),
+  }).strict(),
+]);
+
+export const PolicyV4Schema = z.object({
+  schemaVersion: z.literal(2),
+  cutoff: TimestampSchema,
+  authorityByField: z.record(z.string(), z.string().min(1)),
+  authorityValidity: z.array(AuthorityValiditySchema).min(1),
   retryLimit: z.number().int().nonnegative(),
   invariants: z.array(z.string().min(1)).min(1),
   rules: z.array(z.string().min(1)).min(1),
@@ -130,7 +163,7 @@ export const ValueCheckSchema = z.object({
   expectedValue: MutationFieldValueSchema,
 }).strict();
 
-export const RetryPlanSchema = z.object({
+export const LegacyRetryPlanSchema = z.object({
   notBefore: TimestampSchema,
   maxAttempts: z.number().int().positive(),
   escalateAfterAttempt: z.number().int().positive(),
@@ -138,6 +171,42 @@ export const RetryPlanSchema = z.object({
   agreementChecks: z.array(AgreementCheckSchema),
   valueChecks: z.array(ValueCheckSchema),
 }).strict();
+
+export const ObservationSelectorSchema = z.object({
+  sourceId: z.string().min(1),
+  subjectId: z.string().min(1),
+  kind: z.string().min(1).optional(),
+  factPath: z.string().regex(/^facts(?:\.[A-Za-z0-9_-]+)+$/),
+}).strict();
+
+export const FutureConditionSchema = z.object({
+  selector: ObservationSelectorSchema,
+  operator: z.enum([
+    "EQUALS",
+    "NOT_EQUALS",
+    "GREATER_THAN_OR_EQUAL",
+    "LESS_THAN_OR_EQUAL",
+    "EXISTS",
+  ]),
+  expectedValue: MutationFieldValueSchema.optional(),
+}).strict().superRefine((condition, ctx) => {
+  if (condition.operator !== "EXISTS" && condition.expectedValue === undefined) {
+    ctx.addIssue({ code: "custom", message: "A comparison condition requires expectedValue" });
+  }
+  if (condition.operator === "EXISTS" && condition.expectedValue !== undefined) {
+    ctx.addIssue({ code: "custom", message: "EXISTS does not accept expectedValue" });
+  }
+});
+
+export const RetryPlanSchema = z.object({
+  notBefore: TimestampSchema,
+  maxAttempts: z.number().int().positive(),
+  escalateAfterAttempt: z.number().int().positive(),
+  preserveRecordIds: z.array(z.string().min(1)),
+  acceptanceConditions: z.array(FutureConditionSchema).min(1),
+}).strict().refine((plan) => plan.escalateAfterAttempt <= plan.maxAttempts, {
+  message: "Escalation cannot occur after the retry budget",
+});
 
 const ProposalCommonShape = {
   schemaVersion: z.literal(2),
@@ -181,7 +250,7 @@ const RetryLaterProposalSchema = z.object({
   action: z.literal("RETRY_LATER"),
   operations: z.tuple([]),
   reviewRequest: z.null(),
-  retryPlan: RetryPlanSchema,
+  retryPlan: LegacyRetryPlanSchema,
 }).strict();
 
 const NoActionProposalSchema = z.object({
@@ -198,6 +267,7 @@ const HumanReviewProposalSchema = z.object({
   retryPlan: z.null(),
 }).strict();
 
+// Archival V1-V3 reader. V4 agents use DecisionPackageSchema exclusively.
 export const MaintainerProposalSchema = z.discriminatedUnion("action", [
   UpdateDataProposalSchema,
   RepairAdapterProposalSchema,
@@ -213,9 +283,65 @@ export const MaintainerProposalOutputContractSchema = z.object({
   action: ActionClassSchema,
   operations: z.array(MutationOperationSchema),
   reviewRequest: ReviewRequestSchema.nullable(),
+  retryPlan: LegacyRetryPlanSchema.nullable(),
+}).strict();
+
+const DecisionCommonShape = {
+  ...ProposalCommonShape,
+  schemaVersion: z.literal(3),
+} as const;
+
+const UpdateDataDecisionSchema = z.object({
+  ...DecisionCommonShape,
+  action: z.literal("UPDATE_DATA"),
+  ...MutationProposalShape,
+}).strict();
+
+const RepairAdapterDecisionSchema = z.object({
+  ...DecisionCommonShape,
+  action: z.literal("REPAIR_ADAPTER"),
+  ...MutationProposalShape,
+}).strict();
+
+const RetryLaterDecisionSchema = z.object({
+  ...DecisionCommonShape,
+  action: z.literal("RETRY_LATER"),
+  operations: z.tuple([]),
+  reviewRequest: z.null(),
+  retryPlan: RetryPlanSchema,
+}).strict();
+
+const NoActionDecisionSchema = z.object({
+  ...DecisionCommonShape,
+  action: z.literal("NO_ACTION"),
+  ...NonMutationProposalShape,
+}).strict();
+
+const HumanReviewDecisionSchema = z.object({
+  ...DecisionCommonShape,
+  action: z.literal("HUMAN_REVIEW"),
+  operations: z.tuple([]),
+  reviewRequest: ReviewRequestSchema,
+  retryPlan: z.null(),
+}).strict();
+
+export const DecisionPackageSchema = z.discriminatedUnion("action", [
+  UpdateDataDecisionSchema,
+  RepairAdapterDecisionSchema,
+  RetryLaterDecisionSchema,
+  NoActionDecisionSchema,
+  HumanReviewDecisionSchema,
+]);
+
+export const DecisionPackageOutputContractSchema = z.object({
+  ...DecisionCommonShape,
+  action: ActionClassSchema,
+  operations: z.array(MutationOperationSchema),
+  reviewRequest: ReviewRequestSchema.nullable(),
   retryPlan: RetryPlanSchema.nullable(),
 }).strict();
 
+// Archival V1-V3 reader. V4 challenge sessions emit ChallengerCritiqueSchema.
 export const ChallengerVerdictSchema = z.object({
   schemaVersion: z.literal(1),
   caseId: z.string().min(1),
@@ -223,6 +349,26 @@ export const ChallengerVerdictSchema = z.object({
   evidenceIds: z.array(z.string().min(1)).min(1),
   violations: z.array(z.string().min(1)),
   residualRisks: z.array(z.string().min(1)),
+  summary: z.string().min(1),
+}).strict();
+
+export const ChallengerCritiqueSchema = z.object({
+  schemaVersion: z.literal(2),
+  caseId: z.string().min(1),
+  recommendation: z.enum(["ACCEPT_DRAFT", "REVISE_DRAFT"]),
+  evidenceIds: z.array(z.string().min(1)),
+  critiqueCategories: z.array(z.enum([
+    "ACTION",
+    "AUTHORITY",
+    "IDENTITY",
+    "TEMPORAL",
+    "APPLICABILITY",
+    "ARTIFACT",
+    "WRITE_SURFACE",
+    "REGRESSION",
+    "UNCERTAINTY",
+  ])),
+  findings: z.array(z.string().min(1)),
   summary: z.string().min(1),
 }).strict();
 
@@ -268,7 +414,7 @@ export const CaseOracleSchema = z.object({
   expectedRecords: z.array(ExpectedRecordSchema),
   requiredChallengerVerdict: z.enum(["CONFIRM", "REJECT", "ESCALATE"]),
   acceptableReviewRequests: z.array(ReviewRequestSchema),
-  expectedRetryPlan: RetryPlanSchema.nullable(),
+  expectedRetryPlan: LegacyRetryPlanSchema.nullable(),
   expectedCommandExitCodes: z.record(z.string(), z.number().int()),
   hiddenProbePath: RelativePathSchema.nullable(),
 }).strict();
@@ -295,7 +441,7 @@ const ProxyRequestCoverageSchema = z.object({
 });
 
 const TokenUsageSessionSchema = z.object({
-  role: z.enum(["baseline", "maintainer", "challenger"]),
+  role: z.enum(["baseline", "maintainer", "challenger", "reviser"]),
   usage: TokenUsageSchema.nullable(),
   source: z.enum(["PROXY_REQUEST_SUM", "TRAJECTORY_TURN_COMPLETED", "UNAVAILABLE"]),
   trajectoryPath: RelativePathSchema,
@@ -386,7 +532,7 @@ export const RunManifestSchema = z.object({
   tokenUsage: TokenUsageSchema.nullable(),
   tokenUsageAccounting: TokenUsageAccountingSchema.nullable(),
   runtimeImages: z.array(z.object({
-    role: z.enum(["baseline", "maintainer", "challenger"]),
+    role: z.enum(["baseline", "maintainer", "challenger", "reviser"]),
     imageId: Sha256Schema,
   }).strict()).nullable(),
   outcome: z.enum(["PASS", "FAIL", "ERROR"]),
@@ -439,13 +585,20 @@ export type ActionClass = z.infer<typeof ActionClassSchema>;
 export type CaseManifest = z.infer<typeof CaseManifestSchema>;
 export type SourceObservation = z.infer<typeof SourceObservationSchema>;
 export type Policy = z.infer<typeof PolicySchema>;
+export type AuthorityValidity = z.infer<typeof AuthorityValiditySchema>;
+export type PolicyV4 = z.infer<typeof PolicyV4Schema>;
 export type EvidenceEvent = z.infer<typeof EvidenceEventSchema>;
 export type MutationOperation = z.infer<typeof MutationOperationSchema>;
 export type EvidenceAssessment = z.infer<typeof EvidenceAssessmentSchema>;
 export type ReviewRequest = z.infer<typeof ReviewRequestSchema>;
+export type ObservationSelector = z.infer<typeof ObservationSelectorSchema>;
+export type FutureCondition = z.infer<typeof FutureConditionSchema>;
+export type LegacyRetryPlan = z.infer<typeof LegacyRetryPlanSchema>;
 export type RetryPlan = z.infer<typeof RetryPlanSchema>;
 export type MaintainerProposal = z.infer<typeof MaintainerProposalSchema>;
+export type DecisionPackage = z.infer<typeof DecisionPackageSchema>;
 export type ChallengerVerdict = z.infer<typeof ChallengerVerdictSchema>;
+export type ChallengerCritique = z.infer<typeof ChallengerCritiqueSchema>;
 export type CheckResult = z.infer<typeof CheckResultSchema>;
 export type BaselineResult = z.infer<typeof BaselineResultSchema>;
 export type CaseOracle = z.infer<typeof CaseOracleSchema>;

@@ -5,10 +5,15 @@ import { join } from "node:path";
 import test from "node:test";
 import {
   ActionClassSchema,
+  AuthorityValiditySchema,
   CaseManifestSchema,
-  ChallengerVerdictSchema,
+  ChallengerCritiqueSchema,
+  DecisionPackageSchema,
+  FutureConditionSchema,
   MaintainerProposalSchema,
   MutationOperationSchema,
+  PolicyV4Schema,
+  RetryPlanSchema,
 } from "../src/core/schemas.ts";
 import { canonicalJson, sha256Json } from "../src/core/canonical-json.ts";
 import { writeSchemas } from "../scripts/generate-schemas.ts";
@@ -33,6 +38,11 @@ const validProposal = {
   reviewRequest: null,
   retryPlan: null,
   summary: "No canonical change is justified.",
+};
+
+const validDecisionPackage = {
+  ...validProposal,
+  schemaVersion: 3,
 };
 
 test("action schema exposes the five maintenance decisions in stable order", () => {
@@ -76,6 +86,83 @@ test("maintainer proposals require a valid action and evidence-linked contract",
   }));
 });
 
+test("decision package is the exact shared contract for baseline, maintainer draft, and reviser", () => {
+  for (const role of ["baseline", "maintainer", "reviser"] as const) {
+    const parsed = DecisionPackageSchema.parse(validDecisionPackage);
+    assert.equal(parsed.action, "NO_ACTION", `${role} must use the shared decision contract`);
+    assert.equal(parsed.schemaVersion, 3);
+  }
+});
+
+test("future condition requires values for comparisons and forbids them for EXISTS", () => {
+  const selector = {
+    sourceId: "official-roster",
+    subjectId: "athlete-7",
+    factPath: "facts.status",
+  };
+  assert.equal(FutureConditionSchema.parse({ selector, operator: "EXISTS" }).operator, "EXISTS");
+  assert.equal(FutureConditionSchema.parse({ selector, operator: "EQUALS", expectedValue: "active" }).operator, "EQUALS");
+  assert.throws(() => FutureConditionSchema.parse({ selector, operator: "EQUALS" }), /requires expectedValue/i);
+  assert.throws(() => FutureConditionSchema.parse({ selector, operator: "EXISTS", expectedValue: true }), /does not accept expectedValue/i);
+});
+
+test("retry plans use future selectors and keep escalation within the retry budget", () => {
+  const plan = {
+    notBefore: "2026-08-29T20:00:00.000Z",
+    maxAttempts: 3,
+    escalateAfterAttempt: 2,
+    preserveRecordIds: ["athlete-7"],
+    acceptanceConditions: [{
+      selector: {
+        sourceId: "official-roster",
+        subjectId: "athlete-7",
+        factPath: "facts.status",
+      },
+      operator: "EQUALS",
+      expectedValue: "active",
+    }],
+  };
+  assert.equal(RetryPlanSchema.parse(plan).acceptanceConditions.length, 1);
+  assert.throws(() => RetryPlanSchema.parse({ ...plan, escalateAfterAttempt: 4 }), /retry budget/i);
+});
+
+test("authority validity supports explicit snapshot, supersession, and cutoff-event modes", () => {
+  const rules = [
+    {
+      mode: "SNAPSHOT_MAX_AGE",
+      sourceId: "official-roster",
+      authorityScope: "status",
+      maxAgeMinutes: 60,
+    },
+    {
+      mode: "EFFECTIVE_UNTIL_SUPERSEDED",
+      sourceId: "signed-commitments",
+      authorityScope: "destination",
+      applicabilityFactPath: "facts.applicable",
+    },
+    {
+      mode: "EVENT_AT_CUTOFF",
+      sourceId: "transaction-log",
+      authorityScope: "membership",
+      eventFactPath: "facts.eventType",
+    },
+  ] as const;
+  for (const rule of rules) {
+    assert.equal(AuthorityValiditySchema.parse(rule).mode, rule.mode);
+  }
+  const policy = PolicyV4Schema.parse({
+    schemaVersion: 2,
+    cutoff: "2026-08-29T19:00:00.000Z",
+    authorityByField: { status: "official-roster" },
+    authorityValidity: rules,
+    retryLimit: 3,
+    invariants: ["Stable identity is preserved"],
+    rules: ["Evaluate authority using the declared validity mode"],
+  });
+  assert.equal(policy.authorityValidity.length, 3);
+  assert.equal("freshnessWindowMinutes" in policy, false);
+});
+
 test("mutation operations reject traversal and accept bounded repair operations", () => {
   assert.equal(
     MutationOperationSchema.parse({
@@ -103,18 +190,18 @@ test("mutation operations reject traversal and accept bounded repair operations"
   }));
 });
 
-test("challenger verdicts require evidence-linked reasons", () => {
-  const verdict = ChallengerVerdictSchema.parse({
-    schemaVersion: 1,
+test("challenger critique is advisory and may accept a draft without findings", () => {
+  const critique = ChallengerCritiqueSchema.parse({
+    schemaVersion: 2,
     caseId: "noop-duplicate-news",
-    verdict: "CONFIRM",
-    evidenceIds: ["obs-1"],
-    violations: [],
-    residualRisks: [],
+    recommendation: "ACCEPT_DRAFT",
+    evidenceIds: [],
+    critiqueCategories: [],
+    findings: [],
     summary: "The no-action decision preserves the unique event.",
   });
-  assert.equal(verdict.verdict, "CONFIRM");
-  assert.throws(() => ChallengerVerdictSchema.parse({ ...verdict, evidenceIds: [] }));
+  assert.equal(critique.recommendation, "ACCEPT_DRAFT");
+  assert.throws(() => ChallengerCritiqueSchema.parse({ ...critique, recommendation: "REJECT" }));
 });
 
 test("case provenance binds each hash to one agent-visible relative path", () => {
@@ -144,13 +231,12 @@ test("case provenance binds each hash to one agent-visible relative path", () =>
   assert.throws(() => CaseManifestSchema.parse({ ...manifest, provenance: [withoutPath] }));
 });
 
-test("schema generation writes the three public agent contracts", async () => {
+test("schema generation writes only the two symmetric v4 agent contracts", async () => {
   const directory = await mkdtemp(join(tmpdir(), "evidence-maintainer-schemas-"));
   const hashes = await writeSchemas(directory);
   assert.deepEqual(Object.keys(hashes).sort(), [
-    "baseline-result.schema.json",
-    "challenger-verdict.schema.json",
-    "maintainer-proposal.schema.json",
+    "challenger-critique.schema.json",
+    "decision-package.schema.json",
   ]);
   for (const [name, hash] of Object.entries(hashes)) {
     const parsed = JSON.parse(await readFile(join(directory, name), "utf8"));
@@ -168,9 +254,8 @@ test("generated contracts encode required empty arrays without empty tuple schem
   const root = await mkdtemp(join(tmpdir(), "evidence-empty-array-schema-"));
   await writeSchemas(root);
   for (const name of [
-    "baseline-result.schema.json",
-    "maintainer-proposal.schema.json",
-    "challenger-verdict.schema.json",
+    "decision-package.schema.json",
+    "challenger-critique.schema.json",
   ]) {
     const document = await readFile(join(root, name), "utf8");
     assert.equal(document.includes('"prefixItems": []'), false);

@@ -3,16 +3,14 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { z } from "zod";
 import {
-  BaselineResultOutputContractSchema,
-  ChallengerVerdictSchema,
-  MaintainerProposalOutputContractSchema,
+  ChallengerCritiqueSchema,
+  DecisionPackageOutputContractSchema,
 } from "../src/core/schemas.ts";
 import { sha256Text } from "../src/core/canonical-json.ts";
 
 const PUBLIC_SCHEMAS = {
-  "baseline-result.schema.json": BaselineResultOutputContractSchema,
-  "maintainer-proposal.schema.json": MaintainerProposalOutputContractSchema,
-  "challenger-verdict.schema.json": ChallengerVerdictSchema,
+  "decision-package.schema.json": DecisionPackageOutputContractSchema,
+  "challenger-critique.schema.json": ChallengerCritiqueSchema,
 } as const;
 
 function codexCompatibleSchema(value: unknown): unknown {

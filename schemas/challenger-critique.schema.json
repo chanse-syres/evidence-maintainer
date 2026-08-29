@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 2
+    },
+    "caseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": [
+        "ACCEPT_DRAFT",
+        "REVISE_DRAFT"
+      ]
+    },
+    "evidenceIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "critiqueCategories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ACTION",
+          "AUTHORITY",
+          "IDENTITY",
+          "TEMPORAL",
+          "APPLICABILITY",
+          "ARTIFACT",
+          "WRITE_SURFACE",
+          "REGRESSION",
+          "UNCERTAINTY"
+        ]
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "recommendation",
+    "evidenceIds",
+    "critiqueCategories",
+    "findings",
+    "summary"
+  ],
+  "additionalProperties": false,
+  "title": "challenger-critique"
+}

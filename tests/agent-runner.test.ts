@@ -14,6 +14,12 @@ import {
 } from "../src/agents/codex-runner.ts";
 import { loadPrompt } from "../src/agents/prompt-loader.ts";
 import { RecordedRunner } from "../src/agents/recorded-runner.ts";
+import type { AgentRole } from "../src/agents/runner.ts";
+
+test("reviser is a first-class agent role", () => {
+  const role: AgentRole = "reviser";
+  assert.equal(role, "reviser");
+});
 
 test("recorded runner validates output and writes truth-labeled trajectory boundaries", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-recorded-runner-"));

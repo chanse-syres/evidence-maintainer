@@ -5,7 +5,7 @@ import { sha256Text } from "../src/core/canonical-json.ts";
 import type {
   ActionClass,
   EvidenceAssessment,
-  RetryPlan,
+  LegacyRetryPlan as RetryPlan,
   ReviewRequest,
 } from "../src/core/schemas.ts";
 

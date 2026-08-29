@@ -9,7 +9,7 @@ import {
   type CheckResult,
   type EvidenceAssessment,
   type MaintainerProposal,
-  type RetryPlan,
+  type LegacyRetryPlan,
   type ReviewRequest,
 } from "./schemas.ts";
 import type { LoadedPublicCase } from "./case-loader.ts";
@@ -174,7 +174,7 @@ function reviewRequestMatches(proposal: MaintainerProposal, oracle: CaseOracle):
   ));
 }
 
-function normalizedAgreementCheck(entry: RetryPlan["agreementChecks"][number]): string {
+function normalizedAgreementCheck(entry: LegacyRetryPlan["agreementChecks"][number]): string {
     const left = `${entry.leftEvidenceId}\u0000${entry.leftFactPath}`;
     const right = `${entry.rightEvidenceId}\u0000${entry.rightFactPath}`;
     return canonicalJson(left <= right
@@ -182,7 +182,7 @@ function normalizedAgreementCheck(entry: RetryPlan["agreementChecks"][number]): 
       : { leftEvidenceId: entry.rightEvidenceId, leftFactPath: entry.rightFactPath, rightEvidenceId: entry.leftEvidenceId, rightFactPath: entry.leftFactPath });
 }
 
-function normalizedRetryPlan(value: RetryPlan): string {
+function normalizedRetryPlan(value: LegacyRetryPlan): string {
   const agreementChecks = value.agreementChecks.map(normalizedAgreementCheck).sort();
   const valueChecks = value.valueChecks.map((entry) => canonicalJson(entry)).sort();
   return canonicalJson({

@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const PROMPT_NAMES = new Set(["baseline", "maintainer", "challenger"]);
+const PROMPT_NAMES = new Set(["baseline", "maintainer", "challenger", "revision"]);
 
 export async function loadPrompt(name: string, variables: Record<string, string>): Promise<string> {
   if (!PROMPT_NAMES.has(name)) {

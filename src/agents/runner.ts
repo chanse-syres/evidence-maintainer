@@ -1,4 +1,4 @@
-export type AgentRole = "baseline" | "maintainer" | "challenger";
+export type AgentRole = "baseline" | "maintainer" | "challenger" | "reviser";
 
 export type ModelExecutionFailureKind =
   | "TIMEOUT"
