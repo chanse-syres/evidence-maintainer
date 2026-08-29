@@ -18,6 +18,7 @@
     "schemas": "node --experimental-strip-types scripts/generate-schemas.ts",
     "cases": "node --experimental-strip-types scripts/generate-core-cases.ts",
     "fixtures": "node --experimental-strip-types scripts/generate-recorded-fixtures.ts",
+    "submission:verify": "node --experimental-strip-types scripts/verify-submission.ts",
     "verify": "npm run lint && npm test && npm run demo && npm run build"
   },
   "dependencies": {
