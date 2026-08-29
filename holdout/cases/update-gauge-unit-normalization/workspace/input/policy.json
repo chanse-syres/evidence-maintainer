@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {
+    "stageMeters": "official-river-gauge",
+    "stageMeasuredAt": "official-river-gauge"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Station identity and fields outside the observation authority scope remain unchanged",
+    "Canonical stage height is stored in meters to four decimal places"
+  ],
+  "rules": [
+    "An approved reading controls only stage height and its measurement time",
+    "Convert feet to meters using exactly 1 foot = 0.3048 meters and round to four decimal places"
+  ]
+}

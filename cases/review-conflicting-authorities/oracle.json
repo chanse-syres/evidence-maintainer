@@ -1,18 +1,55 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "review-conflicting-authorities",
   "expectedAction": "HUMAN_REVIEW",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-athletics-active",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      },
+      {
+        "evidenceId": "obs-registrar-withdrawn",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-athletics-active",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    },
+    {
+      "evidenceId": "obs-registrar-withdrawn",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-athletics-active",
     "obs-registrar-withdrawn"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
-  "requiredChallengerVerdict": "ESCALATE",
-  "requiredMinimumInformation": [
-    "signed cross-system resolution",
-    "effective timestamp"
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [
+    {
+      "subjectId": "athlete-71",
+      "targetEvidenceId": "obs-athletics-active",
+      "requestedFactPaths": [
+        "facts.signedCrossSystemResolution",
+        "facts.resolutionEffectiveAt"
+      ]
+    }
   ],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

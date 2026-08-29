@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "exportName": "materializeSnapshot",
+  "cases": [
+    {
+      "id": "unseen-three-page-restart",
+      "args": [
+        [
+          {
+            "generation": 14,
+            "requestCursor": null,
+            "nextCursor": "stale",
+            "records": [
+              {
+                "id": "stale",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "generation": 15,
+            "requestCursor": null,
+            "nextCursor": "p1",
+            "records": [
+              {
+                "id": "x",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "generation": 15,
+            "requestCursor": "p1",
+            "nextCursor": "p2",
+            "records": [
+              {
+                "id": "y",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "generation": 15,
+            "requestCursor": "p2",
+            "nextCursor": null,
+            "records": [
+              {
+                "id": "z",
+                "value": 4
+              }
+            ]
+          }
+        ]
+      ],
+      "expected": [
+        {
+          "id": "x",
+          "value": 2
+        },
+        {
+          "id": "y",
+          "value": 3
+        },
+        {
+          "id": "z",
+          "value": 4
+        }
+      ]
+    }
+  ]
+}

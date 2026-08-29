@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "update-gauge-unit-normalization",
+  "title": "River-gauge publication reconciliation",
+  "description": "A canonical river-gauge record and a newly published official reading require a maintenance decision.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic public-data unit-normalization maintenance pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "input/canonical.json"
+  ],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "26f6ab5fed83fe90e870fa105b0d9059f1178f5e943902ef27033e1457cd7b3f"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "cdf73fe00c38d7b92f410432699592321e355773336e9654b8a49698d578edd5"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "670b60a72997a4f60a7e82638ce54d38456245f4ec7c1f8715e93ea7cf2b6274"
+    }
+  ]
+}

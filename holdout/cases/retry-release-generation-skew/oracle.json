@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 2,
+  "caseId": "retry-release-generation-skew",
+  "expectedAction": "RETRY_LATER",
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-manifest-generation-88",
+        "factPath": "observedAt",
+        "disposition": "CONTEXT",
+        "reason": "The manifest observation remains inside the transient publication window."
+      },
+      {
+        "evidenceId": "obs-manifest-generation-88",
+        "factPath": "facts.generation",
+        "disposition": "SUPPORT",
+        "reason": "The manifest generation must agree with the payload."
+      },
+      {
+        "evidenceId": "obs-manifest-generation-88",
+        "factPath": "facts.payloadSha256",
+        "disposition": "SUPPORT",
+        "reason": "The signed manifest binds the expected payload hash."
+      },
+      {
+        "evidenceId": "obs-manifest-generation-88",
+        "factPath": "facts.signatureValid",
+        "disposition": "SUPPORT",
+        "reason": "The manifest must retain a valid signature before atomic publication can proceed."
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "observedAt",
+        "disposition": "CONTEXT",
+        "reason": "The payload observation remains inside the transient publication window."
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "facts.generation",
+        "disposition": "SUPPORT",
+        "reason": "The payload generation disagrees with the signed manifest."
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "facts.payloadSha256",
+        "disposition": "SUPPORT",
+        "reason": "The payload hash disagrees with the signed manifest."
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "facts.schemaValid",
+        "disposition": "SUPPORT",
+        "reason": "A retry may publish only a schema-valid payload."
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "facts.complete",
+        "disposition": "SUPPORT",
+        "reason": "A retry may publish only a complete payload."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The manifest observation remains inside the transient publication window."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "facts.generation",
+      "disposition": "SUPPORT",
+      "reason": "The manifest generation must agree with the payload."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "facts.payloadSha256",
+      "disposition": "SUPPORT",
+      "reason": "The signed manifest binds the expected payload hash."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "facts.signatureValid",
+      "disposition": "SUPPORT",
+      "reason": "The manifest must retain a valid signature before atomic publication can proceed."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "observedAt",
+      "disposition": "CONTEXT",
+      "reason": "The payload observation remains inside the transient publication window."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "facts.generation",
+      "disposition": "SUPPORT",
+      "reason": "The payload generation disagrees with the signed manifest."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "facts.payloadSha256",
+      "disposition": "SUPPORT",
+      "reason": "The payload hash disagrees with the signed manifest."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "facts.schemaValid",
+      "disposition": "SUPPORT",
+      "reason": "A retry may publish only a schema-valid payload."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "facts.complete",
+      "disposition": "SUPPORT",
+      "reason": "A retry may publish only a complete payload."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The official release source owns its artifact."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "Both artifacts are bound to the same release identity."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The declared scope identifies the controlled artifact fields."
+    },
+    {
+      "evidenceId": "obs-manifest-generation-88",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The artifact kind distinguishes manifest from payload."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "sourceId",
+      "disposition": "SUPPORT",
+      "reason": "The official release source owns its artifact."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "subjectId",
+      "disposition": "SUPPORT",
+      "reason": "Both artifacts are bound to the same release identity."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "authorityScope",
+      "disposition": "SUPPORT",
+      "reason": "The declared scope identifies the controlled artifact fields."
+    },
+    {
+      "evidenceId": "obs-payload-generation-87",
+      "factPath": "kind",
+      "disposition": "SUPPORT",
+      "reason": "The artifact kind distinguishes manifest from payload."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
+    "obs-manifest-generation-88",
+    "obs-payload-generation-87"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": {
+    "notBefore": "2026-08-28T23:05:00.000Z",
+    "maxAttempts": 3,
+    "escalateAfterAttempt": 3,
+    "preserveRecordIds": [
+      "catalog-cache"
+    ],
+    "agreementChecks": [
+      {
+        "leftEvidenceId": "obs-manifest-generation-88",
+        "leftFactPath": "facts.generation",
+        "rightEvidenceId": "obs-payload-generation-87",
+        "rightFactPath": "facts.generation"
+      },
+      {
+        "leftEvidenceId": "obs-manifest-generation-88",
+        "leftFactPath": "facts.payloadSha256",
+        "rightEvidenceId": "obs-payload-generation-87",
+        "rightFactPath": "facts.payloadSha256"
+      }
+    ],
+    "valueChecks": [
+      {
+        "evidenceId": "obs-manifest-generation-88",
+        "factPath": "facts.signatureValid",
+        "expectedValue": true
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "facts.schemaValid",
+        "expectedValue": true
+      },
+      {
+        "evidenceId": "obs-payload-generation-87",
+        "factPath": "facts.complete",
+        "expectedValue": true
+      }
+    ]
+  },
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:06:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 20,
+  "retryLimit": 3,
+  "invariants": [
+    "A manifest and all shards publish atomically at one generation",
+    "Generation 204 remains available until every generation-205 shard agrees with the manifest"
+  ],
+  "rules": [
+    "Manifest generation and each shard generation and watermark must agree before publication",
+    "Inside the publication window, retry eight minutes after the latest relevant observation and escalate after three attempts"
+  ]
+}

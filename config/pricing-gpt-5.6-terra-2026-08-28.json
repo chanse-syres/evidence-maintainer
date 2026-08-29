@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "model": "gpt-5.6-terra",
+  "asOf": "2026-08-28",
+  "currency": "USD",
+  "unit": "one-million-tokens",
+  "inputPerMillionUsd": 2,
+  "cachedInputPerMillionUsd": 0.2,
+  "outputPerMillionUsd": 12,
+  "source": "https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/",
+  "note": "API list-price estimate. Actual Codex subscription or credit billing may differ."
+}

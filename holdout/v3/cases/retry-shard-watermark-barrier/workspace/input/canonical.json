@@ -1,0 +1,11 @@
+[
+  {
+    "id": "search-index",
+    "generation": 204,
+    "shardWatermarks": {
+      "east": 40,
+      "west": 76
+    },
+    "status": "active"
+  }
+]

@@ -14,11 +14,15 @@
     "test": "node --experimental-strip-types --test \"tests/*.test.ts\"",
     "case": "node --experimental-strip-types scripts/run-case.ts",
     "evaluate": "node --experimental-strip-types scripts/evaluate.ts",
+    "evaluation:combine": "node --experimental-strip-types scripts/combine-evaluations.ts",
     "demo": "node --experimental-strip-types scripts/generate-demo.ts",
     "schemas": "node --experimental-strip-types scripts/generate-schemas.ts",
     "cases": "node --experimental-strip-types scripts/generate-core-cases.ts",
+    "holdout:cases": "node --experimental-strip-types scripts/generate-holdout-cases.ts",
+    "holdout:v3:cases": "node --experimental-strip-types scripts/generate-holdout-v3-cases.ts",
     "fixtures": "node --experimental-strip-types scripts/generate-recorded-fixtures.ts",
     "submission:verify": "node --experimental-strip-types scripts/verify-submission.ts",
+    "engine:verify": "npm run schemas && git diff --exit-code -- schemas && npm run lint && npm test && npm run build",
     "verify": "npm run lint && npm test && npm run demo && npm run build"
   },
   "dependencies": {

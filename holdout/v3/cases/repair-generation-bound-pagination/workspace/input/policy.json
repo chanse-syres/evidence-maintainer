@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Records from different generations are never combined",
+    "Record order follows the selected page chain",
+    "A trailing incomplete generation is not silently published"
+  ],
+  "rules": [
+    "A complete chain begins at a null request cursor, retains one generation, links each next cursor to the following request cursor, and ends at a null next cursor",
+    "Select the last complete chain in the captured sequence; reject the capture if a newer chain begins but does not complete"
+  ]
+}

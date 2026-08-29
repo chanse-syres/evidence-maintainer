@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "campaign": "holdout-v3",
+  "status": "INVALID_FOR_SYSTEM_COMPARISON",
+  "invalidatedAt": "2026-08-29T10:31:05.5998138Z",
+  "publicComparisonEligible": false,
+  "score": null,
+  "freezeTag": "holdout-freeze-v3",
+  "freezeCommit": "f69d58d67c919456807c505a2e5aeea991f01a86",
+  "freezeLockSha256": "42c230c4d5f017b79c93be3487fa22404a02eda93f88acd5075a6e4f09994b7d",
+  "caseSetHash": "93df55295ac031583ca40f7c052a5eaedc35adb5bb19ce72b31eb05bf204e9c2",
+  "caseDefinitionSetHash": "48c6a8904fafbdd2ec0c3082d592fbcc2efc98ea58458aa1aaa53549ac25bde4",
+  "runDirectory": "artifacts/evaluation/holdout-v3",
+  "plannedWorkflowSlots": 30,
+  "completedWorkflowSlots": 30,
+  "infrastructureOrEvaluatorProcessErrors": 0,
+  "defects": [
+    {
+      "defectId": "ASYMMETRIC_CHALLENGER",
+      "class": "EVALUATION_ARM_ASYMMETRY",
+      "description": "The direct baseline did not run a Challenger. After the baseline session completed, the workflow synthesized evaluatorVerdict from hidden oracle.requiredChallengerVerdict and oracle.requiredChallengerEvidenceIds. The advanced arm instead ran a real model Challenger whose verdict could reject an otherwise correct Maintainer decision. The two arms therefore did not face the same decision or scoring path."
+    },
+    {
+      "defectId": "SEMANTICALLY_INVALID_CASES",
+      "class": "CASE_DEFINITION_INVALIDITY",
+      "affectedCaseIds": [
+        "retry-shard-watermark-barrier",
+        "update-effective-energy-tariff"
+      ],
+      "cases": [
+        {
+          "caseId": "retry-shard-watermark-barrier",
+          "description": "The V3 retry contract keyed acceptance to the frozen generation-204 evidence identity while requiring a future generation-205, watermark-77 state. A future observation capable of establishing the required state could not retain that immutable evidence identity, so the oracle's retry artifact was not satisfiable under its own visible contract."
+        },
+        {
+          "caseId": "update-effective-energy-tariff",
+          "description": "The visible evidence did not establish that account-314 belonged to the residential-standard tariff class, and the cited tariff observation was outside the policy's snapshot-age interpretation. UPDATE_DATA and abstention were both defensible, so the oracle did not determine one fair action."
+        }
+      ]
+    }
+  ],
+  "rawDescriptiveCounts": {
+    "interpretation": "Frozen observations retained for audit only; these are not valid comparative system-performance results.",
+    "allWorkflowSlots": {
+      "completed": 30,
+      "correctActions": 30,
+      "sourceCoveragePasses": 30,
+      "forbiddenMutations": 0
+    },
+    "baseline": {
+      "workflowSlots": 15,
+      "correctActions": 15,
+      "operationalDecisionIntegrityPasses": 15,
+      "sourceCoveragePasses": 15,
+      "exactAnnotationAlignmentPasses": 5,
+      "medianDurationMs": 27147,
+      "totalTokens": 248071
+    },
+    "advanced": {
+      "workflowSlots": 15,
+      "correctActions": 15,
+      "operationalDecisionIntegrityPasses": 14,
+      "sourceCoveragePasses": 15,
+      "exactAnnotationAlignmentPasses": 3,
+      "medianDurationMs": 51545,
+      "totalTokens": 418843
+    }
+  },
+  "artifacts": {
+    "freeze": "holdout/v3/FREEZE.json",
+    "summary": "artifacts/evaluation/holdout-v3/summary.json",
+    "rows": "artifacts/evaluation/holdout-v3/rows.jsonl",
+    "runs": "artifacts/evaluation/holdout-v3/runs"
+  },
+  "disposition": "Preserve the immutable freeze and all 30 completed workflow artifacts as diagnostic evidence. Do not aggregate, compare, publish, or cite the V3 arm rates as system performance. A public comparison requires a new frozen V4 campaign in which both arms emit the same final decision contract, use the same finalizer and semantic evaluator, and exclude evaluator-invalid cases symmetrically."
+}

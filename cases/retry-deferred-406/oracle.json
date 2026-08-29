@@ -1,17 +1,42 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "retry-deferred-406",
   "expectedAction": "RETRY_LATER",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-deferred-406",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-deferred-406",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-deferred-406"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [
-    "30 minutes",
-    "cache"
-  ],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": {
+    "notBefore": "2026-08-28T17:20:00.000Z",
+    "maxAttempts": 2,
+    "escalateAfterAttempt": 2,
+    "preserveRecordIds": [
+      "source-41"
+    ],
+    "agreementChecks": [],
+    "valueChecks": []
+  },
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

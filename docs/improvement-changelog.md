@@ -1,43 +1,53 @@
-# Improvement Changelog
+# Improvement and Invalidation Changelog
 
-This changelog records what was actually run while building Evidence Maintainer. Rows are historical experiments, not a post-hoc ablation study: case subsets and implementation commits changed between some stages. Only `final-v3` is the frozen headline comparison.
+This changelog records what the evaluation process learned without converting invalid campaigns into performance claims.
 
-Safe Decision Rate (SDR) requires the correct action, correct artifact, no forbidden mutation, preserved regressions, and evidence-supported claims. Approval-eligible completion is reported separately because the independent Challenger can block an otherwise safe proposal.
+**Current status:** no V1, V2, or V3 campaign is eligible for public comparison, and no live V4 campaign has been run. The public selector remains unassigned in [`config/public-comparison.json`](../config/public-comparison.json).
 
-| Stage | Change and hypothesis | Cases | Baseline SDR | Advanced SDR | Unsafe mutations (B/A) | Median time ms (B/A) | Tokens (B/A) | Decision |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| `recorded-core` | Deterministic fixtures tested the evidence ledger, action routing, Challenger, and gate before spending live compute. | 12 | 16.7% | 100% | 16.7% / 0% | 5.5 / 6.5 | 0 / 0 | Keep as an offline control only; recorded output is not live-model evidence. |
-| `live-pilot` | First live two-case runner check. Hypothesis: both arms can complete identical schema-bound sessions without infrastructure errors. | 2 | 100% | 100% | 0% / 0% | 10,618 / 17,929 | 35,543 / 73,153 | Keep the runner; subset was too easy to measure improvement. |
-| `final` | First complete live suite. The early advanced contract required process evidence that did not yet exist and coupled acceptance to brittle wording. | 15 | 40.0% | 26.7% | 0% / 0% | 11,259 / 20,920 | 335,081 / 621,217 | Reject the architecture version. The advanced system underperformed by 13.3 points. |
-| `live-pilot-v2` | Three-case diagnostic after the first correction. Hypothesis: clearer process timing was sufficient. | 3 | 100% | 33.3% | 0% / 0% | 10,966 / 19,379 | 52,795 / 108,929 | Revise. It exposed missing public authority for `ratingAsOf` and underdefined action routing. |
-| `recorded-all` | Replayed all 15 adjudicated cases after adding behavioral action definitions and complete public authority. | 15 | 13.3% | 100% | 33.3% / 0% | 9 / 8 | 0 / 0 | Keep as deterministic regression coverage, not a model result. |
-| `live-pilot-v3` | Live check of the corrected decision contract on three previously diagnostic cases. | 3 | 100% | 100% | 0% / 0% | 10,183 / 16,315 | 52,814 / 109,264 | Keep the contract correction; proceed to a complete run. |
-| `final-v2` | Complete live comparison after the contract correction. | 15 | 66.7% | 80.0% | 0% / 0% | 11,281 / 17,909 | 282,487 / 437,385 | Do not use as headline evidence. Four adapter rows were contaminated by host policy blocking read-only PowerShell inspection. |
-| `live-repair-pilot` | Embedded the same immutable agent-visible workspace bytes in both prompts so reasoning no longer depended on terminal policy. | 3 | 100% | 100% | 0% / 0% | 23,611 / 21,611 | 110,290 / 115,252 | Keep. All six gates passed, all six approvals were eligible, and execution errors fell to zero. |
-| `final-v3` | Frozen full comparison on the shell-independent harness. | 15 | 80.0% | 100% | 0% / 0% | 11,841 / 20,627 | 327,479 / 565,671 | Final primary result. SDR improved by 20 points with zero errors and zero unsafe mutations. |
+## Versioned campaign dispositions
 
-## What changed the outcome
+| Campaign | Execution fact | Why it is invalid | Public disposition |
+| --- | --- | --- | --- |
+| V1 | 16 complete and 1 partial workflow out of 30 planned | The evaluator mixed adjudicated evidence, hidden lexical requirements, Challenger citations, and an invalid retry case into scoring. | No score. Preserve only as evaluator-debugging evidence. |
+| V2 | 30 workflows completed with no infrastructure or evaluator process errors | The primary metric required exact oracle-authored evidence annotations even when actions and artifacts were semantically correct. | Do not use the raw arm rates as performance. Preserve as evidence that annotation conformity is not operational correctness. |
+| V3 | 30 of 30 workflow slots completed with no infrastructure or evaluator process errors | The baseline received a Challenger result synthesized from hidden oracle data while the advanced arm used a real Challenger; two cases were also semantically invalid. | Do not aggregate or compare the arm rates. Preserve the freeze and raw receipts for audit and resource accounting. |
+| V4 | Engine implemented; no live holdout campaign completed | A valid result requires a new frozen case pack and symmetric execution under the shared final-decision contract. | Comparative result pending. |
 
-Three changes mattered:
+The governing records are [V1 invalidation](../holdout/INVALIDATION-v1.json), [V2 invalidation](../holdout/INVALIDATION-v2.json), and [V3 invalidation](../holdout/INVALIDATION-v3.json).
 
-1. **Behavioral action routing replaced process-shaped guessing.** The agent was told what each action means in the maintenance domain, while adjudicated answers remained hidden.
-2. **Every proposed field change needed public authority.** The case contract now exposes the evidence necessary to justify observable behavior without revealing the oracle.
-3. **Agent-visible inputs became shell independent.** Baseline, Maintainer, and Challenger receive identical immutable file bytes already declared in the public case manifest. The deterministic gate still executes the actual candidate and regressions in an isolated workspace.
+## V3 raw observations
 
-The final baseline chose the right action in all 15 cases, but three abstention decisions cited insufficient evidence. The advanced workflow grounded those same decisions correctly. Its Challenger also rejected one factually correct update because the Maintainer marked its own approval level `NONE`; this reduced approval-eligible completion to 14/15 while preventing an unsupported process transition.
+The following values are retained because they are useful for auditing the completed execution. They are **not** valid estimates of either workflow's performance.
 
-## What was not claimed
+| Raw observation | Direct arm | Advanced arm |
+| --- | ---: | ---: |
+| Completed workflow slots | 15 | 15 |
+| Action marked correct by the V3 evaluator | 15 | 15 |
+| Source-coverage check passed | 15 | 15 |
+| Forbidden mutations | 0 | 0 |
+| V3 operational-integrity check passed | 15 | 14 |
+| Exact annotation alignment passed | 5 | 3 |
+| Median duration | 27,147 ms | 51,545 ms |
+| Total tokens | 248,071 | 418,843 |
 
-- The recorded runs are reproducibility controls, not fresh model evaluations.
-- `final-v2` is retained as failure evidence but excluded from headline metrics.
-- A larger agent swarm was considered but not implemented or measured. The project retained two non-overlapping roles because the observed failures were contract and evidence failures, not a shortage of parallel agents.
-- One trial per case does not establish population-level superiority. It is a complete, frozen 15-case result under the competition deadline; repeated trials are the first follow-up experiment.
+These values cannot be interpreted as a baseline win, an advanced-workflow loss, or an effect size. The arm asymmetry prevents causal comparison, and the invalid cases prevent a sound common denominator.
 
-## Evidence
+## Corrections carried into V4
 
-- [Frozen final summary](../artifacts/evaluation/final-v3/summary.json)
-- [Frozen final rows](../artifacts/evaluation/final-v3/rows.jsonl)
-- [Shell-independent repair pilot](../artifacts/evaluation/live-repair-pilot/summary.json)
-- [Disqualified shell-interfered run](../artifacts/evaluation/final-v2/summary.json)
-- [Initial underperforming architecture](../artifacts/evaluation/final/summary.json)
+V4 makes four structural changes:
 
+1. Both arms emit the same final `DecisionPackage`.
+2. Both arms pass through the same finalizer and semantic evaluator.
+3. The Challenger is advisory process evidence; its recommendation does not directly determine the score.
+4. Operational Decision Integrity measures six semantic and execution outcomes. Exact annotation alignment remains diagnostic only.
+
+V4 also uses explicit authority-validity modes, satisfiable future retry selectors, exhaustive failure classes, symmetric evaluator invalidation, and case-balanced uncertainty estimation.
+
+## What remains unmeasured
+
+- Whether propose-challenge-revise improves ODI over the direct workflow.
+- Whether any observed difference persists across repeated trials and new cases.
+- The latency and token tradeoff for a complete valid V4 campaign.
+- Generalization beyond the frozen maintenance domain.
+
+Those questions remain open until a valid V4 campaign is frozen, executed, audited, and selected by the public comparison record.

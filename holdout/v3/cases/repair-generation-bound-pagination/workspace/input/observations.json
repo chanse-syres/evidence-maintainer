@@ -1,0 +1,23 @@
+[
+  {
+    "id": "obs-generation-cursor-contract",
+    "sourceId": "official-catalog-api",
+    "observedAt": "2026-08-28T18:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "pagination-contract",
+      "snapshot-generation"
+    ],
+    "subjectId": null,
+    "kind": "schema-contract",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "generation-cursor-v4",
+    "facts": {
+      "requestCursorField": "requestCursor",
+      "responseCursorField": "nextCursor",
+      "generationField": "generation",
+      "restartMarker": null
+    }
+  }
+]

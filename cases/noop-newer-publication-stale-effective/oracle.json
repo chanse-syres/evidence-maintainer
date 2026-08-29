@@ -1,14 +1,33 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "noop-newer-publication-stale-effective",
   "expectedAction": "NO_ACTION",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-new-publication-old-state",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-new-publication-old-state",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-new-publication-old-state"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

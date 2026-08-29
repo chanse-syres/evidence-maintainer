@@ -1,0 +1,43 @@
+[
+  {
+    "id": "obs-amendment-42",
+    "sourceId": "official-procurement-register",
+    "observedAt": "2026-08-28T14:00:00.000Z",
+    "effectiveAt": "2026-08-28T14:00:00.000Z",
+    "authorityScope": [
+      "deadline",
+      "revision-chain"
+    ],
+    "subjectId": "solicitation-77",
+    "kind": "amendment",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "procurement-revision-v2",
+    "facts": {
+      "revision": "rev-42",
+      "supersedes": "rev-41",
+      "deadline": "2026-09-17T21:00:00.000Z"
+    }
+  },
+  {
+    "id": "obs-rescission-43",
+    "sourceId": "official-procurement-register",
+    "observedAt": "2026-08-28T16:00:00.000Z",
+    "effectiveAt": "2026-08-28T16:00:00.000Z",
+    "authorityScope": [
+      "deadline",
+      "revision-chain"
+    ],
+    "subjectId": "solicitation-77",
+    "kind": "rescission",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "procurement-revision-v2",
+    "facts": {
+      "revision": "rev-43",
+      "supersedes": "rev-42",
+      "restoresRevision": "rev-41",
+      "deadline": "2026-09-10T21:00:00.000Z"
+    }
+  }
+]

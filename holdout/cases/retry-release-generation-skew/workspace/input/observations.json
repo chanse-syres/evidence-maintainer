@@ -1,0 +1,42 @@
+[
+  {
+    "id": "obs-manifest-generation-88",
+    "sourceId": "official-release-manifest",
+    "observedAt": "2026-08-28T22:54:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "release-generation",
+      "payload-hash"
+    ],
+    "subjectId": "catalog-release",
+    "kind": "signed-manifest",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "release-manifest-v3",
+    "facts": {
+      "generation": 88,
+      "payloadSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-payload-generation-87",
+    "sourceId": "official-release-payload",
+    "observedAt": "2026-08-28T22:55:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "release-payload"
+    ],
+    "subjectId": "catalog-release",
+    "kind": "dataset",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "catalog-payload-v5",
+    "facts": {
+      "generation": 87,
+      "payloadSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "schemaValid": true,
+      "complete": true
+    }
+  }
+]

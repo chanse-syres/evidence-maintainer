@@ -7,20 +7,42 @@ import { actionBadgeFor, evidenceModeLabel } from "./case-model.ts";
 
 interface ArmCardResult {
   attempts: number;
-  safeDecisions: number;
-  sdr: number;
-  unsafeMutations: number;
+  operationalDecisions: number;
+  odi: number;
+  sourceCoverage: number;
+  contradictionFree: number;
+  requiredCommandsPassed: number;
+  annotationAligned: number;
+  forbiddenMutationFailures: number;
+  semanticFailures: number;
   action: string;
+}
+
+function isNormalizedRunPath(value: string): boolean {
+  return value.length > 0 &&
+    !value.includes("\\") &&
+    !value.startsWith("/") &&
+    !/^[A-Za-z]:/.test(value) &&
+    !value.split("/").some((segment) => segment === "" || segment === "..");
+}
+
+function hasDecisionArtifacts(row: EvaluationRow): boolean {
+  return row.failureClass !== "MODEL_EXECUTION" && isNormalizedRunPath(row.runPath);
 }
 
 function summarizeRows(rows: EvaluationRow[]): ArmCardResult {
   const attempts = rows.length;
-  const safeDecisions = rows.filter((row) => row.safeDecision).length;
+  const operationalDecisions = rows.filter((row) => row.operationalDecisionIntegrity).length;
   return {
     attempts,
-    safeDecisions,
-    sdr: attempts === 0 ? 0 : safeDecisions / attempts,
-    unsafeMutations: rows.filter((row) => row.unsafeMutation).length,
+    operationalDecisions,
+    odi: attempts === 0 ? 0 : operationalDecisions / attempts,
+    sourceCoverage: rows.filter((row) => row.sourceCoverage).length,
+    contradictionFree: rows.filter((row) => row.contradictionFree).length,
+    requiredCommandsPassed: rows.filter((row) => row.requiredCommandsPassed).length,
+    annotationAligned: rows.filter((row) => row.annotationAligned).length,
+    forbiddenMutationFailures: rows.filter((row) => !row.noForbiddenMutation).length,
+    semanticFailures: rows.filter((row) => row.failureClass === "GENUINE_SEMANTIC_FAILURE").length,
     action: rows[0]?.action ?? "UNKNOWN",
   };
 }
@@ -43,13 +65,18 @@ async function loadSummary(root: string): Promise<EvaluationSummary> {
   return summary;
 }
 
-async function loadCaseTitle(root: string, row: EvaluationRow): Promise<string> {
-  const path = resolve(root, row.runPath, "workspace/case.json");
-  const value = JSON.parse(await readFile(path, "utf8")) as { title?: unknown };
-  if (typeof value.title !== "string" || value.title.length === 0) {
-    throw new Error(`Invalid case title in required artifact ${path}`);
+async function loadCaseTitle(root: string, caseId: string, rows: EvaluationRow[]): Promise<string> {
+  for (const row of rows) {
+    if (!isNormalizedRunPath(row.runPath)) continue;
+    const path = resolve(root, ...row.runPath.split("/"), "workspace", "case.json");
+    try {
+      const value = JSON.parse(await readFile(path, "utf8")) as { title?: unknown };
+      if (typeof value.title === "string" && value.title.length > 0) return value.title;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    }
   }
-  return value.title;
+  return caseId.split("-").map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(" ");
 }
 
 export async function loadOverviewModel(artifactRoot: string) {
@@ -59,38 +86,33 @@ export async function loadOverviewModel(artifactRoot: string) {
     const caseRows = summary.rows.filter((row) => row.caseId === caseId);
     const baselineRows = caseRows.filter((row) => row.arm === "baseline");
     const advancedRows = caseRows.filter((row) => row.arm === "advanced");
-    const representative = advancedRows[0] ?? baselineRows[0];
-    if (!representative) throw new Error(`Case ${caseId} has no evaluation rows`);
-    const action = (advancedRows[0]?.action ?? baselineRows[0]?.action) as ActionClass;
+    const representative = advancedRows.find(hasDecisionArtifacts) ?? baselineRows.find(hasDecisionArtifacts);
+    const firstRow = advancedRows[0] ?? baselineRows[0];
+    if (!firstRow) throw new Error(`Case ${caseId} has no evaluation rows`);
+    const action = (representative?.action ?? firstRow.expectedAction ?? "HUMAN_REVIEW") as ActionClass;
     const baseline = summarizeRows(baselineRows);
     const advanced = summarizeRows(advancedRows);
     return {
       caseId,
-      title: await loadCaseTitle(artifactRoot, representative),
+      title: await loadCaseTitle(artifactRoot, caseId, [
+        ...(representative ? [representative] : []),
+        ...advancedRows,
+        ...baselineRows,
+      ]),
       action,
       actionBadge: actionBadgeFor(action),
       baseline,
       advanced,
-      harmfulChange: baseline.unsafeMutations > 0 || advanced.unsafeMutations > 0,
-      detailHref: `/cases/${caseId}`,
+      harmfulChange: baseline.forbiddenMutationFailures > 0 || advanced.forbiddenMutationFailures > 0,
+      detailHref: representative ? `/cases/${caseId}` : null,
+      detailRunPath: representative?.runPath ?? null,
     };
   }));
 
-  const baselineUnsafe = summary.rows.filter(
-    (row) => row.arm === "baseline" && row.unsafeMutation,
-  ).length;
-  const advancedUnsafe = summary.rows.filter(
-    (row) => row.arm === "advanced" && row.unsafeMutation,
-  ).length;
-  const baselineAbstentions = summary.rows.filter(
-    (row) => row.arm === "baseline" && row.correctAbstention,
-  ).length;
-  const advancedAbstentions = summary.rows.filter(
-    (row) => row.arm === "advanced" && row.correctAbstention,
-  ).length;
-  const flagshipCaseId = cases.some((item) => item.caseId === "update-official-commitment")
-    ? "update-official-commitment"
-    : cases[0]?.caseId ?? "";
+  const inspectableCases = cases.filter((item) => item.detailRunPath !== null);
+  const flagshipCaseId = inspectableCases.some((item) => item.caseId === "retry-shard-watermark-barrier")
+    ? "retry-shard-watermark-barrier"
+    : inspectableCases[0]?.caseId ?? null;
 
   return {
     generatedAt: summary.generatedAt,
@@ -98,20 +120,13 @@ export async function loadOverviewModel(artifactRoot: string) {
     modeLabel: evidenceModeLabel(summary.mode),
     model: summary.model,
     caseSetHash: summary.caseSetHash,
-    baseline: {
-      ...summary.arms.baseline,
-      unsafeMutations: baselineUnsafe,
-      correctAbstentions: baselineAbstentions,
-    },
-    advanced: {
-      ...summary.arms.advanced,
-      unsafeMutations: advancedUnsafe,
-      correctAbstentions: advancedAbstentions,
-    },
-    absoluteSdrChange: summary.absoluteSdrChange,
+    baseline: summary.arms.baseline,
+    advanced: summary.arms.advanced,
+    absoluteOdiChange: summary.absoluteOdiChange,
+    odiBootstrap95: summary.odiBootstrap95,
     cases,
     flagshipCaseId,
-    flagshipHref: `/cases/${flagshipCaseId}`,
+    flagshipHref: flagshipCaseId === null ? null : `/cases/${flagshipCaseId}`,
   };
 }
 

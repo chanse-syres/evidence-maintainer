@@ -3,23 +3,34 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { z } from "zod";
 import {
-  BaselineResultSchema,
-  ChallengerVerdictSchema,
-  MaintainerProposalSchema,
+  ChallengerCritiqueSchema,
+  DecisionPackageOutputContractSchema,
 } from "../src/core/schemas.ts";
 import { sha256Text } from "../src/core/canonical-json.ts";
 
 const PUBLIC_SCHEMAS = {
-  "baseline-result.schema.json": BaselineResultSchema,
-  "maintainer-proposal.schema.json": MaintainerProposalSchema,
-  "challenger-verdict.schema.json": ChallengerVerdictSchema,
+  "decision-package.schema.json": DecisionPackageOutputContractSchema,
+  "challenger-critique.schema.json": ChallengerCritiqueSchema,
 } as const;
 
 function codexCompatibleSchema(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(codexCompatibleSchema);
   if (value === null || typeof value !== "object") return value;
+  const record = value as Record<string, unknown>;
+  if (
+    record.type === "array" &&
+    Array.isArray(record.prefixItems) &&
+    record.prefixItems.length === 0 &&
+    record.maxItems === 0
+  ) {
+    return Object.fromEntries(
+      Object.entries({ ...record, items: { type: "string" } })
+        .filter(([key]) => key !== "prefixItems" && key !== "propertyNames")
+        .map(([key, entry]) => [key === "oneOf" ? "anyOf" : key, codexCompatibleSchema(entry)]),
+    );
+  }
   return Object.fromEntries(
-    Object.entries(value as Record<string, unknown>)
+    Object.entries(record)
       .filter(([key]) => key !== "propertyNames")
       .map(([key, entry]) => [key === "oneOf" ? "anyOf" : key, codexCompatibleSchema(entry)]),
   );

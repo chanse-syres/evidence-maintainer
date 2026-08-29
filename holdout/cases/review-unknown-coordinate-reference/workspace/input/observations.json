@@ -1,0 +1,46 @@
+[
+  {
+    "id": "obs-official-boundary-2026",
+    "sourceId": "official-city-boundary",
+    "observedAt": "2026-08-28T10:00:00.000Z",
+    "effectiveAt": "2026-08-28T00:00:00.000Z",
+    "authorityScope": [
+      "jurisdiction-boundary"
+    ],
+    "subjectId": "permit-204",
+    "kind": "signed-boundary",
+    "status": 200,
+    "contentType": "application/geo+json",
+    "schemaFingerprint": "municipal-boundary-v4",
+    "facts": {
+      "boundaryVersion": "city-boundary-2026",
+      "crs": "EPSG:4326",
+      "geometrySha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  },
+  {
+    "id": "obs-permit-location",
+    "sourceId": "official-permit-register",
+    "observedAt": "2026-08-28T11:00:00.000Z",
+    "effectiveAt": "2026-08-28T09:30:00.000Z",
+    "authorityScope": [
+      "permit-location"
+    ],
+    "subjectId": "permit-204",
+    "kind": "permit-coordinate",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "permit-location-v2",
+    "facts": {
+      "coordinates": [
+        -122.67648,
+        45.52317
+      ],
+      "crs": null,
+      "positionalAccuracyMeters": null,
+      "distanceComputationCrsAssumption": "EPSG:4326",
+      "distanceInsideUnderAssumptionMeters": 1.2,
+      "signedJurisdictionDetermination": null
+    }
+  }
+]

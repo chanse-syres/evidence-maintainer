@@ -1,0 +1,46 @@
+[
+  {
+    "id": "obs-meter-window-314",
+    "sourceId": "official-meter-ledger",
+    "observedAt": "2026-08-28T16:02:00.000Z",
+    "effectiveAt": "2026-08-21T00:00:00.000Z",
+    "authorityScope": [
+      "usage-kwh",
+      "billing-window"
+    ],
+    "subjectId": "account-314",
+    "kind": "settled-meter-window",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "meter-window-v3",
+    "facts": {
+      "windowStart": "2026-08-20T00:00:00.000Z",
+      "windowEnd": "2026-08-21T00:00:00.000Z",
+      "usageKwh": 26.5,
+      "settlementState": "final"
+    }
+  },
+  {
+    "id": "obs-tariff-rev-12",
+    "sourceId": "official-tariff-register",
+    "observedAt": "2026-08-18T09:00:00.000Z",
+    "effectiveAt": "2026-08-19T00:00:00.000Z",
+    "authorityScope": [
+      "energy-rate",
+      "tariff-revision"
+    ],
+    "subjectId": "residential-standard",
+    "kind": "signed-tariff",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "tiered-tariff-v2",
+    "facts": {
+      "revision": "rev-12",
+      "baseChargeCents": 120,
+      "firstTierLimitKwh": 20,
+      "firstTierCentsPerKwh": 14,
+      "excessTierCentsPerKwh": 22,
+      "signatureValid": true
+    }
+  }
+]

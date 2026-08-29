@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "exportName": "normalizeClosures",
+  "cases": [
+    {
+      "id": "unseen-offsets",
+      "args": [
+        [
+          {
+            "id": "unseen-east",
+            "start": "2027-03-14T03:05:00",
+            "startOffsetMinutes": -240,
+            "end": "2027-03-14T04:20:00",
+            "endOffsetMinutes": -240
+          },
+          {
+            "id": "unseen-legacy",
+            "start": "2027-01-02T00:00:00.000Z",
+            "end": "2027-01-02T00:30:00.000Z"
+          },
+          {
+            "id": "unseen-fallback",
+            "start": "2027-10-31T12:00:00",
+            "startOffsetMinutes": 330,
+            "end": "2027-10-31T11:45:00",
+            "endOffsetMinutes": 270
+          }
+        ]
+      ],
+      "expected": [
+        {
+          "id": "unseen-east",
+          "startUtc": "2027-03-14T07:05:00.000Z",
+          "endUtc": "2027-03-14T08:20:00.000Z"
+        },
+        {
+          "id": "unseen-legacy",
+          "startUtc": "2027-01-02T00:00:00.000Z",
+          "endUtc": "2027-01-02T00:30:00.000Z"
+        },
+        {
+          "id": "unseen-fallback",
+          "startUtc": "2027-10-31T06:30:00.000Z",
+          "endUtc": "2027-10-31T07:15:00.000Z"
+        }
+      ]
+    }
+  ]
+}

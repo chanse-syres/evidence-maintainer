@@ -1,0 +1,16 @@
+[
+  {
+    "id": "closure-fallback",
+    "start": "2026-11-01T01:30:00",
+    "startOffsetMinutes": -420,
+    "end": "2026-11-01T01:15:00",
+    "endOffsetMinutes": -480
+  },
+  {
+    "id": "closure-normal",
+    "start": "2026-11-02T09:00:00",
+    "startOffsetMinutes": -480,
+    "end": "2026-11-02T10:00:00",
+    "endOffsetMinutes": -480
+  }
+]

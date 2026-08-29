@@ -1,37 +1,45 @@
 import assert from "node:assert/strict";
-import { resolve } from "node:path";
-import test from "node:test";
+import test, { before } from "node:test";
 import { renderDecisionReport } from "../src/reports/render-decision-report.ts";
+import { writeV4EvaluationFixture } from "./helpers/v4-run-fixture.ts";
 
-const recordedRun = resolve(
-  "artifacts/evaluation/recorded-all/runs/update-official-commitment/trial-1/advanced",
-);
+let baselineRun: string;
+let advancedRun: string;
 
-test("decision report renders every evidence and approval section", async () => {
-  const html = await renderDecisionReport(recordedRun);
+before(async () => {
+  ({ baselineRun, advancedRun } = await writeV4EvaluationFixture());
+});
+
+test("decision report renders the V4 final decision and verification sections", async () => {
+  const html = await renderDecisionReport(advancedRun);
   for (const heading of [
     "Recorded evidence",
     "Selected action",
     "Evidence timeline",
-    "Maintainer proposal",
-    "Challenger verdict",
+    "Final decision",
     "Deterministic checks",
     "Changed files",
-    "Residual risk",
-    "Approval decision",
+    "Residual uncertainty",
+    "Eligibility decision",
     "Artifact hashes",
   ]) {
     assert.match(html, new RegExp(`>${heading}<`));
   }
   assert.doesNotMatch(html, /Live agent result/);
-  assert.match(html, /UPDATE_DATA/);
-  assert.match(html, /obs-official-commitment/);
+  assert.match(html, /NO_ACTION/);
+  assert.match(html, /obs-v4-report-case/);
   assert.match(html, /<style>/);
   assert.doesNotMatch(html, /<script|https?:\/\//);
 });
 
+test("baseline report renders without an advanced evidence ledger", async () => {
+  const html = await renderDecisionReport(baselineRun);
+  assert.match(html, /No recorded evidence events\./);
+  assert.match(html, /Final decision/);
+});
+
 test("decision report escapes agent-controlled text", async () => {
-  const html = await renderDecisionReport(recordedRun, {
+  const html = await renderDecisionReport(advancedRun, {
     titleOverride: '<img src=x onerror="alert(1)">',
   });
   assert.match(html, /&lt;img src=x onerror=&quot;alert\(1\)&quot;&gt;/);

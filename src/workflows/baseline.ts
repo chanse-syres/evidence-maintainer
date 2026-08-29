@@ -1,24 +1,19 @@
-import { spawn } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
-import { once } from "node:events";
 import type { AgentRunner } from "../agents/runner.ts";
 import { loadPrompt } from "../agents/prompt-loader.ts";
 import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
-import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
+import { copyCaseWorkspaceV4, loadPublicCaseV4 } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
-import { runDeterministicGate, type CommandResult } from "../core/deterministic-gate.ts";
-import { applyOperations } from "../core/mutation-engine.ts";
 import {
-  BaselineResultSchema,
-  MaintainerProposalSchema,
+  DecisionPackageSchema,
   RunManifestSchema,
-  type ChallengerVerdict,
   type RunManifest,
 } from "../core/schemas.ts";
-import { snapshotTree } from "../core/tree-snapshot.ts";
 import { PROJECT_ID } from "../core/project.ts";
+import { buildTokenUsageAccounting } from "../evaluation/token-usage-accounting.ts";
 import { recordApproval } from "./approval.ts";
+import { finalizeDecision } from "./finalize-decision.ts";
 
 export interface RunBaselineInput {
   caseDir: string;
@@ -33,39 +28,6 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
-async function runCommand(command: string, workspace: string): Promise<CommandResult> {
-  const env = { ...process.env };
-  delete env.NODE_TEST_CONTEXT;
-  const child = spawn(command, {
-    cwd: workspace,
-    env,
-    shell: true,
-    windowsHide: true,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  const stdout: Buffer[] = [];
-  const stderr: Buffer[] = [];
-  child.stdout.on("data", (chunk: Buffer) => stdout.push(chunk));
-  child.stderr.on("data", (chunk: Buffer) => stderr.push(chunk));
-  const [code] = await once(child, "close") as [number | null, NodeJS.Signals | null];
-  return {
-    exitCode: code ?? 1,
-    stdout: Buffer.concat(stdout).toString("utf8"),
-    stderr: Buffer.concat(stderr).toString("utf8"),
-  };
-}
-
-export async function runRequiredCommands(
-  workspace: string,
-  commands: readonly string[],
-): Promise<Record<string, CommandResult>> {
-  const results: Record<string, CommandResult> = {};
-  for (const command of commands) {
-    results[command] = await runCommand(command, workspace);
-  }
-  return results;
-}
-
 async function hashArtifacts(root: string, paths: readonly string[]): Promise<Record<string, string>> {
   const output: Record<string, string> = {};
   for (const path of paths) {
@@ -77,15 +39,16 @@ async function hashArtifacts(root: string, paths: readonly string[]): Promise<Re
 export async function runBaseline(input: RunBaselineInput): Promise<RunManifest> {
   const runRoot = resolve(input.runRoot);
   await mkdir(join(runRoot, "trajectories"), { recursive: true });
-  const loadedCase = await loadPublicCase(input.caseDir);
-  const workspace = await copyCaseWorkspace(input.caseDir, join(runRoot, "workspace"));
-  const before = await snapshotTree(workspace);
-  await writeJson(join(runRoot, "before-tree.json"), before);
+  const loadedCase = await loadPublicCaseV4(input.caseDir);
+  const agentWorkspace = await copyCaseWorkspaceV4(
+    input.caseDir,
+    join(runRoot, "agent-workspace"),
+  );
 
-  const outputSchemaPath = resolve("schemas", "baseline-result.schema.json");
+  const outputSchemaPath = resolve("schemas", "decision-package.schema.json");
   const outputContract = await readFile(outputSchemaPath, "utf8");
   const agentVisibleWorkspace = await readAgentVisibleSnapshot(
-    workspace,
+    agentWorkspace,
     loadedCase.manifest.agentVisibleFiles,
   );
   const prompt = await loadPrompt("baseline", {
@@ -111,62 +74,21 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     runId,
     role: "baseline",
     caseId: loadedCase.manifest.id,
-    workspace,
+    workspace: agentWorkspace,
     prompt,
     outputSchemaPath,
     model: input.model,
     timeoutMs: input.timeoutMs,
     trajectoryPath,
-    parse: (value) => BaselineResultSchema.parse(value),
+    parse: (value) => DecisionPackageSchema.parse(value),
   });
-  await writeJson(join(runRoot, "baseline-result.json"), agent.output);
-  const proposal = MaintainerProposalSchema.parse({
-    schemaVersion: agent.output.schemaVersion,
-    caseId: agent.output.caseId,
-    action: agent.output.action,
-    firstMaterialDivergence: agent.output.firstMaterialDivergence,
-    failureOwner: agent.output.failureOwner,
-    evidenceUsed: agent.output.evidenceUsed,
-    evidenceRejected: agent.output.evidenceRejected,
-    affectedEntities: agent.output.affectedEntities,
-    affectedFiles: agent.output.affectedFiles,
-    operations: agent.output.operations,
-    preservedInvariants: agent.output.preservedInvariants,
-    unresolvedUncertainty: agent.output.unresolvedUncertainty,
-    minimumInformationRequest: agent.output.minimumInformationRequest,
-    retryCondition: agent.output.retryCondition,
-    approvalLevel: agent.output.approvalLevel,
-    summary: agent.output.summary,
-  });
-  await applyOperations(workspace, proposal.operations);
-  const commandResults = await runRequiredCommands(workspace, loadedCase.manifest.requiredCommands);
-  await writeJson(join(runRoot, "command-results.json"), commandResults);
-  const after = await snapshotTree(workspace);
-  await writeJson(join(runRoot, "after-tree.json"), after);
-
-  const oracle = await loadOracle(input.caseDir);
-  const evaluatorVerdict: ChallengerVerdict = {
-    schemaVersion: 1,
-    caseId: loadedCase.manifest.id,
-    verdict: oracle.requiredChallengerVerdict,
-    evidenceIds: oracle.requiredEvidenceIds,
-    violations: [],
-    residualRisks: [],
-    summary: "Evaluator-only adjudication used after the direct-agent session completed.",
-  };
-  const gate = await runDeterministicGate({
-    loadedCase,
-    oracle,
-    workspace,
-    before,
-    after,
-    proposal,
-    challenger: evaluatorVerdict,
-    commandResults,
+  const { gate } = await finalizeDecision({
+    caseDir: input.caseDir,
+    runRoot,
+    package: agent.output,
     submissionMode: true,
     liveWriteAttempted: false,
   });
-  await writeJson(join(runRoot, "gate.json"), gate);
   const approval = recordApproval({
     caseId: loadedCase.manifest.id,
     requested: input.approve,
@@ -176,7 +98,7 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
 
   const finishedAt = new Date().toISOString();
   const artifactPaths = [
-    "baseline-result.json",
+    "final-decision.json",
     "before-tree.json",
     "after-tree.json",
     "command-results.json",
@@ -184,8 +106,25 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     "approval.json",
     "trajectories/baseline.jsonl",
   ];
+  const proxyLedgerPaths = agent.proxyLedgerPath
+    ? [relative(runRoot, agent.proxyLedgerPath).replaceAll("\\", "/")]
+    : [];
+  artifactPaths.push(...proxyLedgerPaths);
+  const usageAccounting = agent.proxyRequestUsageCoverage
+    ? buildTokenUsageAccounting([{
+        role: "baseline",
+        usage: agent.tokenUsage,
+        source: agent.tokenUsageSource,
+        trajectoryPath: relative(runRoot, trajectoryPath).replaceAll("\\", "/"),
+        proxyLedgerPath: agent.proxyLedgerPath
+          ? relative(runRoot, agent.proxyLedgerPath).replaceAll("\\", "/")
+          : undefined,
+        trajectoryAggregateCaptured: agent.trajectoryAggregateCaptured ?? false,
+        proxyRequestCoverage: agent.proxyRequestUsageCoverage,
+      }])
+    : null;
   const manifest = RunManifestSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     projectId: PROJECT_ID,
     runId,
     caseId: loadedCase.manifest.id,
@@ -200,9 +139,12 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     outputSchemaSha256: sha256Text(outputContract),
     caseSetSha256: sha256Json({ caseId: loadedCase.manifest.id, workspaceHash: loadedCase.workspaceHash }),
     trajectoryPaths: [relative(runRoot, trajectoryPath).replaceAll("\\", "/")],
+    proxyLedgerPaths,
     artifactSha256: await hashArtifacts(runRoot, artifactPaths),
-    tokenUsage: agent.tokenUsage
-      ? { input: agent.tokenUsage.input, cachedInput: 0, output: agent.tokenUsage.output }
+    tokenUsage: usageAccounting?.tokenUsage ?? null,
+    tokenUsageAccounting: usageAccounting?.tokenUsageAccounting ?? null,
+    runtimeImages: agent.runtimeImageId
+      ? [{ role: "baseline", imageId: agent.runtimeImageId.replace(/^sha256:/, "") }]
       : null,
     outcome: gate.status,
   });

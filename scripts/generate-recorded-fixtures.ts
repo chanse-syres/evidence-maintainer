@@ -2,11 +2,12 @@ import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadOracle, loadPublicCase } from "../src/core/case-loader.ts";
-import type {
-  BaselineResult,
-  ChallengerVerdict,
-  MaintainerProposal,
-  MutationOperation,
+import {
+  MaintainerProposalSchema,
+  type BaselineResult,
+  type ChallengerVerdict,
+  type MaintainerProposal,
+  type MutationOperation,
 } from "../src/core/schemas.ts";
 
 const CORE_CASE_IDS = [
@@ -45,8 +46,28 @@ const adapterRepairs: Record<string, MutationOperation> = {
   "repair-pagination": {
     kind: "REPLACE_TEXT",
     file: "adapter.ts",
-    find: `export function collectPages(loadPage: (address: string) => Page, start: string): string[] {\n  const records: string[] = [];\n  let page = Number(start);\n  while (Number.isInteger(page) && page <= 3) {\n    records.push(...loadPage(String(page)).records);\n    page += 1;\n  }\n  return records;\n}`,
-    replace: `export function collectPages(loadPage: (address: string) => Page, start: string): string[] {\n  const records: string[] = [];\n  const seen = new Set<string>();\n  let address: string | null = start;\n  while (address !== null) {\n    if (seen.has(address)) throw new Error(\"Pagination cycle detected\");\n    seen.add(address);\n    const page = loadPage(address);\n    records.push(...page.records);\n    address = page.nextPage;\n  }\n  return [...new Set(records)];\n}`,
+    find: `export function collectPages(loadPage: (address: string) => Page, start: string): string[] {
+  const records: string[] = [];
+  let page = Number(start);
+  while (Number.isInteger(page) && page <= 3) {
+    records.push(...loadPage(String(page)).records);
+    page += 1;
+  }
+  return records;
+}`,
+    replace: `export function collectPages(loadPage: (address: string) => Page, start: string): string[] {
+  const records: string[] = [];
+  const seen = new Set<string>();
+  let address: string | null = start;
+  while (address !== null) {
+    if (seen.has(address)) throw new Error("Pagination cycle detected");
+    seen.add(address);
+    const page = loadPage(address);
+    records.push(...page.records);
+    address = page.nextPage;
+  }
+  return [...new Set(records)];
+}`,
     expectedCount: 1,
   },
 };
@@ -63,119 +84,94 @@ function assignments(fields: Record<string, unknown>): Array<{
   });
 }
 
+function asBaseline(proposal: MaintainerProposal): BaselineResult {
+  return { ...proposal, arm: "baseline", executedCommands: [] };
+}
+
+function asNoAction(proposal: MaintainerProposal, summary: string): MaintainerProposal {
+  return MaintainerProposalSchema.parse({
+    ...proposal,
+    action: "NO_ACTION",
+    operations: [],
+    reviewRequest: null,
+    retryPlan: null,
+    affectedFiles: [],
+    summary,
+  });
+}
+
+function asUpdate(
+  proposal: MaintainerProposal,
+  operations: MutationOperation[],
+  summary: string,
+): MaintainerProposal {
+  return MaintainerProposalSchema.parse({
+    ...proposal,
+    action: "UPDATE_DATA",
+    operations,
+    reviewRequest: null,
+    retryPlan: null,
+    affectedFiles: ["input/canonical.json"],
+    summary,
+  });
+}
+
 function directBaseline(caseId: string, correct: MaintainerProposal): BaselineResult {
-  const baseline: BaselineResult = { ...correct, arm: "baseline", executedCommands: [] };
   if (caseId === "update-official-commitment" || caseId === "noop-duplicate-news") {
-    return baseline;
+    return asBaseline(correct);
   }
   if (caseId === "update-transfer-destination") {
-    return {
-      ...baseline,
-      evidenceUsed: ["obs-transfer-rumor"],
+    return asBaseline(MaintainerProposalSchema.parse({
+      ...correct,
+      evidenceAssessments: [{ evidenceId: "obs-transfer-rumor", factPath: "$", disposition: "SUPPORT", reason: "The report is treated as decisive." }],
       operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-21", assignments: assignments({ destination: "Lakeside", status: "transferred" }) }],
-      summary: "The latest reported destination is applied directly.",
-    };
+      summary: "The reported destination is applied directly.",
+    }));
   }
   if (caseId === "update-authoritative-rating") {
-    return {
-      ...baseline,
+    return asBaseline(MaintainerProposalSchema.parse({
+      ...correct,
       operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-31", assignments: assignments({ rating: 93, ratingAsOf: "2026-08-25T17:30:00.000Z", otherProviderRating: 93 }) }],
-      summary: "The newest rating is copied into both visible rating fields.",
-    };
+      summary: "The newest rating is copied into both provider fields.",
+    }));
   }
   if (caseId === "repair-selector-drift") {
-    return {
-      ...baseline,
+    return asBaseline(MaintainerProposalSchema.parse({
+      ...correct,
       operations: [{ kind: "REPLACE_TEXT", file: "adapter.ts", find: "player-card", replace: "roster-person", expectedCount: 1 }],
       summary: "The old presentation class is replaced with the new class.",
-    };
+    }));
   }
   if (caseId === "repair-json-nesting") {
-    return {
-      ...baseline,
+    return asBaseline(MaintainerProposalSchema.parse({
+      ...correct,
       operations: [{ kind: "REPLACE_TEXT", file: "adapter.ts", find: ".players ?? []", replace: ".data?.roster ?? []", expectedCount: 1 }],
       summary: "The old path is replaced by the newly observed path.",
-    };
+    }));
   }
   if (caseId === "repair-pagination") {
-    return {
-      ...baseline,
+    return asBaseline(MaintainerProposalSchema.parse({
+      ...correct,
       operations: [{ kind: "REPLACE_TEXT", file: "adapter.ts", find: "page <= 3", replace: "page <= 10", expectedCount: 1 }],
       summary: "The numeric page bound is expanded.",
-    };
+    }));
   }
   if (caseId.startsWith("retry-")) {
-    return {
-      ...baseline,
-      action: "NO_ACTION",
-      retryCondition: null,
-      summary: "The cached result is retained without a specific retry plan.",
-    };
+    return asBaseline(asNoAction(correct, "The cache is retained without a bounded retry plan."));
   }
   if (caseId === "noop-newer-publication-stale-effective") {
-    return {
-      ...baseline,
-      action: "UPDATE_DATA",
-      affectedFiles: ["input/canonical.json"],
-      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-51", assignments: assignments({ status: "offered" }) }],
-      summary: "The newest publication is treated as current state.",
-    };
+    return asBaseline(asUpdate(correct, [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-51", assignments: assignments({ status: "offered" }) }], "The newest publication is treated as current state."));
   }
   if (caseId === "review-conflicting-authorities") {
-    return {
-      ...baseline,
-      action: "UPDATE_DATA",
-      affectedFiles: ["input/canonical.json"],
-      operations: [{
-        kind: "SET_RECORD_FIELDS",
-        file: "input/canonical.json",
-        recordId: "athlete-71",
-        assignments: assignments({ status: "withdrawn" }),
-      }],
-      minimumInformationRequest: [],
-      approvalLevel: "SIMULATED_HUMAN",
-      summary: "One official observation is selected despite an unresolved co-authoritative conflict.",
-    };
+    return asBaseline(asUpdate(correct, [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-71", assignments: assignments({ status: "withdrawn" }) }], "One co-authoritative observation is selected without resolution."));
   }
   if (caseId === "review-name-collision") {
-    return {
-      ...baseline,
-      action: "UPDATE_DATA",
-      affectedFiles: ["input/canonical.json"],
-      operations: [{
-        kind: "SET_RECORD_FIELDS",
-        file: "input/canonical.json",
-        recordId: "person-81",
-        assignments: assignments({ award: "Regional Scholar" }),
-      }],
-      minimumInformationRequest: [],
-      approvalLevel: "SIMULATED_HUMAN",
-      summary: "The first normalized-name match is updated without a stable identity key.",
-    };
+    return asBaseline(asUpdate(correct, [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "person-81", assignments: assignments({ award: "Regional Scholar" }) }], "The first normalized-name match is updated."));
   }
   if (caseId === "review-reintroduced-identity") {
-    return {
-      ...baseline,
-      action: "UPDATE_DATA",
-      affectedFiles: ["input/canonical.json"],
-      operations: [{
-        kind: "SET_RECORD_FIELDS",
-        file: "input/canonical.json",
-        recordId: "occurrence-91",
-        assignments: assignments({ status: "active", closedAt: null }),
-      }],
-      minimumInformationRequest: [],
-      approvalLevel: "SIMULATED_HUMAN",
-      summary: "A same-name, same-slot observation is treated as continuity with the closed occurrence.",
-    };
+    return asBaseline(asUpdate(correct, [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "occurrence-91", assignments: assignments({ status: "active", closedAt: null }) }], "Name and slot are treated as identity continuity."));
   }
-  return {
-    ...baseline,
-    action: "UPDATE_DATA",
-    affectedFiles: ["input/canonical.json"],
-    operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-61", assignments: assignments({ status: "removed" }) }],
-    summary: "An absent athlete is removed from canonical state.",
-  };
+  return asBaseline(asUpdate(correct, [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-61", assignments: assignments({ status: "removed" }) }], "Filtered absence is treated as removal."));
 }
 
 async function correctProposal(caseId: string): Promise<MaintainerProposal> {
@@ -193,40 +189,32 @@ async function correctProposal(caseId: string): Promise<MaintainerProposal> {
   } else if (oracle.expectedAction === "REPAIR_ADAPTER") {
     operations = [adapterRepairs[caseId]];
   }
-  const affectedEntities = [
-    ...new Set([
-      ...oracle.expectedRecords.map((record) => record.recordId),
-      ...loaded.observations.map((entry) => entry.subjectId).filter((value): value is string => Boolean(value)),
-    ]),
-  ];
-  return {
-    schemaVersion: 1,
+  const affectedEntities = [...new Set([
+    ...oracle.expectedRecords.map((record) => record.recordId),
+    ...loaded.observations.map((entry) => entry.subjectId).filter((value): value is string => Boolean(value)),
+  ])];
+  const common = {
+    schemaVersion: 2 as const,
     caseId,
-    action: oracle.expectedAction,
-    firstMaterialDivergence: `The first material divergence is established by ${oracle.requiredEvidenceIds.join(", ")}.`,
-    failureOwner: oracle.expectedAction === "REPAIR_ADAPTER"
-      ? "source-adapter"
-      : oracle.expectedAction === "UPDATE_DATA"
-        ? "canonical-data"
-        : "source-observation",
-    evidenceUsed: oracle.requiredEvidenceIds,
-    evidenceRejected: loaded.observations.map((entry) => entry.id).filter((id) => !oracle.requiredEvidenceIds.includes(id)),
+    firstMaterialDivergence: `The first material divergence is established by ${[...new Set(oracle.evidenceAssessmentBundles[0].map((entry) => entry.evidenceId))].join(", ")}.`,
+    failureOwner: oracle.expectedAction === "REPAIR_ADAPTER" ? "source-adapter" : oracle.expectedAction === "UPDATE_DATA" ? "canonical-data" : "source-observation",
+    evidenceAssessments: oracle.evidenceAssessmentBundles[0],
     affectedEntities,
     affectedFiles: oracle.allowedChangedFiles,
-    operations,
     preservedInvariants: loaded.policy.invariants,
-    unresolvedUncertainty: oracle.expectedAction === "HUMAN_REVIEW"
-      ? ["The available evidence cannot establish a unique authoritative identity or state transition."]
-      : [],
-    minimumInformationRequest: oracle.requiredMinimumInformation,
-    retryCondition: oracle.requiredRetryConditionIncludes.length > 0
-      ? `Retry after ${oracle.requiredRetryConditionIncludes.join(" while retaining ")}.`
-      : null,
-    approvalLevel: oracle.expectedAction === "HUMAN_REVIEW" ? "NONE" : "SIMULATED_HUMAN",
-    summary: oracle.expectedAction === "HUMAN_REVIEW"
-      ? "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
-      : `Evidence supports ${oracle.expectedAction} while preserving declared invariants.`,
+    unresolvedUncertainty: oracle.expectedAction === "HUMAN_REVIEW" ? ["The evidence does not yet establish the resolving fact."] : [],
+    summary: oracle.expectedAction === "HUMAN_REVIEW" ? "The exact resolving information is requested before mutation." : `Evidence supports ${oracle.expectedAction} while preserving declared invariants.`,
   };
+  if (oracle.expectedAction === "UPDATE_DATA" || oracle.expectedAction === "REPAIR_ADAPTER") {
+    return MaintainerProposalSchema.parse({ ...common, action: oracle.expectedAction, operations, reviewRequest: null, retryPlan: null });
+  }
+  if (oracle.expectedAction === "RETRY_LATER") {
+    return MaintainerProposalSchema.parse({ ...common, action: "RETRY_LATER", operations: [], reviewRequest: null, retryPlan: oracle.expectedRetryPlan });
+  }
+  if (oracle.expectedAction === "HUMAN_REVIEW") {
+    return MaintainerProposalSchema.parse({ ...common, action: "HUMAN_REVIEW", operations: [], reviewRequest: oracle.acceptableReviewRequests[0], retryPlan: null });
+  }
+  return MaintainerProposalSchema.parse({ ...common, action: "NO_ACTION", operations: [], reviewRequest: null, retryPlan: null });
 }
 
 export async function generateRecordedFixtures(
@@ -240,7 +228,7 @@ export async function generateRecordedFixtures(
       schemaVersion: 1,
       caseId,
       verdict: oracle.requiredChallengerVerdict,
-      evidenceIds: oracle.requiredEvidenceIds,
+      evidenceIds: oracle.requiredChallengerEvidenceIds,
       violations: [],
       residualRisks: [],
       summary: "The evidence, candidate artifact, and preserved invariants support the adjudicated result.",

@@ -1,14 +1,33 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "noop-filtered-removal",
   "expectedAction": "NO_ACTION",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-filtered-quarterbacks",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-filtered-quarterbacks",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-filtered-quarterbacks"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

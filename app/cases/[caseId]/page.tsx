@@ -1,21 +1,30 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { resolve } from "node:path";
 import { loadOverviewModel } from "../../../src/ui/overview-model.ts";
 import { loadCaseModel } from "../../../src/ui/case-model.ts";
-
-const evaluationRoot = resolve(process.cwd(), "artifacts/evaluation/recorded-all");
+import { loadPublicComparisonSelection } from "../../../src/ui/public-comparison.ts";
 
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const overview = await loadOverviewModel(evaluationRoot);
-  return overview.cases.map(({ caseId }) => ({ caseId }));
+  const selection = await loadPublicComparisonSelection();
+  if (selection.state === "pending") return [];
+  const overview = await loadOverviewModel(selection.evaluationRoot);
+  return overview.cases
+    .filter(({ detailRunPath }) => detailRunPath !== null)
+    .map(({ caseId }) => ({ caseId }));
 }
 
 export default async function CasePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = await params;
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(caseId)) throw new Error("Invalid case ID");
-  const runDir = resolve(evaluationRoot, "runs", caseId, "trial-1", "advanced");
+  const selection = await loadPublicComparisonSelection();
+  if (selection.state === "pending") notFound();
+  const overview = await loadOverviewModel(selection.evaluationRoot);
+  const selectedCase = overview.cases.find((item) => item.caseId === caseId);
+  if (!selectedCase?.detailRunPath) notFound();
+  const runDir = resolve(selection.evaluationRoot, ...selectedCase.detailRunPath.split("/"));
   const detail = await loadCaseModel(runDir);
   const changed = [
     ...detail.diff.added.map((path) => ({ kind: "added", path })),
@@ -46,19 +55,19 @@ export default async function CasePage({ params }: { params: Promise<{ caseId: s
         </article>
 
         <article className="evidence-card">
-          <div className="card-heading"><div><span className="step-number">02</span><h2>Maintainer proposal</h2></div><span className={`action-badge tone-${detail.actionBadge.tone}`}>{detail.actionBadge.label}</span></div>
-          <p className="lead-text">{detail.proposal.firstMaterialDivergence}</p>
-          <dl className="fact-list"><div><dt>Failure owner</dt><dd>{detail.proposal.failureOwner}</dd></div><div><dt>Evidence used</dt><dd>{detail.proposal.evidenceUsed.join(", ")}</dd></div><div><dt>Preserved invariants</dt><dd>{detail.proposal.preservedInvariants.join(" · ")}</dd></div></dl>
+          <div className="card-heading"><div><span className="step-number">02</span><h2>Final decision</h2></div><span className={`action-badge tone-${detail.actionBadge.tone}`}>{detail.actionBadge.label}</span></div>
+          <p className="lead-text">{detail.decision.summary}</p>
+          <dl className="fact-list"><div><dt>Failure owner</dt><dd>{detail.decision.failureOwner}</dd></div><div><dt>Evidence used</dt><dd>{detail.decision.evidenceAssessments.map((assessment) => `${assessment.evidenceId}:${assessment.factPath}`).join(", ")}</dd></div><div><dt>Affected entities</dt><dd>{detail.decision.affectedEntities.length ? detail.decision.affectedEntities.join(" · ") : "None"}</dd></div></dl>
         </article>
 
         <article className="evidence-card">
-          <div className="card-heading"><div><span className="step-number">03</span><h2>Challenger verdict</h2></div><span className={`verdict verdict-${detail.challenger.verdict.toLowerCase()}`}>{detail.challenger.verdict}</span></div>
-          <p className="lead-text">{detail.challenger.summary}</p>
-          <dl className="fact-list"><div><dt>Evidence checked</dt><dd>{detail.challenger.evidenceIds.join(", ")}</dd></div><div><dt>Residual risk</dt><dd>{detail.residualRisks.length ? detail.residualRisks.join(" · ") : "None identified"}</dd></div></dl>
+          <div className="card-heading"><div><span className="step-number">03</span><h2>Decision basis</h2></div><span>Final package</span></div>
+          <p className="lead-text">{detail.decision.firstMaterialDivergence}</p>
+          <dl className="fact-list"><div><dt>Preserved invariants</dt><dd>{detail.decision.preservedInvariants.join(" · ")}</dd></div><div><dt>Unresolved uncertainty</dt><dd>{detail.decision.unresolvedUncertainty.length ? detail.decision.unresolvedUncertainty.join(" · ") : "None declared"}</dd></div><div><dt>Affected files</dt><dd>{detail.decision.affectedFiles.length ? detail.decision.affectedFiles.join(" · ") : "None"}</dd></div></dl>
         </article>
 
         <article className="evidence-card detail-wide">
-          <div className="card-heading"><div><span className="step-number">04</span><h2>Deterministic gate</h2></div><span className={`gate-status gate-${detail.gateStatus.toLowerCase()}`}>{detail.gateStatus}</span></div>
+          <div className="card-heading"><div><span className="step-number">04</span><h2>Decision integrity checks</h2></div><span className={`gate-status gate-${detail.gateStatus.toLowerCase()}`}>{detail.gateStatus}</span></div>
           <div className="check-grid">{detail.checks.map((check) => <div className={`check-card ${check.passed ? "check-pass" : "check-fail"}`} key={check.id}><span>{check.passed ? "✓" : "×"}</span><div><b>{check.id}</b><p>{check.summary}</p></div></div>)}</div>
         </article>
 
@@ -68,7 +77,7 @@ export default async function CasePage({ params }: { params: Promise<{ caseId: s
         </article>
 
         <article className="evidence-card approval-card">
-          <div className="card-heading"><div><span className="step-number">06</span><h2>Approval</h2></div><span className={`approval approval-${detail.approval.decision.toLowerCase()}`}>{detail.approval.decision}</span></div>
+          <div className="card-heading"><div><span className="step-number">06</span><h2>Recorded eligibility</h2></div><span className={`approval approval-${detail.approval.decision.toLowerCase()}`}>{detail.approval.decision}</span></div>
           <p className="lead-text">{detail.approval.reason}</p>
           <a className="primary-action full-action" href={detail.reportPath} download>Download signed decision record <span aria-hidden="true">↓</span></a>
         </article>

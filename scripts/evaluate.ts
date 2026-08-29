@@ -3,12 +3,14 @@ import { pathToFileURL } from "node:url";
 import { resolveCaseSelection, runEvaluation } from "../src/evaluation/run-evaluation.ts";
 
 interface EvaluateOptions {
+  caseRoot: string;
   cases: string;
   trials: number;
   mode: "live" | "recorded";
   model: string;
   timeoutMs: number;
   out: string;
+  lock?: string;
 }
 
 export function parseEvaluateArgs(args: string[]): EvaluateOptions {
@@ -20,7 +22,7 @@ export function parseEvaluateArgs(args: string[]): EvaluateOptions {
       throw new Error(`Invalid evaluation argument near ${name ?? "end"}`);
     }
     const key = name.slice(2);
-    if (!["cases", "trials", "mode", "model", "timeout-ms", "out"].includes(key)) {
+    if (!["case-root", "cases", "trials", "mode", "model", "timeout-ms", "out", "lock"].includes(key)) {
       throw new Error(`Unknown argument: ${name}`);
     }
     values[key] = value;
@@ -34,24 +36,28 @@ export function parseEvaluateArgs(args: string[]): EvaluateOptions {
   if (!Number.isInteger(trials) || trials <= 0) throw new Error("--trials must be a positive integer");
   if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) throw new Error("--timeout-ms must be a positive integer");
   return {
+    caseRoot: values["case-root"] ?? "cases",
     cases: values.cases,
     trials,
     mode: values.mode as EvaluateOptions["mode"],
     model: values.model ?? "recorded-fixture",
     timeoutMs,
     out: values.out,
+    ...(values.lock ? { lock: values.lock } : {}),
   };
 }
 
 export async function evaluateCli(args: string[]): Promise<void> {
   const options = parseEvaluateArgs(args);
   const summary = await runEvaluation({
-    caseIds: await resolveCaseSelection(options.cases),
+    caseIds: await resolveCaseSelection(options.cases, options.caseRoot),
     trials: options.trials,
     mode: options.mode,
     model: options.model,
     timeoutMs: options.timeoutMs,
     outDir: resolve(options.out),
+    caseRoot: resolve(options.caseRoot),
+    ...(options.lock ? { lockPath: resolve(options.lock) } : {}),
   });
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
 }

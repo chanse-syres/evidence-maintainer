@@ -1,0 +1,14 @@
+[
+  {
+    "label": "initial",
+    "summarySha256": "a3b97b45ff401845e7222bd307385826bdb11a8ec5a6224a6313a869c7a79c8a",
+    "trialOffset": 0,
+    "sourceTrialsPerCase": 1
+  },
+  {
+    "label": "repeat",
+    "summarySha256": "30e99c5aaeb9f9f16ff3acd7d9c5f04f90f23a858b866eeb70500dc81ee47512",
+    "trialOffset": 1,
+    "sourceTrialsPerCase": 2
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "obs-approved-stage-feet",
+    "sourceId": "official-river-gauge",
+    "observedAt": "2026-08-28T15:02:00.000Z",
+    "effectiveAt": "2026-08-28T15:00:00.000Z",
+    "authorityScope": [
+      "stage-height",
+      "stage-measurement-time"
+    ],
+    "subjectId": "gauge-1042",
+    "kind": "approved-reading",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "gauge-reading-feet-v1",
+    "facts": {
+      "stageValue": 12.5,
+      "stageUnit": "ft",
+      "qualityCode": "approved"
+    }
+  }
+]

@@ -3,18 +3,17 @@ import { join } from "node:path";
 import { z } from "zod";
 import {
   CaseManifestSchema,
-  ChallengerVerdictSchema,
   CheckResultSchema,
+  DecisionPackageSchema,
   EvidenceEventSchema,
-  MaintainerProposalSchema,
   RunManifestSchema,
   type CaseManifest,
-  type ChallengerVerdict,
   type CheckResult,
+  type DecisionPackage,
   type EvidenceEvent,
-  type MaintainerProposal,
   type RunManifest,
 } from "../core/schemas.ts";
+import { diffTrees, type TreeSnapshot } from "../core/tree-snapshot.ts";
 
 const TreeDiffSchema = z.object({
   added: z.array(z.string()),
@@ -27,6 +26,15 @@ const GateSchema = z.object({
   checks: z.array(CheckResultSchema),
   changedFiles: z.array(z.string()),
   diff: TreeDiffSchema,
+}).strict();
+
+const TreeSnapshotSchema = z.object({
+  files: z.array(z.object({
+    path: z.string().min(1),
+    sha256: z.string().regex(/^[a-f0-9]{64}$/),
+    bytes: z.number().int().nonnegative(),
+  }).strict()),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
 }).strict();
 
 const ApprovalSchema = z.object({
@@ -48,9 +56,10 @@ export interface RunArtifacts {
   manifest: RunManifest;
   caseManifest: CaseManifest;
   evidence: EvidenceEvent[];
-  proposal: MaintainerProposal;
-  challenger: ChallengerVerdict;
+  decision: DecisionPackage;
   gate: GateArtifact;
+  beforeTree: TreeSnapshot;
+  afterTree: TreeSnapshot;
   diff: TreeDiff;
   approval: ApprovalArtifact;
 }
@@ -117,27 +126,59 @@ async function requiredJsonLines<T>(
   });
 }
 
+async function optionalJsonLines<T>(
+  runDir: string,
+  relativePath: string,
+  schema: z.ZodType<T>,
+): Promise<T[]> {
+  try {
+    return await requiredJsonLines(runDir, relativePath, schema);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === `Missing required artifact ${join(runDir, relativePath)}`
+    ) {
+      return [];
+    }
+    throw error;
+  }
+}
+
 export async function loadRunArtifacts(runDir: string): Promise<RunArtifacts> {
-  const [manifest, caseManifest, evidence, proposal, challenger, gate, diff, approval] =
+  const manifest = await requiredJson(runDir, "manifest.json", RunManifestSchema);
+  const [caseManifest, evidence, decision, gate, beforeTree, afterTree, approval] =
     await Promise.all([
-      requiredJson(runDir, "manifest.json", RunManifestSchema),
       requiredJson(runDir, "workspace/case.json", CaseManifestSchema),
-      requiredJsonLines(runDir, "evidence.jsonl", EvidenceEventSchema),
-      requiredJson(runDir, "maintainer-proposal.json", MaintainerProposalSchema),
-      requiredJson(runDir, "challenger-verdict.json", ChallengerVerdictSchema),
+      manifest.arm === "advanced"
+        ? requiredJsonLines(runDir, "evidence.jsonl", EvidenceEventSchema)
+        : optionalJsonLines(runDir, "evidence.jsonl", EvidenceEventSchema),
+      requiredJson(runDir, "final-decision.json", DecisionPackageSchema),
       requiredJson(runDir, "gate.json", GateSchema),
-      requiredJson(runDir, "candidate-diff.json", TreeDiffSchema),
+      requiredJson(runDir, "before-tree.json", TreeSnapshotSchema),
+      requiredJson(runDir, "after-tree.json", TreeSnapshotSchema),
       requiredJson(runDir, "approval.json", ApprovalSchema),
     ]);
+  if (
+    manifest.caseId !== caseManifest.id ||
+    manifest.caseId !== decision.caseId ||
+    manifest.caseId !== approval.caseId
+  ) {
+    throw new Error(`Run artifact case IDs do not agree in ${runDir}`);
+  }
+  const diff = diffTrees(beforeTree, afterTree);
+  if (JSON.stringify(diff) !== JSON.stringify(gate.diff)) {
+    throw new Error(`Gate diff does not match the before/after snapshots in ${runDir}`);
+  }
 
   return {
     runDir,
     manifest,
     caseManifest,
     evidence: [...evidence].sort((left, right) => left.seq - right.seq),
-    proposal,
-    challenger,
+    decision,
     gate,
+    beforeTree,
+    afterTree,
     diff,
     approval,
   };

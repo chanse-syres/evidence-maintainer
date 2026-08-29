@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 2,
+  "status": "FROZEN_BEFORE_MODEL_EXECUTION",
+  "frozenAt": "2026-08-29T08:20:28.594Z",
+  "freezeTag": "holdout-freeze-v2",
+  "systemFreezeCommit": "8fbdfb94c237a7634b091332d3dcfbd9ed10b8c7",
+  "holdoutDefinitionCommit": "8fbdfb94c237a7634b091332d3dcfbd9ed10b8c7",
+  "evaluationHarnessCommit": "8fbdfb94c237a7634b091332d3dcfbd9ed10b8c7",
+  "holdoutTreeHash": "5a8266a288c60683811807798d13b9dd33e5bd98ae19b7335852b769c39b9fd3",
+  "model": "gpt-5.6-terra",
+  "mode": "live",
+  "trialsPerCase": 3,
+  "timeoutMs": 1200000,
+  "caseRoot": "holdout/cases",
+  "caseSetHash": "f826ca019e1fb98e61411cf89df6ec4326af69e95a9ec8ffa4b9f04a08139085",
+  "caseDefinitionSetHash": "2463ab7bb305ff46ac59b654b621b622a67a6291e30e47ea6ea74e9df340aeea",
+  "cases": [
+    {
+      "caseId": "noop-superseded-amendment",
+      "workspaceHash": "cad50ae96975155ec307d3d2230bc38671032c1d57c24397fadf627d6fb33ced"
+    },
+    {
+      "caseId": "repair-offset-transition",
+      "workspaceHash": "1d4bfe377c174b139e0c47c5798fe56ff3886865509db786c897fc05c1e4a6b9"
+    },
+    {
+      "caseId": "retry-release-generation-skew",
+      "workspaceHash": "c7ea1748fae3eb5a14acbe3d5c6af265182b799da5ebea8bc145d479a9f93784"
+    },
+    {
+      "caseId": "review-unknown-coordinate-reference",
+      "workspaceHash": "346addb2daf242ea74dcfc8bce2f64d91e4587dc9ee0e8fe493375d2cf233dfc"
+    },
+    {
+      "caseId": "update-gauge-unit-normalization",
+      "workspaceHash": "fd86d3cce55d42223ffe337e0637827b955434acbcd1ba371075ad1025f98d5a"
+    }
+  ],
+  "caseDefinitions": [
+    {
+      "caseId": "noop-superseded-amendment",
+      "sha256": "870ee1b19f4734416cee43c65f0301b2273437162d92fd4e4fd4b037e8ea9213"
+    },
+    {
+      "caseId": "repair-offset-transition",
+      "sha256": "ebc8283b025e3f8665199adc87f960b9fae650dddd0e3c91b23bd7f44c812203"
+    },
+    {
+      "caseId": "retry-release-generation-skew",
+      "sha256": "c06f322b8d6f8f2c011d790bab1767d063269a6b1c8c5d2629ea95777d6b5185"
+    },
+    {
+      "caseId": "review-unknown-coordinate-reference",
+      "sha256": "1742fe0ab892c9027896d2a486cae49af0978af50c840a2b3b13b343c8ed233b"
+    },
+    {
+      "caseId": "update-gauge-unit-normalization",
+      "sha256": "679e50e4fab10e12f13043f34cd9de2c72183d456e014e397d528df397683ab5"
+    }
+  ],
+  "contracts": {
+    "prompts/baseline.md": "6165ad0ec3ad104334f30ce39056673509e31ae70f5d0d82aa2a58dde20e2210",
+    "prompts/maintainer.md": "4e0a88720665e07063ecb87b17d75d6c945b05c4868112b190a95b7fa147a6f2",
+    "prompts/challenger.md": "82dc2c1dd70da548f14c65c348431b52f916a80d01b3672c876d5e8dc9d0ede4",
+    "schemas/baseline-result.schema.json": "0ae021d351b4eb18c9493dace28d75fc5e7562e1e95409d88e0298cda2dc1332",
+    "schemas/maintainer-proposal.schema.json": "e90bb4cb16025ba21b22bf84813ade3dfe4193e2379b353b41dd419dc87dc3a2",
+    "schemas/challenger-verdict.schema.json": "c7410a445bc6409a0386650aff066da69c4f3e0fa37d00455d1eae1102425325"
+  },
+  "metricVersion": "safe-decision-rate-v3-evidence-assessment",
+  "errorPolicy": {
+    "typedModelExecutionFailure": "Count as an unsafe workflow run and preserve any available usage evidence.",
+    "infrastructureOrEvaluatorFailure": "Abort the campaign; never relabel it as a model failure.",
+    "missingOrCorruptRunArtifact": "Abort aggregation as evidence corruption."
+  },
+  "statisticsPolicy": "Report this five-case holdout as descriptive evidence with three repeated runs per arm. One case per action does not support a population-generalization claim.",
+  "protocol": [
+    "Run all five cases and all three trials without inspecting intermediate results.",
+    "Do not change prompts, schemas, routing, cases, container inputs, proxy code, or workflow code after this freeze.",
+    "Keep model-caused failures separate from infrastructure and evaluator failures.",
+    "Report holdout results separately from the 15-case development benchmark."
+  ]
+}

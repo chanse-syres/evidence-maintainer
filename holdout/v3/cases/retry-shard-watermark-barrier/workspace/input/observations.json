@@ -1,0 +1,61 @@
+[
+  {
+    "id": "obs-index-manifest-205",
+    "sourceId": "official-index-manifest",
+    "observedAt": "2026-08-28T17:02:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "index-generation",
+      "shard-watermarks"
+    ],
+    "subjectId": "search-index",
+    "kind": "signed-manifest",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "index-manifest-v5",
+    "facts": {
+      "generation": 205,
+      "eastWatermark": 41,
+      "westWatermark": 77,
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-east-shard-205",
+    "sourceId": "official-east-shard",
+    "observedAt": "2026-08-28T17:03:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "east-shard"
+    ],
+    "subjectId": "search-index",
+    "kind": "shard-status",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "shard-status-v2",
+    "facts": {
+      "generation": 205,
+      "watermark": 41,
+      "complete": true
+    }
+  },
+  {
+    "id": "obs-west-shard-204",
+    "sourceId": "official-west-shard",
+    "observedAt": "2026-08-28T17:04:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "west-shard"
+    ],
+    "subjectId": "search-index",
+    "kind": "shard-status",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "shard-status-v2",
+    "facts": {
+      "generation": 204,
+      "watermark": 76,
+      "complete": true
+    }
+  }
+]

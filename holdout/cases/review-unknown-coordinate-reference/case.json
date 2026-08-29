@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "review-unknown-coordinate-reference",
+  "title": "Permit jurisdiction reconciliation",
+  "description": "Official boundary and permit-location records require a jurisdiction maintenance decision under explicit uncertainty rules.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic geospatial authority and uncertainty pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ca1c8caf95c80180207f07a1e596e85ca6e823d768fe35b8de894b4f2266401e"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "f804de4eb6b8c316a96b356949a6c7932820a7d1228eea32908408e7107bdc41"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "4ae7e52dfcfa579cba8b787ae2adc4e77848979df001d479db6991d5c6dc9b4f"
+    }
+  ]
+}

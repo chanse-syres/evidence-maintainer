@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "caseId": "repair-generation-bound-pagination",
+  "expectedAction": "REPAIR_ADAPTER",
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-generation-cursor-contract",
+        "factPath": "facts.requestCursorField",
+        "disposition": "SUPPORT",
+        "reason": "The request cursor marks chain boundaries."
+      },
+      {
+        "evidenceId": "obs-generation-cursor-contract",
+        "factPath": "facts.responseCursorField",
+        "disposition": "SUPPORT",
+        "reason": "The response cursor links adjacent pages."
+      },
+      {
+        "evidenceId": "obs-generation-cursor-contract",
+        "factPath": "facts.generationField",
+        "disposition": "SUPPORT",
+        "reason": "Generation identity prevents mixed snapshots."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-generation-cursor-contract",
+      "factPath": "facts.requestCursorField",
+      "disposition": "SUPPORT",
+      "reason": "The request cursor marks chain boundaries."
+    },
+    {
+      "evidenceId": "obs-generation-cursor-contract",
+      "factPath": "facts.responseCursorField",
+      "disposition": "SUPPORT",
+      "reason": "The response cursor links adjacent pages."
+    },
+    {
+      "evidenceId": "obs-generation-cursor-contract",
+      "factPath": "facts.generationField",
+      "disposition": "SUPPORT",
+      "reason": "Generation identity prevents mixed snapshots."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
+    "obs-generation-cursor-contract"
+  ],
+  "allowedChangedFiles": [
+    "adapter.ts"
+  ],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {
+    "node --experimental-strip-types --test adapter.test.ts": 0
+  },
+  "hiddenProbePath": "verifier/hidden-probes.json"
+}

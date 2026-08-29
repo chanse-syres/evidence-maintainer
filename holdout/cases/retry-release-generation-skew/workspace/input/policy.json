@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 30,
+  "retryLimit": 3,
+  "invariants": [
+    "Manifest and payload from different generations are never combined",
+    "The generation-87 cache remains available until a complete atomic release is observed"
+  ],
+  "rules": [
+    "Proceed only when manifest generation, payload generation, and payload hash agree",
+    "Publication skew inside the window is transient: measure the retry delay from the most recent relevant artifact observation, retry 10 minutes after that timestamp, and escalate after three unsuccessful attempts"
+  ]
+}

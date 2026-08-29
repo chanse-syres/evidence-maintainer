@@ -1,0 +1,9 @@
+[
+  {
+    "id": "district-levy-9",
+    "rate": 0.012,
+    "materializedRevision": "rev-18",
+    "effectiveFrom": "2026-08-01T00:00:00.000Z",
+    "status": "active"
+  }
+]

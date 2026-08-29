@@ -1,8 +1,13 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { sha256Text } from "../src/core/canonical-json.ts";
-import type { ActionClass } from "../src/core/schemas.ts";
+import type {
+  ActionClass,
+  EvidenceAssessment,
+  LegacyRetryPlan as RetryPlan,
+  ReviewRequest,
+} from "../src/core/schemas.ts";
 
 interface CaseDefinition {
   id: string;
@@ -18,9 +23,14 @@ interface CaseDefinition {
     allowedChangedFiles: string[];
     expectedRecords: Array<{ file: string; recordId: string; fields: Record<string, unknown> }>;
     requiredChallengerVerdict: "CONFIRM" | "REJECT" | "ESCALATE";
-    requiredMinimumInformation?: string[];
-    requiredRetryConditionIncludes?: string[];
+    requiredEvidenceAssessments?: EvidenceAssessment[];
+    evidenceAssessmentBundles?: EvidenceAssessment[][];
+    allowedEvidenceAssessments?: EvidenceAssessment[];
+    requiredChallengerEvidenceIds?: string[];
+    acceptableReviewRequests?: ReviewRequest[];
+    expectedRetryPlan?: RetryPlan | null;
     expectedCommandExitCodes?: Record<string, number>;
+    hiddenProbePath?: string | null;
   };
 }
 
@@ -176,7 +186,7 @@ const definitions: CaseDefinition[] = [
       "input/observations.json": json([observation({ id: "obs-deferred-406", sourceId: "public-provider", observedAt: "2026-08-28T16:50:00.000Z", kind: "deferred-response", status: 406, contentType: "text/html", schemaFingerprint: "deferred-contract-v1", facts: { deferred: true, retryAfterMinutes: 30, cacheValid: true } })]),
       "input/policy.json": json(policy({ freshnessWindowMinutes: 60, invariants: ["A deferred response cannot delete cached records", "Retries are bounded"], rules: ["Use the valid cache during expected deferral", "Retry after 30 minutes at most twice"] })),
     },
-    oracle: { expectedAction: "RETRY_LATER", requiredEvidenceIds: ["obs-deferred-406"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM", requiredRetryConditionIncludes: ["30 minutes", "cache"] },
+    oracle: { expectedAction: "RETRY_LATER", requiredEvidenceIds: ["obs-deferred-406"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM", expectedRetryPlan: { notBefore: "2026-08-28T17:20:00.000Z", maxAttempts: 2, escalateAfterAttempt: 2, preserveRecordIds: ["source-41"], agreementChecks: [], valueChecks: [] } },
   },
   {
     id: "retry-timeout-cache",
@@ -190,7 +200,7 @@ const definitions: CaseDefinition[] = [
       "input/observations.json": json([observation({ id: "obs-timeout", sourceId: "public-provider", observedAt: "2026-08-28T16:50:00.000Z", kind: "network-timeout", status: null, contentType: null, schemaFingerprint: null, facts: { timeoutMs: 10000, contradictoryEvidence: false } })]),
       "input/policy.json": json(policy({ freshnessWindowMinutes: 45, invariants: ["A transient timeout cannot erase cached records", "Retries are bounded"], rules: ["Retain cache inside freshness window", "Retry after 15 minutes"] })),
     },
-    oracle: { expectedAction: "RETRY_LATER", requiredEvidenceIds: ["obs-timeout"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM", requiredRetryConditionIncludes: ["15 minutes", "cache"] },
+    oracle: { expectedAction: "RETRY_LATER", requiredEvidenceIds: ["obs-timeout"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM", expectedRetryPlan: { notBefore: "2026-08-28T17:05:00.000Z", maxAttempts: 2, escalateAfterAttempt: 2, preserveRecordIds: ["source-42"], agreementChecks: [], valueChecks: [] } },
   },
   {
     id: "retry-partial-document",
@@ -204,7 +214,7 @@ const definitions: CaseDefinition[] = [
       "input/observations.json": json([observation({ id: "obs-partial-document", sourceId: "public-provider", observedAt: "2026-08-28T16:55:00.000Z", kind: "partial-document", status: 200, contentType: "text/html", schemaFingerprint: "incomplete:6f21", facts: { closingMarkerPresent: false, contentLength: 4096, expectedMinimumLength: 18000 } })]),
       "input/policy.json": json(policy({ freshnessWindowMinutes: 90, invariants: ["Partial documents cannot replace complete state", "Retries are bounded"], rules: ["Require closing marker and known complete fingerprint", "Retry for a complete document after 20 minutes"] })),
     },
-    oracle: { expectedAction: "RETRY_LATER", requiredEvidenceIds: ["obs-partial-document"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM", requiredRetryConditionIncludes: ["20 minutes", "complete document"] },
+    oracle: { expectedAction: "RETRY_LATER", requiredEvidenceIds: ["obs-partial-document"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM", expectedRetryPlan: { notBefore: "2026-08-28T17:15:00.000Z", maxAttempts: 2, escalateAfterAttempt: 2, preserveRecordIds: ["source-43"], agreementChecks: [], valueChecks: [] } },
   },
   {
     id: "noop-newer-publication-stale-effective",
@@ -254,8 +264,12 @@ const definitions: CaseDefinition[] = [
       requiredEvidenceIds: ["obs-athletics-active", "obs-registrar-withdrawn"],
       allowedChangedFiles: [],
       expectedRecords: [],
-      requiredChallengerVerdict: "ESCALATE",
-      requiredMinimumInformation: ["signed cross-system resolution", "effective timestamp"],
+      requiredChallengerVerdict: "CONFIRM",
+      acceptableReviewRequests: [{
+        subjectId: "athlete-71",
+        targetEvidenceId: "obs-athletics-active",
+        requestedFactPaths: ["facts.signedCrossSystemResolution", "facts.resolutionEffectiveAt"],
+      }],
     },
   },
   {
@@ -280,8 +294,11 @@ const definitions: CaseDefinition[] = [
       requiredEvidenceIds: ["obs-name-only-award"],
       allowedChangedFiles: [],
       expectedRecords: [],
-      requiredChallengerVerdict: "ESCALATE",
-      requiredMinimumInformation: ["stable source identifier", "program or graduation year"],
+      requiredChallengerVerdict: "CONFIRM",
+      acceptableReviewRequests: [
+        { subjectId: "Jordan Lee", targetEvidenceId: "obs-name-only-award", requestedFactPaths: ["facts.stableId"] },
+        { subjectId: "Jordan Lee", targetEvidenceId: "obs-name-only-award", requestedFactPaths: ["facts.program", "facts.graduationYear"] },
+      ],
     },
   },
   {
@@ -303,14 +320,19 @@ const definitions: CaseDefinition[] = [
       requiredEvidenceIds: ["obs-reintroduced-slot"],
       allowedChangedFiles: [],
       expectedRecords: [],
-      requiredChallengerVerdict: "ESCALATE",
-      requiredMinimumInformation: ["occurrence-stable identifier", "continuity or new-occurrence confirmation"],
+      requiredChallengerVerdict: "CONFIRM",
+      acceptableReviewRequests: [
+        { subjectId: "Casey Quinn slot 14", targetEvidenceId: "obs-reintroduced-slot", requestedFactPaths: ["facts.sourceOccurrenceId"] },
+        { subjectId: "Casey Quinn slot 14", targetEvidenceId: "obs-reintroduced-slot", requestedFactPaths: ["facts.continuityDecision"] },
+        { subjectId: "Casey Quinn slot 14", targetEvidenceId: "obs-reintroduced-slot", requestedFactPaths: ["facts.newOccurrenceConfirmation"] },
+      ],
     },
   },
 ];
 
 async function writeCase(root: string, definition: CaseDefinition): Promise<void> {
   const caseDir = resolve(root, definition.id);
+  await rm(caseDir, { recursive: true, force: true });
   const provenance = [];
   const agentVisibleFiles = [];
   for (const [relativePath, content] of Object.entries(definition.files).sort(([a], [b]) => a.localeCompare(b))) {
@@ -341,17 +363,31 @@ async function writeCase(root: string, definition: CaseDefinition): Promise<void
     requiredCommands: definition.requiredCommands,
     provenance,
   };
+  const defaultEvidenceAssessments = definition.oracle.requiredEvidenceAssessments ??
+    definition.oracle.requiredEvidenceIds.map((evidenceId) => ({
+      evidenceId,
+      factPath: "$",
+      disposition: "SUPPORT" as const,
+      reason: "This observation is required by the adjudicated causal route.",
+    }));
+  const evidenceAssessmentBundles = definition.oracle.evidenceAssessmentBundles ?? [defaultEvidenceAssessments];
+  const allowedEvidenceAssessments = definition.oracle.allowedEvidenceAssessments ??
+    evidenceAssessmentBundles.flat();
   const oracle = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     caseId: definition.id,
     expectedAction: definition.oracle.expectedAction,
-    requiredEvidenceIds: definition.oracle.requiredEvidenceIds,
+    evidenceAssessmentBundles,
+    allowedEvidenceAssessments,
+    requiredChallengerEvidenceIds: definition.oracle.requiredChallengerEvidenceIds ??
+      definition.oracle.requiredEvidenceIds,
     allowedChangedFiles: definition.oracle.allowedChangedFiles,
     expectedRecords: definition.oracle.expectedRecords,
     requiredChallengerVerdict: definition.oracle.requiredChallengerVerdict,
-    requiredMinimumInformation: definition.oracle.requiredMinimumInformation ?? [],
-    requiredRetryConditionIncludes: definition.oracle.requiredRetryConditionIncludes ?? [],
+    acceptableReviewRequests: definition.oracle.acceptableReviewRequests ?? [],
+    expectedRetryPlan: definition.oracle.expectedRetryPlan ?? null,
     expectedCommandExitCodes: definition.oracle.expectedCommandExitCodes ?? {},
+    hiddenProbePath: definition.oracle.hiddenProbePath ?? null,
   };
   await writeFile(resolve(caseDir, "case.json"), json(manifest), "utf8");
   await writeFile(resolve(caseDir, "oracle.json"), json(oracle), "utf8");

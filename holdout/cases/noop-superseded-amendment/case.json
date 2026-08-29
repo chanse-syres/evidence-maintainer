@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-superseded-amendment",
+  "title": "Procurement amendment reconciliation",
+  "description": "Two ordered official revisions and the current canonical solicitation require a maintenance decision.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic ordered-amendment materialization pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "332f3d93e3e5d9549c66c76b288761e8df12451f6b8b7ed8e61187bee351e628"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a491693a622085757c1f9e197d2a99eb8f8bc4db24beb48cf2ad61ef65056b77"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "7894f6448b28d17d2e712242da76648721ec176564c9d2b5cee619e78b77291c"
+    }
+  ]
+}

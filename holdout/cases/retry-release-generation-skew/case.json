@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-release-generation-skew",
+  "title": "Release publication reconciliation",
+  "description": "A signed manifest, a schema-valid payload, and the current cache require one bounded maintenance decision.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic multi-artifact publication-skew pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "fc77ab602f47c1e7768e4d7977dc4a91da979564006a4052e3ffd7b0af883246"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "474dab882e457b0e324cbf4324b5d7d372ad367b5907b830a0174ec9166edcaa"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "88ee1ab2c9b7fc7d4937bc6e9f139947bf84a8c6ef33888a5b97bea83f841441"
+    }
+  ]
+}

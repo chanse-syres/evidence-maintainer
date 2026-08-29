@@ -1,17 +1,55 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "review-reintroduced-identity",
   "expectedAction": "HUMAN_REVIEW",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-reintroduced-slot",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-reintroduced-slot",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-reintroduced-slot"
   ],
   "allowedChangedFiles": [],
   "expectedRecords": [],
-  "requiredChallengerVerdict": "ESCALATE",
-  "requiredMinimumInformation": [
-    "occurrence-stable identifier",
-    "continuity or new-occurrence confirmation"
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [
+    {
+      "subjectId": "Casey Quinn slot 14",
+      "targetEvidenceId": "obs-reintroduced-slot",
+      "requestedFactPaths": [
+        "facts.sourceOccurrenceId"
+      ]
+    },
+    {
+      "subjectId": "Casey Quinn slot 14",
+      "targetEvidenceId": "obs-reintroduced-slot",
+      "requestedFactPaths": [
+        "facts.continuityDecision"
+      ]
+    },
+    {
+      "subjectId": "Casey Quinn slot 14",
+      "targetEvidenceId": "obs-reintroduced-slot",
+      "requestedFactPaths": [
+        "facts.newOccurrenceConfirmation"
+      ]
+    }
   ],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }

@@ -9,11 +9,15 @@ import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import {
   CaseManifestSchema,
   CaseOracleSchema,
+  CaseOracleV4Schema,
   PolicySchema,
+  PolicyV4Schema,
   SourceObservationSchema,
   type CaseManifest,
   type CaseOracle,
+  type CaseOracleV4,
   type Policy,
+  type PolicyV4,
   type SourceObservation,
 } from "./schemas.ts";
 import { sha256Json, sha256Text } from "./canonical-json.ts";
@@ -32,6 +36,10 @@ export interface LoadedPublicCase {
   policy: Policy;
   workspaceFiles: WorkspaceFile[];
   workspaceHash: string;
+}
+
+export interface LoadedPublicCaseV4 extends Omit<LoadedPublicCase, "policy"> {
+  policy: PolicyV4;
 }
 
 function normalizeRelativePath(value: string): string {
@@ -68,7 +76,10 @@ async function readJson(path: string): Promise<unknown> {
   return JSON.parse(await readFile(path, "utf8"));
 }
 
-export async function loadPublicCase(caseDir: string): Promise<LoadedPublicCase> {
+async function loadPublicCaseWithPolicy<P>(
+  caseDir: string,
+  parsePolicy: (value: unknown) => P,
+): Promise<Omit<LoadedPublicCase, "policy"> & { policy: P }> {
   const root = await realpath(caseDir);
   const caseJsonPath = await resolveContained(root, "case.json");
   const manifest = CaseManifestSchema.parse(await readJson(caseJsonPath));
@@ -108,7 +119,7 @@ export async function loadPublicCase(caseDir: string): Promise<LoadedPublicCase>
   const policyPath = await resolveContained(root, "workspace/input/policy.json");
   const canonical = await readJson(canonicalPath);
   const observations = SourceObservationSchema.array().parse(await readJson(observationsPath));
-  const policy = PolicySchema.parse(await readJson(policyPath));
+  const policy = parsePolicy(await readJson(policyPath));
 
   return {
     caseDir: root,
@@ -121,14 +132,30 @@ export async function loadPublicCase(caseDir: string): Promise<LoadedPublicCase>
   };
 }
 
+export async function loadPublicCase(caseDir: string): Promise<LoadedPublicCase> {
+  return loadPublicCaseWithPolicy(caseDir, (value) => PolicySchema.parse(value));
+}
+
+export async function loadPublicCaseV4(caseDir: string): Promise<LoadedPublicCaseV4> {
+  return loadPublicCaseWithPolicy(caseDir, (value) => PolicyV4Schema.parse(value));
+}
+
 export async function loadOracle(caseDir: string): Promise<CaseOracle> {
   const root = await realpath(caseDir);
   const oraclePath = await resolveContained(root, "oracle.json");
   return CaseOracleSchema.parse(await readJson(oraclePath));
 }
 
-export async function copyCaseWorkspace(caseDir: string, runDir: string): Promise<string> {
-  const loaded = await loadPublicCase(caseDir);
+export async function loadOracleV4(caseDir: string): Promise<CaseOracleV4> {
+  const root = await realpath(caseDir);
+  const oraclePath = await resolveContained(root, "oracle.json");
+  return CaseOracleV4Schema.parse(await readJson(oraclePath));
+}
+
+async function copyLoadedWorkspace(
+  loaded: Omit<LoadedPublicCase, "policy"> & { policy: unknown },
+  runDir: string,
+): Promise<string> {
   await mkdir(runDir, { recursive: true });
   await copyFile(resolve(loaded.caseDir, "case.json"), resolve(runDir, "case.json"));
   for (const file of loaded.workspaceFiles) {
@@ -142,4 +169,14 @@ export async function copyCaseWorkspace(caseDir: string, runDir: string): Promis
     await copyFile(source, destination);
   }
   return resolve(runDir);
+}
+
+export async function copyCaseWorkspace(caseDir: string, runDir: string): Promise<string> {
+  const loaded = await loadPublicCase(caseDir);
+  return copyLoadedWorkspace(loaded, runDir);
+}
+
+export async function copyCaseWorkspaceV4(caseDir: string, runDir: string): Promise<string> {
+  const loaded = await loadPublicCaseV4(caseDir);
+  return copyLoadedWorkspace(loaded, runDir);
 }

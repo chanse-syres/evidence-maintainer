@@ -1,0 +1,20 @@
+[
+  {
+    "id": "obs-local-offset-contract",
+    "sourceId": "official-transit-api",
+    "observedAt": "2026-08-28T18:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "timestamp-encoding"
+    ],
+    "subjectId": null,
+    "kind": "schema-change",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "closure-local-offset-v2",
+    "facts": {
+      "legacyEncoding": "UTC ISO timestamp",
+      "currentEncoding": "local wall-clock timestamp with a separate offsetMinutes on each endpoint"
+    }
+  }
+]

@@ -1,8 +1,26 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "caseId": "update-transfer-destination",
   "expectedAction": "UPDATE_DATA",
-  "requiredEvidenceIds": [
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-official-destination",
+        "factPath": "$",
+        "disposition": "SUPPORT",
+        "reason": "This observation is required by the adjudicated causal route."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-official-destination",
+      "factPath": "$",
+      "disposition": "SUPPORT",
+      "reason": "This observation is required by the adjudicated causal route."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
     "obs-official-destination"
   ],
   "allowedChangedFiles": [
@@ -19,7 +37,8 @@
     }
   ],
   "requiredChallengerVerdict": "CONFIRM",
-  "requiredMinimumInformation": [],
-  "requiredRetryConditionIncludes": [],
-  "expectedCommandExitCodes": {}
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
 }
