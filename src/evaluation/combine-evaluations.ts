@@ -1,11 +1,16 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
-import { loadOracle } from "../core/case-loader.ts";
+import { loadOracleV4 } from "../core/case-loader.ts";
 import { sha256Text } from "../core/canonical-json.ts";
 import { RunManifestSchema } from "../core/schemas.ts";
 import { aggregateRows, type AggregateSummary } from "./aggregate.ts";
 import { createExecutionErrorRow } from "./run-evaluation.ts";
-import { scoreRun, type EvaluationRow } from "./score-run.ts";
+import {
+  failureClasses,
+  scoreRun,
+  type EvaluationRow,
+  type FailureClass,
+} from "./score-run.ts";
 import { readTrajectoryUsage, reconstructUsage, type TrajectoryUsage } from "./trajectory-usage.ts";
 
 export { reconstructUsage } from "./trajectory-usage.ts";
@@ -37,15 +42,13 @@ export interface CombinedEvaluationSummary extends AggregateSummary {
     resolvedCommit: string;
     verifiedPaths: string[];
   } | null;
-  failureTaxonomy: {
-    modelExecutionErrors: number;
-    infrastructureErrors: number;
-  };
+  failureTaxonomy: Record<FailureClass, number>;
   modelSessions: {
     total: number;
     baseline: number;
     maintainer: number;
     challenger: number;
+    reviser: number;
     sessionsWithUsage: number;
     tokenUsage: Usage & { total: number };
   };
@@ -111,6 +114,7 @@ async function countAndCleanTrajectoryLogs(runPath: string): Promise<{
   baseline: number;
   maintainer: number;
   challenger: number;
+  reviser: number;
   sessionsWithUsage: number;
   usage: Usage;
 }> {
@@ -124,6 +128,7 @@ async function countAndCleanTrajectoryLogs(runPath: string): Promise<{
       baseline: 0,
       maintainer: 0,
       challenger: 0,
+      reviser: 0,
       sessionsWithUsage: 0,
       usage: { input: 0, cachedInput: 0, output: 0 },
     };
@@ -133,6 +138,7 @@ async function countAndCleanTrajectoryLogs(runPath: string): Promise<{
     baseline: 0,
     maintainer: 0,
     challenger: 0,
+    reviser: 0,
     sessionsWithUsage: 0,
     usage: { input: 0, cachedInput: 0, output: 0 },
   };
@@ -144,7 +150,7 @@ async function countAndCleanTrajectoryLogs(runPath: string): Promise<{
     }
     if (!entry.name.endsWith(".jsonl")) continue;
     const role = entry.name.slice(0, -".jsonl".length);
-    if (role === "baseline" || role === "maintainer" || role === "challenger") {
+    if (role === "baseline" || role === "maintainer" || role === "challenger" || role === "reviser") {
       counts[role] += 1;
       counts.total += 1;
       const usage = await readTrajectoryUsage(join(trajectoryDir, entry.name));
@@ -214,6 +220,7 @@ export async function combineEvaluationSources(
     baseline: 0,
     maintainer: 0,
     challenger: 0,
+    reviser: 0,
     sessionsWithUsage: 0,
     tokenUsage: { input: 0, cachedInput: 0, output: 0, total: 0 },
   };
@@ -267,11 +274,12 @@ export async function combineEvaluationSources(
       sessionCounts.baseline += sessions.baseline;
       sessionCounts.maintainer += sessions.maintainer;
       sessionCounts.challenger += sessions.challenger;
+      sessionCounts.reviser += sessions.reviser;
       sessionCounts.sessionsWithUsage += sessions.sessionsWithUsage;
       sessionCounts.tokenUsage.input += sessions.usage.input;
       sessionCounts.tokenUsage.cachedInput += sessions.usage.cachedInput;
       sessionCounts.tokenUsage.output += sessions.usage.output;
-      const expectedAction = (await loadOracle(join(config.caseRoot, parsed.caseId))).expectedAction;
+      const expectedAction = (await loadOracleV4(join(config.caseRoot, parsed.caseId))).expectedAction;
       const destinationRelative = relative(outDir, destinationRunPath).replaceAll("\\", "/");
 
       let combinedRow: CombinedEvaluationRow;
@@ -384,6 +392,12 @@ export async function combineEvaluationSources(
     }
   }
   const aggregate = aggregateRows(rows);
+  const failureTaxonomy = Object.fromEntries(
+    failureClasses.map((failureClass) => [
+      failureClass,
+      rows.filter((row) => row.failureClass === failureClass).length,
+    ]),
+  ) as Record<FailureClass, number>;
   sessionCounts.tokenUsage.total = sessionCounts.tokenUsage.input + sessionCounts.tokenUsage.output;
   const summary: CombinedEvaluationSummary = {
     schemaVersion: 2,
@@ -395,10 +409,7 @@ export async function combineEvaluationSources(
     trialsPerCase: config.expectedTrialsPerCase,
     inputCommit: config.inputCommit ?? null,
     inputCommitVerification: config.inputCommitVerification ?? null,
-    failureTaxonomy: {
-      modelExecutionErrors: consumedModelErrors.size,
-      infrastructureErrors: 0,
-    },
+    failureTaxonomy,
     modelSessions: sessionCounts,
     sources: sourceMetadata,
     ...aggregate,

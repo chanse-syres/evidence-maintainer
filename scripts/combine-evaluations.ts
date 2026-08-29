@@ -133,11 +133,11 @@ export async function combineCli(argv: string[]): Promise<void> {
   );
   process.stdout.write(`${JSON.stringify({
     out: resolve(options.out),
-    baseline: `${summary.arms.baseline.safeDecisions}/${summary.arms.baseline.workflowRunCount}`,
-    advanced: `${summary.arms.advanced.safeDecisions}/${summary.arms.advanced.workflowRunCount}`,
-    absoluteSdrChange: summary.absoluteSdrChange,
+    baselineOdi: `${summary.arms.baseline.operationalDecisions}/${summary.arms.baseline.workflowRunCount}`,
+    advancedOdi: `${summary.arms.advanced.operationalDecisions}/${summary.arms.advanced.workflowRunCount}`,
+    absoluteOdiChange: summary.absoluteOdiChange,
     modelSessions: summary.modelSessions,
-    modelExecutionErrors: summary.failureTaxonomy.modelExecutionErrors,
+    failureTaxonomy: summary.failureTaxonomy,
   }, null, 2)}\n`);
 }
 

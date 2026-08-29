@@ -45,9 +45,10 @@ export async function generateDemo(): Promise<void> {
     sourceModel: summary.model,
     caseSetHash: summary.caseSetHash,
     summary: {
-      baselineSdr: summary.arms.baseline.sdr,
-      advancedSdr: summary.arms.advanced.sdr,
-      absoluteSdrChange: summary.absoluteSdrChange,
+      baselineOdi: summary.arms.baseline.odi,
+      advancedOdi: summary.arms.advanced.odi,
+      absoluteOdiChange: summary.absoluteOdiChange,
+      comparisonClass: summary.comparisonDesign.class,
     },
     reports,
   }, null, 2)}\n`, "utf8");

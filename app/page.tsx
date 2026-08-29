@@ -60,22 +60,22 @@ export default async function Home() {
         <article className="metric-card baseline-card">
           <div className="metric-label">Direct agent baseline</div>
           <div className="metric-value">{percent(overview.baseline.odi)}</div>
-          <div className="metric-foot">{overview.baseline.operationalDecisions}/{overview.baseline.caseCount} operationally correct decisions</div>
+          <div className="metric-foot">{overview.baseline.operationalDecisions}/{overview.baseline.workflowRunCount} operationally correct decisions</div>
         </article>
         <article className="metric-card advanced-card">
           <div className="metric-label">Evidence-first system</div>
           <div className="metric-value">{percent(overview.advanced.odi)}</div>
-          <div className="metric-foot">{overview.advanced.operationalDecisions}/{overview.advanced.caseCount} operationally correct decisions</div>
+          <div className="metric-foot">{overview.advanced.operationalDecisions}/{overview.advanced.workflowRunCount} operationally correct decisions</div>
         </article>
         <article className="metric-card">
-          <div className="metric-label">Unsafe mutations</div>
-          <div className="paired-stat"><span>{overview.baseline.unsafeMutations}</span><i>→</i><strong>{overview.advanced.unsafeMutations}</strong></div>
-          <div className="metric-foot">baseline → evidence-first</div>
+          <div className="metric-label">Forbidden-mutation protection</div>
+          <div className="paired-stat"><span>{overview.baseline.noForbiddenMutationCount}</span><i>→</i><strong>{overview.advanced.noForbiddenMutationCount}</strong></div>
+          <div className="metric-foot">passing runs · baseline → evidence-first</div>
         </article>
         <article className="metric-card">
-          <div className="metric-label">Correct abstentions</div>
-          <div className="paired-stat"><span>{overview.baseline.correctAbstentions}</span><i>→</i><strong>{overview.advanced.correctAbstentions}</strong></div>
-          <div className="metric-foot">knowing when not to mutate</div>
+          <div className="metric-label">Evidence source coverage</div>
+          <div className="paired-stat"><span>{overview.baseline.sourceCoverageCount}</span><i>→</i><strong>{overview.advanced.sourceCoverageCount}</strong></div>
+          <div className="metric-foot">passing runs · annotation match reported separately</div>
         </article>
       </section>
 

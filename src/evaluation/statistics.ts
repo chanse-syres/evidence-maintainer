@@ -61,6 +61,23 @@ function sampleWithReplacement<T>(values: readonly T[], count: number, random: (
   return Array.from({ length: count }, () => values[Math.floor(random() * values.length)]);
 }
 
+export function caseBalancedMean<T extends BootstrapRow>(
+  rows: readonly T[],
+  accessor: (row: T) => number | null,
+  arm: "baseline" | "advanced",
+): number {
+  const valuesByCase = new Map<string, number[]>();
+  for (const row of rows) {
+    if (row.arm !== arm) continue;
+    const value = accessor(row);
+    if (value === null) continue;
+    const values = valuesByCase.get(row.caseId) ?? [];
+    values.push(value);
+    valuesByCase.set(row.caseId, values);
+  }
+  return mean([...valuesByCase.values()].map((values) => mean(values)));
+}
+
 export function stratifiedNestedBootstrap<T extends BootstrapRow>(
   rows: readonly T[],
   accessor: (row: T) => number | null,
@@ -105,7 +122,7 @@ export function stratifiedNestedBootstrap<T extends BootstrapRow>(
           const sampledRows = sampleWithReplacement(sourceRows, sourceRows.length, random);
           const sampledValues = sampledRows.map(accessor).filter((value): value is number => value !== null);
           const destination = arm === "baseline" ? baselineValues : advancedValues;
-          destination.push(...sampledValues);
+          if (sampledValues.length > 0) destination.push(mean(sampledValues));
         }
       }
     }

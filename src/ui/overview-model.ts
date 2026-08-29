@@ -9,9 +9,12 @@ interface ArmCardResult {
   attempts: number;
   operationalDecisions: number;
   odi: number;
-  evidenceSourceCoverage: number;
-  evidenceAdjudicationAligned: number;
-  unsafeMutations: number;
+  sourceCoverage: number;
+  contradictionFree: number;
+  requiredCommandsPassed: number;
+  annotationAligned: number;
+  forbiddenMutationFailures: number;
+  semanticFailures: number;
   action: string;
 }
 
@@ -22,9 +25,12 @@ function summarizeRows(rows: EvaluationRow[]): ArmCardResult {
     attempts,
     operationalDecisions,
     odi: attempts === 0 ? 0 : operationalDecisions / attempts,
-    evidenceSourceCoverage: rows.filter((row) => row.evidenceSourceCoverage).length,
-    evidenceAdjudicationAligned: rows.filter((row) => row.evidenceAdjudicationAligned).length,
-    unsafeMutations: rows.filter((row) => row.unsafeMutation).length,
+    sourceCoverage: rows.filter((row) => row.sourceCoverage).length,
+    contradictionFree: rows.filter((row) => row.contradictionFree).length,
+    requiredCommandsPassed: rows.filter((row) => row.requiredCommandsPassed).length,
+    annotationAligned: rows.filter((row) => row.annotationAligned).length,
+    forbiddenMutationFailures: rows.filter((row) => !row.noForbiddenMutation).length,
+    semanticFailures: rows.filter((row) => row.failureClass === "GENUINE_SEMANTIC_FAILURE").length,
     action: rows[0]?.action ?? "UNKNOWN",
   };
 }
@@ -75,23 +81,11 @@ export async function loadOverviewModel(artifactRoot: string) {
       actionBadge: actionBadgeFor(action),
       baseline,
       advanced,
-      harmfulChange: baseline.unsafeMutations > 0 || advanced.unsafeMutations > 0,
+      harmfulChange: baseline.forbiddenMutationFailures > 0 || advanced.forbiddenMutationFailures > 0,
       detailHref: `/cases/${caseId}`,
     };
   }));
 
-  const baselineUnsafe = summary.rows.filter(
-    (row) => row.arm === "baseline" && row.unsafeMutation,
-  ).length;
-  const advancedUnsafe = summary.rows.filter(
-    (row) => row.arm === "advanced" && row.unsafeMutation,
-  ).length;
-  const baselineAbstentions = summary.rows.filter(
-    (row) => row.arm === "baseline" && row.correctAbstention,
-  ).length;
-  const advancedAbstentions = summary.rows.filter(
-    (row) => row.arm === "advanced" && row.correctAbstention,
-  ).length;
   const flagshipCaseId = cases.some((item) => item.caseId === "retry-shard-watermark-barrier")
     ? "retry-shard-watermark-barrier"
     : cases[0]?.caseId ?? "";
@@ -102,16 +96,8 @@ export async function loadOverviewModel(artifactRoot: string) {
     modeLabel: evidenceModeLabel(summary.mode),
     model: summary.model,
     caseSetHash: summary.caseSetHash,
-    baseline: {
-      ...summary.arms.baseline,
-      unsafeMutations: baselineUnsafe,
-      correctAbstentions: baselineAbstentions,
-    },
-    advanced: {
-      ...summary.arms.advanced,
-      unsafeMutations: advancedUnsafe,
-      correctAbstentions: advancedAbstentions,
-    },
+    baseline: summary.arms.baseline,
+    advanced: summary.arms.advanced,
     absoluteOdiChange: summary.absoluteOdiChange,
     odiBootstrap95: summary.odiBootstrap95,
     cases,

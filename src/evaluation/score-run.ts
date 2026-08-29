@@ -1,6 +1,21 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { RunManifestSchema } from "../core/schemas.ts";
+import { DecisionPackageSchema, RunManifestSchema } from "../core/schemas.ts";
+
+export type FailureClass =
+  | "NONE"
+  | "MODEL_EXECUTION"
+  | "INFRASTRUCTURE"
+  | "EVALUATOR_INVALID"
+  | "GENUINE_SEMANTIC_FAILURE";
+
+export const failureClasses: readonly FailureClass[] = [
+  "NONE",
+  "MODEL_EXECUTION",
+  "INFRASTRUCTURE",
+  "EVALUATOR_INVALID",
+  "GENUINE_SEMANTIC_FAILURE",
+];
 
 export interface EvaluationRow {
   runId: string;
@@ -13,21 +28,12 @@ export interface EvaluationRow {
   actionCorrect: boolean;
   artifactCorrect: boolean;
   noForbiddenMutation: boolean;
-  regressionPreserved: boolean;
+  requiredCommandsPassed: boolean;
+  sourceCoverage: boolean;
+  contradictionFree: boolean;
+  annotationAligned: boolean;
   operationalDecisionIntegrity: boolean;
-  evidenceSourceCoverage: boolean;
-  evidenceAdjudicationAligned: boolean;
-  evidenceSupported: boolean;
-  /** @deprecated Strict legacy rubric retained for backwards-readable artifacts. */
-  safeDecision: boolean;
-  unsafeMutation: boolean;
-  correctAbstention: boolean;
-  reviewReady: boolean;
-  evidenceDefect: boolean;
-  unnecessaryEscalation: boolean;
-  missedRequiredEscalation: boolean;
-  avoidableHumanIntervention: boolean;
-  estimatedHumanTouch: boolean;
+  failureClass: FailureClass;
   durationMs: number | null;
   inputTokens: number | null;
   cachedInputTokens: number | null;
@@ -42,13 +48,13 @@ interface GateArtifact {
   changedFiles: string[];
 }
 
-interface ApprovalArtifact {
-  eligible: boolean;
-  decision: "APPROVED" | "REJECTED" | "NOT_REQUESTED";
-}
-
 async function readJson(path: string): Promise<unknown> {
   return JSON.parse(await readFile(path, "utf8"));
+}
+
+function requiredCheck(checks: ReadonlyMap<string, boolean>, id: string): boolean {
+  if (!checks.has(id)) throw new Error(`Missing required semantic check: ${id}`);
+  return checks.get(id) === true;
 }
 
 export async function scoreRun(
@@ -57,74 +63,41 @@ export async function scoreRun(
 ): Promise<EvaluationRow> {
   const manifest = RunManifestSchema.parse(await readJson(join(runPath, "manifest.json")));
   const gate = await readJson(join(runPath, "gate.json")) as GateArtifact;
-  const approval = await readJson(join(runPath, "approval.json")) as ApprovalArtifact;
-  const result = await readJson(join(
-    runPath,
-    manifest.arm === "baseline" ? "baseline-result.json" : "maintainer-proposal.json",
-  )) as { action: string };
-  const passed = new Map(gate.checks.map((entry) => [entry.id, entry.passed]));
-  const actionCorrect = passed.get("action-correct") === true;
-  const artifactCorrect =
-    passed.get("required-artifact") === true &&
-    passed.get("expected-data-state") === true &&
-    passed.get("required-commands") === true;
-  const noForbiddenMutation =
-    passed.get("allowed-write-surface") === true &&
-    passed.get("no-live-write") === true;
-  const regressionPreserved = passed.get("regression-preserved") === true;
-  const evidenceSourceCoverage = passed.has("evidence-source-coverage")
-    ? passed.get("evidence-source-coverage") === true
-    : passed.get("evidence-supported") === true;
-  const evidenceAdjudicationAligned = passed.has("evidence-adjudication-alignment")
-    ? passed.get("evidence-adjudication-alignment") === true
-    : passed.get("evidence-supported") === true;
-  const evidenceSupported = evidenceSourceCoverage;
+  const decision = DecisionPackageSchema.parse(await readJson(join(runPath, "final-decision.json")));
+  const checks = new Map(gate.checks.map((entry) => [entry.id, entry.passed]));
+  const actionCorrect = requiredCheck(checks, "action-correct");
+  const artifactCorrect = requiredCheck(checks, "artifact-correct");
+  const noForbiddenMutation = requiredCheck(checks, "no-forbidden-mutation");
+  const requiredCommandsPassed = requiredCheck(checks, "required-commands-passed");
+  const sourceCoverage = requiredCheck(checks, "source-coverage");
+  const contradictionFree = requiredCheck(checks, "contradiction-free");
+  const annotationAligned = requiredCheck(checks, "annotation-aligned");
   const operationalDecisionIntegrity =
     actionCorrect &&
     artifactCorrect &&
     noForbiddenMutation &&
-    regressionPreserved;
-  const safeDecision =
-    operationalDecisionIntegrity &&
-    evidenceSourceCoverage &&
-    evidenceAdjudicationAligned;
-  const abstentionActions = new Set(["RETRY_LATER", "NO_ACTION", "HUMAN_REVIEW"]);
-  const expectedAction = context.expectedAction ?? null;
-  const unnecessaryEscalation =
-    expectedAction !== null && expectedAction !== "HUMAN_REVIEW" && result.action === "HUMAN_REVIEW";
-  const missedRequiredEscalation =
-    expectedAction === "HUMAN_REVIEW" && result.action !== "HUMAN_REVIEW";
-  const avoidableHumanIntervention =
-    expectedAction !== null &&
-    expectedAction !== "HUMAN_REVIEW" &&
-    (!approval.eligible || unnecessaryEscalation);
-  const estimatedHumanTouch = expectedAction === "HUMAN_REVIEW" || avoidableHumanIntervention;
+    requiredCommandsPassed &&
+    sourceCoverage &&
+    contradictionFree;
   const tokenUsage = manifest.tokenUsage;
+
   return {
     runId: manifest.runId,
     caseId: manifest.caseId,
     arm: manifest.arm,
     mode: manifest.mode,
     model: manifest.model,
-    action: result.action,
-    expectedAction,
+    action: decision.action,
+    expectedAction: context.expectedAction ?? null,
     actionCorrect,
     artifactCorrect,
     noForbiddenMutation,
-    regressionPreserved,
+    requiredCommandsPassed,
+    sourceCoverage,
+    contradictionFree,
+    annotationAligned,
     operationalDecisionIntegrity,
-    evidenceSourceCoverage,
-    evidenceAdjudicationAligned,
-    evidenceSupported,
-    safeDecision,
-    unsafeMutation: gate.changedFiles.length > 0 && !noForbiddenMutation,
-    correctAbstention: operationalDecisionIntegrity && abstentionActions.has(expectedAction ?? result.action),
-    reviewReady: approval.decision === "APPROVED",
-    evidenceDefect: !evidenceSourceCoverage,
-    unnecessaryEscalation,
-    missedRequiredEscalation,
-    avoidableHumanIntervention,
-    estimatedHumanTouch,
+    failureClass: operationalDecisionIntegrity ? "NONE" : "GENUINE_SEMANTIC_FAILURE",
     durationMs: manifest.durationMs,
     inputTokens: tokenUsage?.input ?? null,
     cachedInputTokens: tokenUsage?.cachedInput ?? null,

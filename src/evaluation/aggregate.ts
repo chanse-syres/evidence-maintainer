@@ -1,4 +1,8 @@
-import type { EvaluationRow } from "./score-run.ts";
+import {
+  failureClasses,
+  type EvaluationRow,
+  type FailureClass,
+} from "./score-run.ts";
 import {
   mean,
   quantileType7,
@@ -13,47 +17,6 @@ export interface Interval {
   high: number;
 }
 
-export interface ArmSummary {
-  /** @deprecated Use uniqueCaseCount or workflowRunCount explicitly. */
-  caseCount: number;
-  uniqueCaseCount: number;
-  workflowRunCount: number;
-  operationalDecisions: number;
-  odi: number;
-  odi95: Interval;
-  evidenceSourceCoverageCount: number;
-  evidenceSourceCoverageRate: number;
-  evidenceAdjudicationAlignedCount: number;
-  evidenceAdjudicationAlignedRate: number;
-  /** @deprecated Strict legacy metric retained for existing artifact readers. */
-  safeDecisions: number;
-  sdr: number;
-  sdr95: Interval;
-  actionAccuracy: number;
-  unsafeMutationRate: number;
-  correctAbstentionRate: number;
-  correctAbstentions: number;
-  expectedAbstentionRuns: number;
-  reviewReadyCompletions: number;
-  reviewReadyRate: number;
-  evidenceDefects: number;
-  evidenceDefectRate: number;
-  unnecessaryEscalations: number;
-  nonReviewRuns: number;
-  unnecessaryEscalationRate: number;
-  missedRequiredEscalations: number;
-  requiredReviewRuns: number;
-  missedRequiredEscalationRate: number;
-  avoidableHumanInterventions: number;
-  avoidableHumanInterventionRate: number;
-  estimatedHumanTouches: number;
-  estimatedHumanTouchRate: number;
-  medianDurationMs: number;
-  totalTokens: number;
-  durationMs: ResourceSummary;
-  tokens: ResourceSummary;
-}
-
 export interface ResourceSummary {
   count: number;
   total: number;
@@ -64,6 +27,34 @@ export interface ResourceSummary {
   p95: number;
 }
 
+export interface ArmSummary {
+  caseCount: number;
+  uniqueCaseCount: number;
+  workflowRunCount: number;
+  operationalDecisions: number;
+  odi: number;
+  odi95: Interval;
+  actionCorrectCount: number;
+  actionCorrectRate: number;
+  artifactCorrectCount: number;
+  artifactCorrectRate: number;
+  noForbiddenMutationCount: number;
+  noForbiddenMutationRate: number;
+  requiredCommandsPassedCount: number;
+  requiredCommandsPassedRate: number;
+  sourceCoverageCount: number;
+  sourceCoverageRate: number;
+  contradictionFreeCount: number;
+  contradictionFreeRate: number;
+  annotationAlignedCount: number;
+  annotationAlignedRate: number;
+  failureClasses: Record<FailureClass, number>;
+  medianDurationMs: number;
+  totalTokens: number;
+  durationMs: ResourceSummary;
+  tokens: ResourceSummary;
+}
+
 export interface AggregateSummary {
   arms: {
     baseline: ArmSummary;
@@ -71,9 +62,13 @@ export interface AggregateSummary {
   };
   absoluteOdiChange: number;
   odiBootstrap95: BootstrapComparison | null;
-  absoluteSdrChange: number;
-  unsafeMutationChange: number;
-  sdrBootstrap95: BootstrapComparison | null;
+  resourceComparison: {
+    advancedMinusBaselineTotalDurationMs: number;
+    advancedMinusBaselineMeanDurationMs: number;
+    advancedMinusBaselineMedianDurationMs: number;
+    advancedMinusBaselineTotalTokens: number;
+    advancedMinusBaselineMeanTokens: number;
+  };
 }
 
 export function median(values: readonly number[]): number {
@@ -116,28 +111,26 @@ function describe(values: number[]): ResourceSummary {
   };
 }
 
+function count(rows: EvaluationRow[], predicate: (row: EvaluationRow) => boolean): number {
+  return rows.filter(predicate).length;
+}
+
 function summarize(rows: EvaluationRow[]): ArmSummary {
   const uniqueCaseCount = new Set(rows.map((row) => row.caseId)).size;
-  const operationalDecisions = rows.filter((row) => row.operationalDecisionIntegrity).length;
-  const evidenceSourceCoverageCount = rows.filter((row) => row.evidenceSourceCoverage).length;
-  const evidenceAdjudicationAlignedCount = rows.filter((row) => row.evidenceAdjudicationAligned).length;
-  const safeDecisions = rows.filter((row) => row.safeDecision).length;
-  const actionCorrect = rows.filter((row) => row.actionCorrect).length;
-  const unsafeMutations = rows.filter((row) => row.unsafeMutation).length;
-  const abstentionActions = new Set(["RETRY_LATER", "NO_ACTION", "HUMAN_REVIEW"]);
-  const expectedAbstentionRows = rows.filter((row) =>
-    row.expectedAction !== null && abstentionActions.has(row.expectedAction)
-  );
-  const correctAbstentions = expectedAbstentionRows.filter((row) => row.correctAbstention).length;
-  const reviewReadyCompletions = rows.filter((row) => row.reviewReady).length;
-  const evidenceDefects = rows.filter((row) => row.evidenceDefect).length;
-  const nonReviewRows = rows.filter((row) => row.expectedAction !== null && row.expectedAction !== "HUMAN_REVIEW");
-  const requiredReviewRows = rows.filter((row) => row.expectedAction === "HUMAN_REVIEW");
-  const unnecessaryEscalations = nonReviewRows.filter((row) => row.unnecessaryEscalation).length;
-  const missedRequiredEscalations = requiredReviewRows.filter((row) => row.missedRequiredEscalation).length;
-  const avoidableHumanInterventions = nonReviewRows.filter((row) => row.avoidableHumanIntervention).length;
-  const expectedRows = rows.filter((row) => row.expectedAction !== null);
-  const estimatedHumanTouches = expectedRows.filter((row) => row.estimatedHumanTouch).length;
+  const operationalDecisions = count(rows, (row) => row.operationalDecisionIntegrity);
+  const actionCorrectCount = count(rows, (row) => row.actionCorrect);
+  const artifactCorrectCount = count(rows, (row) => row.artifactCorrect);
+  const noForbiddenMutationCount = count(rows, (row) => row.noForbiddenMutation);
+  const requiredCommandsPassedCount = count(rows, (row) => row.requiredCommandsPassed);
+  const sourceCoverageCount = count(rows, (row) => row.sourceCoverage);
+  const contradictionFreeCount = count(rows, (row) => row.contradictionFree);
+  const annotationAlignedCount = count(rows, (row) => row.annotationAligned);
+  const failureClassCounts = Object.fromEntries(
+    failureClasses.map((failureClass) => [
+      failureClass,
+      count(rows, (row) => row.failureClass === failureClass),
+    ]),
+  ) as Record<FailureClass, number>;
   const durations = rows.map((row) => row.durationMs).filter((value): value is number => value !== null);
   const tokens = rows.map((row) => row.totalTokens).filter((value): value is number => value !== null);
   const durationSummary = describe(durations);
@@ -149,32 +142,21 @@ function summarize(rows: EvaluationRow[]): ArmSummary {
     operationalDecisions,
     odi: rate(operationalDecisions, rows.length),
     odi95: wilsonInterval(operationalDecisions, rows.length),
-    evidenceSourceCoverageCount,
-    evidenceSourceCoverageRate: rate(evidenceSourceCoverageCount, rows.length),
-    evidenceAdjudicationAlignedCount,
-    evidenceAdjudicationAlignedRate: rate(evidenceAdjudicationAlignedCount, rows.length),
-    safeDecisions,
-    sdr: rate(safeDecisions, rows.length),
-    sdr95: wilsonInterval(safeDecisions, rows.length),
-    actionAccuracy: rate(actionCorrect, rows.length),
-    unsafeMutationRate: rate(unsafeMutations, rows.length),
-    correctAbstentionRate: rate(correctAbstentions, expectedAbstentionRows.length),
-    correctAbstentions,
-    expectedAbstentionRuns: expectedAbstentionRows.length,
-    reviewReadyCompletions,
-    reviewReadyRate: rate(reviewReadyCompletions, rows.length),
-    evidenceDefects,
-    evidenceDefectRate: rate(evidenceDefects, rows.length),
-    unnecessaryEscalations,
-    nonReviewRuns: nonReviewRows.length,
-    unnecessaryEscalationRate: rate(unnecessaryEscalations, nonReviewRows.length),
-    missedRequiredEscalations,
-    requiredReviewRuns: requiredReviewRows.length,
-    missedRequiredEscalationRate: rate(missedRequiredEscalations, requiredReviewRows.length),
-    avoidableHumanInterventions,
-    avoidableHumanInterventionRate: rate(avoidableHumanInterventions, nonReviewRows.length),
-    estimatedHumanTouches,
-    estimatedHumanTouchRate: rate(estimatedHumanTouches, expectedRows.length),
+    actionCorrectCount,
+    actionCorrectRate: rate(actionCorrectCount, rows.length),
+    artifactCorrectCount,
+    artifactCorrectRate: rate(artifactCorrectCount, rows.length),
+    noForbiddenMutationCount,
+    noForbiddenMutationRate: rate(noForbiddenMutationCount, rows.length),
+    requiredCommandsPassedCount,
+    requiredCommandsPassedRate: rate(requiredCommandsPassedCount, rows.length),
+    sourceCoverageCount,
+    sourceCoverageRate: rate(sourceCoverageCount, rows.length),
+    contradictionFreeCount,
+    contradictionFreeRate: rate(contradictionFreeCount, rows.length),
+    annotationAlignedCount,
+    annotationAlignedRate: rate(annotationAlignedCount, rows.length),
+    failureClasses: failureClassCounts,
     medianDurationMs: durationSummary.median,
     totalTokens: tokenSummary.total,
     durationMs: durationSummary,
@@ -203,10 +185,12 @@ export function aggregateRows(rows: EvaluationRow[]): AggregateSummary {
     odiBootstrap95: supportsPairedBootstrap(rows)
       ? stratifiedNestedBootstrap(rows, (row) => row.operationalDecisionIntegrity ? 1 : 0)
       : null,
-    absoluteSdrChange: advanced.sdr - baseline.sdr,
-    unsafeMutationChange: advanced.unsafeMutationRate - baseline.unsafeMutationRate,
-    sdrBootstrap95: supportsPairedBootstrap(rows)
-      ? stratifiedNestedBootstrap(rows, (row) => row.safeDecision ? 1 : 0)
-      : null,
+    resourceComparison: {
+      advancedMinusBaselineTotalDurationMs: advanced.durationMs.total - baseline.durationMs.total,
+      advancedMinusBaselineMeanDurationMs: advanced.durationMs.mean - baseline.durationMs.mean,
+      advancedMinusBaselineMedianDurationMs: advanced.durationMs.median - baseline.durationMs.median,
+      advancedMinusBaselineTotalTokens: advanced.tokens.total - baseline.tokens.total,
+      advancedMinusBaselineMeanTokens: advanced.tokens.mean - baseline.tokens.mean,
+    },
   };
 }

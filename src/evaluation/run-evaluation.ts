@@ -4,14 +4,18 @@ import { join, relative, resolve } from "node:path";
 import { CodexRunner } from "../agents/codex-runner.ts";
 import { RecordedRunner } from "../agents/recorded-runner.ts";
 import { ModelExecutionError, type AgentRunner } from "../agents/runner.ts";
-import { loadPublicCase } from "../core/case-loader.ts";
+import { loadOracleV4, loadPublicCaseV4 } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
-import { CaseOracleSchema } from "../core/schemas.ts";
 import { snapshotTree } from "../core/tree-snapshot.ts";
 import { runAdvanced } from "../workflows/advanced.ts";
 import { runBaseline } from "../workflows/baseline.ts";
 import { aggregateRows, type AggregateSummary } from "./aggregate.ts";
-import { scoreRun, type EvaluationRow } from "./score-run.ts";
+import {
+  failureClasses,
+  scoreRun,
+  type EvaluationRow,
+  type FailureClass,
+} from "./score-run.ts";
 import { reconstructAvailableUsage, type TrajectoryUsage } from "./trajectory-usage.ts";
 
 export interface RunEvaluationConfig {
@@ -24,19 +28,38 @@ export interface RunEvaluationConfig {
   caseRoot?: string;
   lockPath?: string;
   runner?: AgentRunner;
+  evaluatorInvalidations?: EvaluatorInvalidationInput[];
+}
+
+export interface EvaluatorInvalidationInput {
+  caseId: string;
+  reason: string;
+  receiptPath: string;
 }
 
 export interface EvaluationSummary extends AggregateSummary {
-  schemaVersion: 1;
+  schemaVersion: 2;
   generatedAt: string;
   caseSetHash: string;
   caseDefinitionSetHash: string;
   model: string;
   mode: "live" | "recorded";
   trialsPerCase: number;
-  failureTaxonomy: {
-    modelExecutionErrors: number;
-    infrastructureOrEvaluatorErrors: number;
+  selection: {
+    selectedCaseCount: number;
+    includedCaseCount: number;
+    excludedCaseCount: number;
+    selectedCaseSetHash: string;
+    selectedCaseDefinitionSetHash: string;
+    includedCaseIds: string[];
+    excludedCaseIds: string[];
+  };
+  failureTaxonomy: Record<FailureClass, number>;
+  comparisonDesign: {
+    class: "SYSTEM_LEVEL_NON_COMPUTE_MATCHED";
+    baselineSessions: 1;
+    advancedSessions: 3;
+    attribution: string;
   };
   lockVerification: {
     lockSha256: string;
@@ -145,7 +168,6 @@ export function createExecutionErrorRow(input: {
   trial: number;
   tokenUsage?: TrajectoryUsage | null;
 }): EvaluationRow {
-  const requiredReview = input.expectedAction === "HUMAN_REVIEW";
   const tokenUsage = input.tokenUsage ?? null;
   return {
     runId: `${input.caseId}-${input.arm}-trial-${input.trial}-error`,
@@ -158,20 +180,12 @@ export function createExecutionErrorRow(input: {
     actionCorrect: false,
     artifactCorrect: false,
     noForbiddenMutation: false,
-    regressionPreserved: false,
+    requiredCommandsPassed: false,
+    sourceCoverage: false,
+    contradictionFree: false,
+    annotationAligned: false,
     operationalDecisionIntegrity: false,
-    evidenceSourceCoverage: false,
-    evidenceAdjudicationAligned: false,
-    evidenceSupported: false,
-    safeDecision: false,
-    unsafeMutation: false,
-    correctAbstention: false,
-    reviewReady: false,
-    evidenceDefect: false,
-    unnecessaryEscalation: false,
-    missedRequiredEscalation: requiredReview,
-    avoidableHumanIntervention: !requiredReview,
-    estimatedHumanTouch: true,
+    failureClass: "MODEL_EXECUTION",
     durationMs: null,
     inputTokens: tokenUsage?.input ?? null,
     cachedInputTokens: tokenUsage?.cachedInput ?? null,
@@ -184,6 +198,9 @@ export function createExecutionErrorRow(input: {
 
 export async function runEvaluation(config: RunEvaluationConfig): Promise<EvaluationSummary> {
   if (config.caseIds.length === 0) throw new Error("Evaluation requires at least one case");
+  if (new Set(config.caseIds).size !== config.caseIds.length) {
+    throw new Error("Evaluation case IDs must be unique");
+  }
   if (!Number.isInteger(config.trials) || config.trials <= 0) throw new Error("Trials must be a positive integer");
   const outDir = resolve(config.outDir);
   const caseRoot = resolve(config.caseRoot ?? "cases");
@@ -193,34 +210,69 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
       ? new RecordedRunner(resolve("artifacts", "recorded", "runner-fixtures.json"))
       : new CodexRunner()
   );
+
+  const invalidationInputs = config.evaluatorInvalidations ?? [];
+  const invalidatedIds = new Set<string>();
+  const invalidations = [];
+  for (const input of invalidationInputs) {
+    if (!config.caseIds.includes(input.caseId)) {
+      throw new Error(`Evaluator invalidation names an unselected case: ${input.caseId}`);
+    }
+    if (invalidatedIds.has(input.caseId)) {
+      throw new Error(`Duplicate evaluator invalidation: ${input.caseId}`);
+    }
+    if (!input.reason.trim()) throw new Error(`Evaluator invalidation requires a reason: ${input.caseId}`);
+    const receiptText = await readFile(resolve(input.receiptPath), "utf8");
+    invalidatedIds.add(input.caseId);
+    invalidations.push({
+      caseId: input.caseId,
+      reason: input.reason,
+      sourceReceiptSha256: sha256Text(receiptText),
+      receipt: JSON.parse(receiptText),
+    });
+  }
+  const includedCaseIds = config.caseIds.filter((caseId) => !invalidatedIds.has(caseId));
+  if (includedCaseIds.length === 0) throw new Error("Evaluator invalidations excluded every selected case");
+
   const caseHashes = [];
   const caseDefinitions = [];
   const expectedActions = new Map<string, string>();
   for (const caseId of config.caseIds) {
     const caseDir = join(caseRoot, caseId);
-    const loaded = await loadPublicCase(caseDir);
-    const oracle = CaseOracleSchema.parse(JSON.parse(await readFile(join(caseDir, "oracle.json"), "utf8")));
+    const loaded = await loadPublicCaseV4(caseDir);
+    const oracle = await loadOracleV4(caseDir);
     caseHashes.push({ caseId, workspaceHash: loaded.workspaceHash });
     caseDefinitions.push({ caseId, sha256: (await snapshotTree(caseDir)).sha256 });
     expectedActions.set(caseId, oracle.expectedAction);
   }
-  const canonicalCaseHashes = [...caseHashes].sort((left, right) => left.caseId.localeCompare(right.caseId));
-  const canonicalCaseDefinitions = [...caseDefinitions].sort((left, right) => left.caseId.localeCompare(right.caseId));
-  const caseSetHash = sha256Json(canonicalCaseHashes);
-  const caseDefinitionSetHash = sha256Json(canonicalCaseDefinitions);
+  const canonicalSelectedCaseHashes = [...caseHashes].sort((left, right) => left.caseId.localeCompare(right.caseId));
+  const canonicalSelectedCaseDefinitions = [...caseDefinitions].sort((left, right) => left.caseId.localeCompare(right.caseId));
+  const canonicalIncludedCaseHashes = canonicalSelectedCaseHashes.filter((entry) => !invalidatedIds.has(entry.caseId));
+  const canonicalIncludedCaseDefinitions = canonicalSelectedCaseDefinitions.filter((entry) => !invalidatedIds.has(entry.caseId));
+  const selectedCaseSetHash = sha256Json(canonicalSelectedCaseHashes);
+  const selectedCaseDefinitionSetHash = sha256Json(canonicalSelectedCaseDefinitions);
+  const caseSetHash = sha256Json(canonicalIncludedCaseHashes);
+  const caseDefinitionSetHash = sha256Json(canonicalIncludedCaseDefinitions);
   const lockVerification = config.lockPath
     ? await verifyEvaluationLock({
         lockPath: config.lockPath,
         config,
         caseRoot,
-        caseHashes: canonicalCaseHashes,
-        caseSetHash,
-        caseDefinitionSetHash,
+        caseHashes: canonicalSelectedCaseHashes,
+        caseSetHash: selectedCaseSetHash,
+        caseDefinitionSetHash: selectedCaseDefinitionSetHash,
       })
     : null;
+
+  await writeJson(join(outDir, "evaluator-invalidations.json"), {
+    schemaVersion: 1,
+    selectedCaseIds: [...config.caseIds].sort(),
+    includedCaseIds: [...includedCaseIds].sort(),
+    invalidations,
+  });
+
   const rows: EvaluationRow[] = [];
-  let modelExecutionErrors = 0;
-  for (const caseId of config.caseIds) {
+  for (const caseId of includedCaseIds) {
     for (let trial = 1; trial <= config.trials; trial += 1) {
       for (const arm of ["baseline", "advanced"] as const) {
         const runPath = join(outDir, "runs", caseId, `trial-${trial}`, arm);
@@ -240,18 +292,18 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
           row.runPath = relative(outDir, runPath).replaceAll("\\", "/");
           rows.push(row);
         } catch (error) {
+          const classification: FailureClass = error instanceof ModelExecutionError
+            ? "MODEL_EXECUTION"
+            : "INFRASTRUCTURE";
           await writeJson(join(runPath, "error.json"), {
             caseId,
             arm,
-            classification: error instanceof ModelExecutionError
-              ? "MODEL_EXECUTION"
-              : "INFRASTRUCTURE_OR_EVALUATOR",
+            classification,
             kind: error instanceof ModelExecutionError ? error.kind : null,
             message: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : undefined,
           });
           if (!(error instanceof ModelExecutionError)) throw error;
-          modelExecutionErrors += 1;
           const tokenUsage = await reconstructAvailableUsage(runPath);
           rows.push(createExecutionErrorRow({
             caseId,
@@ -267,18 +319,38 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
       }
     }
   }
+
+  const failureTaxonomy = Object.fromEntries(
+    failureClasses.map((failureClass) => [
+      failureClass,
+      rows.filter((row) => row.failureClass === failureClass).length,
+    ]),
+  ) as Record<FailureClass, number>;
+  failureTaxonomy.EVALUATOR_INVALID = invalidations.length * config.trials * 2;
   const aggregate = aggregateRows(rows);
   const summary: EvaluationSummary = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     caseSetHash,
     caseDefinitionSetHash,
     model: config.model,
     mode: config.mode,
     trialsPerCase: config.trials,
-    failureTaxonomy: {
-      modelExecutionErrors,
-      infrastructureOrEvaluatorErrors: 0,
+    selection: {
+      selectedCaseCount: config.caseIds.length,
+      includedCaseCount: includedCaseIds.length,
+      excludedCaseCount: invalidations.length,
+      selectedCaseSetHash,
+      selectedCaseDefinitionSetHash,
+      includedCaseIds: [...includedCaseIds].sort(),
+      excludedCaseIds: [...invalidatedIds].sort(),
+    },
+    failureTaxonomy,
+    comparisonDesign: {
+      class: "SYSTEM_LEVEL_NON_COMPUTE_MATCHED",
+      baselineSessions: 1,
+      advancedSessions: 3,
+      attribution: "Observed differences apply to the complete workflows, not to critique quality alone.",
     },
     lockVerification,
     ...aggregate,
