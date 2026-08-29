@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter’s presentation-class selector no longer matches the redesigned roster markup, although the authoritative data-athlete-id attribute remains stable.",
+  "failureOwner": "adapter selector implementation",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.html",
+    "fixtures/new.html"
+  ],
+  "evidenceRejected": [
+    "input/canonical.json"
+  ],
+  "affectedEntities": [
+    "official-roster athlete identity extraction"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "player-card",
+      "replace": "[data-athlete-id]",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority"
+  ],
+  "unresolvedUncertainty": [
+    "The deterministic required test command has not been recorded as passing after the proposed replacement."
+  ],
+  "minimumInformationRequest": [
+    "Record successful output from `node --experimental-strip-types --test adapter.test.ts` against the proposed adapter change."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Repair only adapter.ts by replacing the presentation-class selector with the stable semantic data-athlete-id selector; no canonical data mutation is proposed."
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-pagination-token",
+    "input/policy.json",
+    "adapter.test.ts"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The adapter remains unrepaired; opaque-token collection is demonstrably failing until a gated, approved repair is supplied.",
+    "The current source behavior cannot be independently confirmed beyond the recorded failing test output."
+  ],
+  "summary": "The no-mutation HUMAN_REVIEW action is appropriate: the required deterministic test gate currently fails for opaque continuations, no candidate diff exists, and the stated policy requires both gate success and simulated approval before a consequential change."
+}

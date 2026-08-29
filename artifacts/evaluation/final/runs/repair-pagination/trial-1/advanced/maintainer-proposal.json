@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The pagination contract changed from integer pages to opaque nextPage continuation tokens.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-pagination-token",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts"
+  ],
+  "evidenceRejected": [
+    "input/canonical.json"
+  ],
+  "affectedEntities": [
+    "pagination adapter",
+    "fixture collection"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "A deterministic required test result and simulated human approval are absent; the adapter source could not be independently inspected in this restricted workspace."
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the current adapter already supports both continuation formats.",
+    "Whether the required deterministic test gate passes after the candidate repair."
+  ],
+  "minimumInformationRequest": [
+    "Provide successful output from `node --experimental-strip-types --test adapter.test.ts` for the proposed adapter repair and simulated human approval."
+  ],
+  "retryCondition": "Retry after deterministic gate success and simulated human approval are recorded.",
+  "approvalLevel": "NONE",
+  "summary": "Evidence supports an adapter-level pagination divergence, but does not justify a consequential mutation without the required gate result and approval."
+}

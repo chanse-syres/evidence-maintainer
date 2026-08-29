@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "status": "official-roster-unfiltered"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "rules": [
+    "Interpret result sets within declared filter scope",
+    "Removal requires an unfiltered authoritative view or explicit transaction"
+  ]
+}

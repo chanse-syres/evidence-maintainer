@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The source roster moved from top-level players to data.roster, while the existing adapter workspace snapshot predates the documented envelope transition.",
+  "failureOwner": "adapter.ts payload-shape handling",
+  "evidenceUsed": [
+    "obs-json-nesting",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "roster payload normalization",
+    "player record IDs"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The required deterministic test command could not be executed in this read-only, policy-blocked environment, so no consequential adapter mutation is approved."
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable"
+  ],
+  "unresolvedUncertainty": [
+    "The exact current adapter implementation and deterministic test outcome could not be independently inspected or executed in the restricted environment.",
+    "Simulated human approval has not been recorded for an adapter change."
+  ],
+  "minimumInformationRequest": [
+    "Run `node --experimental-strip-types --test adapter.test.ts` against the copied case workspace and provide the result.",
+    "Provide simulated human approval after the proposed adapter change passes the deterministic gate."
+  ],
+  "retryCondition": "The required deterministic test passes for both fixtures and simulated human approval is recorded.",
+  "approvalLevel": "NONE",
+  "summary": "Evidence supports an adapter-envelope repair, but the mandatory gate and simulated approval are unavailable; escalate for human review without mutation."
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "review-conflicting-authorities",
+  "title": "Escalate two authoritative records that disagree at the same effective time",
+  "description": "Two independently authoritative systems publish incompatible status values for the same entity and neither record contains a supersession edge.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Cross-system authority conflict in public-data maintenance",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "81190c3456d8525d8c0760e7a12a2d383d7dddfc75220b8e8bf5448dd5b6790e"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a0500da072c9c5fa904f47d68f348b8004181af59dd3d5259ddc525dd79e7ffb"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "b2afeb63d818d0e1b0ea6a0f92a4ce54e1fd3b12bb32084a7a2f3d4ccf0c519b"
+    }
+  ]
+}

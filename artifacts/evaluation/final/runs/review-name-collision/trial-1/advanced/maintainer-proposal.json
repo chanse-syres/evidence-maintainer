@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The award observation identifies only the name \"Jordan Lee\" while the canonical snapshot contains two active people with that same name and no supplied stable identifier or disambiguators.",
+  "failureOwner": "source observation identity resolution",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-name-only-award",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-name-only-award"
+  ],
+  "affectedEntities": [
+    "person-81",
+    "person-82"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The name-only observation cannot be safely resolved to either matching canonical person."
+    }
+  ],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the announced Jordan Lee is person-81 or person-82.",
+    "Which stable identifier or two independent disambiguators would resolve the observation."
+  ],
+  "minimumInformationRequest": [
+    "Provide a stable source identifier for the announced Jordan Lee, or two independent disambiguators such as program and graduation year."
+  ],
+  "retryCondition": "Retry after identity-resolving evidence is available for obs-name-only-award.",
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Escalated for human review without mutation because policy requires a stable identifier or two independent disambiguators and explicitly requires escalation for a name collision."
+}

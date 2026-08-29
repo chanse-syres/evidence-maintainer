@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The subsequent bounded retry may fail or yield contradictory authoritative evidence.",
+    "The proposal does not specify durable retry scheduling, though no write paths are allowed."
+  ],
+  "summary": "The cache was 20 minutes old at the 17:00 policy cutoff, within the 45-minute freshness window; the sole observation is a non-contradictory timeout. Retaining the cache and requesting one bounded retry at 17:05 is consistent with the policy and introduces no writes."
+}

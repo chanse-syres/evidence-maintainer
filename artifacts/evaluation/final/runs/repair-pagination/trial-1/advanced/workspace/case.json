@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "repair-pagination",
+  "title": "Repair cursor pagination while preserving complete historical collection",
+  "description": "Opaque nextPage tokens replace numeric pages and a correct adapter must collect all pages without duplicates.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Observed public API pagination transition pattern",
+  "agentVisibleFiles": [
+    "workspace/adapter.test.ts",
+    "workspace/adapter.ts",
+    "workspace/fixtures/new.json",
+    "workspace/fixtures/old.json",
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "adapter.ts"
+  ],
+  "requiredCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "provenance": [
+    {
+      "sourceId": "fixture-adapter.test.ts",
+      "path": "workspace/adapter.test.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "c57934d1f19428de78ef149d8e386a799ffa34fc142623ba265401fe14e41f05"
+    },
+    {
+      "sourceId": "fixture-adapter.ts",
+      "path": "workspace/adapter.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "1eb9035eb45303ba86d4e0f9630bcfd809d301bc51ed38746bbf10e464e06854"
+    },
+    {
+      "sourceId": "fixture-fixtures-new.json",
+      "path": "workspace/fixtures/new.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "d43d47b33c755f1ae5338ecac606c1e1c613da8fde4e30100a96fb48faacdcf8"
+    },
+    {
+      "sourceId": "fixture-fixtures-old.json",
+      "path": "workspace/fixtures/old.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "6a62eb197a50dbf0d5d90a769e0f314e5e90f2acb7947c5951b8c05dc5eb100e"
+    },
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ae710817530664cde58e96bf60ceedbbb6a5f6aed76e910159837016efbe0e57"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "c40c7f68d1319139099ff44987e296a1a20eca9b60a9029fbbaf1a04259197c7"
+    }
+  ]
+}

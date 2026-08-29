@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "No material divergence: obs-2 matches the existing evt-1 occurrence and is duplicate coverage.",
+  "failureOwner": "none",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/policy.json",
+    "obs-1",
+    "obs-2"
+  ],
+  "evidenceRejected": [
+    "obs-2"
+  ],
+  "affectedEntities": [
+    "athlete-7",
+    "evt-1"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The canonical record already represents evt-1; the syndicated article has the same subject, effective time, status, team, and event ID, so it cannot create a second occurrence."
+    }
+  ],
+  "preservedInvariants": [
+    "Canonical event IDs remain unique",
+    "Syndicated coverage cannot create a second occurrence"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "No change is justified. The later syndicated story is coverage of the already-canonical commitment event, not a new event.",
+  "arm": "baseline",
+  "executedCommands": []
+}

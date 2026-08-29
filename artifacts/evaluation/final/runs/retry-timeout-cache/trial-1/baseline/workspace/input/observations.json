@@ -1,0 +1,18 @@
+[
+  {
+    "id": "obs-timeout",
+    "sourceId": "public-provider",
+    "observedAt": "2026-08-28T16:50:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [],
+    "subjectId": null,
+    "kind": "network-timeout",
+    "status": null,
+    "contentType": null,
+    "schemaFingerprint": null,
+    "facts": {
+      "timeoutMs": 10000,
+      "contradictoryEvidence": false
+    }
+  }
+]

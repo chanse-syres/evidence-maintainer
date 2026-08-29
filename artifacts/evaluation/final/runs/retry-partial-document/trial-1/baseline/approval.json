@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "requested": true,
+  "eligible": false,
+  "decision": "REJECTED",
+  "reason": "Approval is ineligible because the deterministic gate failed.",
+  "recordedAt": "2026-08-29T00:30:34.427Z"
+}

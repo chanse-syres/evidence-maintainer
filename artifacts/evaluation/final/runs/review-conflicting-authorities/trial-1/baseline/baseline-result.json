@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "At effectiveAt 2026-08-27T14:00:00.000Z, co-authoritative observations report incompatible status values: active versus withdrawn, with neither observation superseding the other.",
+  "failureOwner": "cross-system resolution authority",
+  "evidenceUsed": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn",
+    "input/policy.json",
+    "input/canonical.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-71"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Policy requires escalation for conflicting co-authoritative values at the same effective time; no supersession edge or signed cross-system resolution is present."
+    }
+  ],
+  "preservedInvariants": [
+    "Conflicting co-authoritative records cannot be resolved by source order",
+    "Canonical state remains unchanged without a supersession edge"
+  ],
+  "unresolvedUncertainty": [
+    "Which status is authoritative after 2026-08-27T14:00:00.000Z.",
+    "Whether either system has a signed cross-system resolution that supersedes the conflicting records."
+  ],
+  "minimumInformationRequest": [
+    "A signed cross-system resolution identifying the resolved status for athlete-71.",
+    "The effective timestamp and supersession relationship for that resolution."
+  ],
+  "retryCondition": "Retry only after a signed cross-system resolution with an effective timestamp and supersession relationship is available.",
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Escalated for human review. Canonical status remains active because two authoritative records conflict at the same effective time and neither supplies a supersession edge.",
+  "arm": "baseline",
+  "executedCommands": []
+}

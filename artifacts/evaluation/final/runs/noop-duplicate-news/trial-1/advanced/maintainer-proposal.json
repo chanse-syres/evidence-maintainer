@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "No material divergence: obs-2 reports the same subject, event ID, effective time, status, and team as the canonical evt-1 occurrence.",
+  "failureOwner": "NONE",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-1",
+    "obs-2",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-7",
+    "evt-1"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Syndicated coverage is duplicate reporting of canonical event evt-1 and cannot create a second occurrence."
+    }
+  ],
+  "preservedInvariants": [
+    "Canonical event IDs remain unique",
+    "Syndicated coverage cannot create a second occurrence"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "No mutation is justified: the canonical record already contains evt-1, while obs-2 is non-authoritative coverage of that same occurrence."
+}

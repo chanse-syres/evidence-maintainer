@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04aec-9292-76b0-8e42-ac27638d32d8"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"retry-deferred-406\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"input/canonical.json\",\"obs-deferred-406\",\"input/policy.json\"],\"violations\":[],\"residualRisks\":[\"Prior retry-attempt count is absent; any future retry must verify that it remains below 2.\",\"The next provider response may remain unusable.\"],\"summary\":\"The deferred 406 explicitly preserves cache validity and specifies a 30-minute delay; retaining the 42-record cache with no mutation complies with both invariants. The proposed retry condition correctly bounds any future retry.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17316,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":285,"reasoning_output_tokens":148}}

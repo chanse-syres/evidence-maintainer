@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "athlete-11 remains offered with no team in the canonical snapshot after the authoritative official observation records committed to Coastal State effective 2026-08-20T20:00:00.000Z.",
+  "failureOwner": "canonical-data-maintenance",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-official-commitment",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-older-aggregator"
+  ],
+  "affectedEntities": [
+    "athlete-11"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The official evidence supports the candidate update, but the ledger provides no deterministic gate-success or simulated-approval evidence required before applying a consequential mutation."
+    }
+  ],
+  "preservedInvariants": [
+    "Stable athlete identity is preserved",
+    "Only an authoritative commitment source may set committed status"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the required deterministic validation gate has passed.",
+    "Whether simulated human approval has been granted for the candidate canonical-data change."
+  ],
+  "minimumInformationRequest": [
+    "Provide recorded deterministic gate-success evidence for updating athlete-11.",
+    "Provide simulated human approval for setting athlete-11 status to committed and team to Coastal State."
+  ],
+  "retryCondition": "Recorded deterministic gate success and simulated human approval are available.",
+  "approvalLevel": "NONE",
+  "summary": "Official commitment evidence authoritatively supersedes the stale discovery observation, but mutation is withheld pending the required gate and simulated approval."
+}

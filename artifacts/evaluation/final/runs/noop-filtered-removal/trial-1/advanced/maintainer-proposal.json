@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The filtered quarterback observation omits athlete-61, but its declared QB-subset scope does not assert a roster removal or a status change for this DB.",
+  "failureOwner": "None; the source observation is being interpreted within its declared scope.",
+  "evidenceUsed": [
+    "evt-002",
+    "obs-filtered-quarterbacks",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-filtered-quarterbacks"
+  ],
+  "affectedEntities": [
+    "athlete-61"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "No unfiltered authoritative roster view or explicit removal transaction supports changing athlete-61."
+    }
+  ],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "unresolvedUncertainty": [
+    "Whether athlete-61 remains on an unfiltered authoritative roster is not established by the QB-filtered observation."
+  ],
+  "minimumInformationRequest": [
+    "An unfiltered official-roster view covering athlete-61, or an explicit authoritative removal transaction."
+  ],
+  "retryCondition": "Retry only when an unfiltered authoritative roster observation or explicit removal transaction is available.",
+  "approvalLevel": "NONE",
+  "summary": "Retain athlete-61 unchanged; absence from a position=QB result is scoped filtering, not evidence of removal."
+}

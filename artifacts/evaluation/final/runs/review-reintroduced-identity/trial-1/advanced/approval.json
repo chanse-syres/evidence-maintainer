@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "requested": true,
+  "eligible": false,
+  "decision": "REJECTED",
+  "reason": "Approval is ineligible because the deterministic gate failed.",
+  "recordedAt": "2026-08-29T00:33:00.747Z"
+}

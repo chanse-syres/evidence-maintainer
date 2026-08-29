@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 60,
+  "retryLimit": 2,
+  "invariants": [
+    "A deferred response cannot delete cached records",
+    "Retries are bounded"
+  ],
+  "rules": [
+    "Use the valid cache during expected deferral",
+    "Retry after 30 minutes at most twice"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "review-name-collision-baseline-1787963522543",
+  "caseId": "review-name-collision",
+  "arm": "baseline",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T00:32:02.543Z",
+  "finishedAt": "2026-08-29T00:32:11.709Z",
+  "durationMs": 9166,
+  "timeoutMs": 1200000,
+  "promptSha256": "9f14097975c2327aed51beccc74580701f4ff10a01a23110ac6732c501a8bba9",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "d8f39ba8c2afcd40b95955b93ed55af6bd897874ca44520417a4f0b1c4e9d321",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "cac32a1a9aacf11f868a3dee51d43c5cb3302e6e1f22aa3700b500bafcb41a6c",
+    "before-tree.json": "1525efd71af36cbeaf82ec7e07a63068f7f6f16c3b91b7f79a4cbb6cc11103ce",
+    "after-tree.json": "1525efd71af36cbeaf82ec7e07a63068f7f6f16c3b91b7f79a4cbb6cc11103ce",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "ab0bd4a32046cdf347882b2abb4ddadeac0a93d990a28bb996cf6980018c3df8",
+    "approval.json": "9a031d34d5ac784f3b8f75ce3122a5cbfc40081df133975e9ddec056e60e7572",
+    "trajectories/baseline.jsonl": "371ad45b2b4644280f15df07df04a36081b5ada7095226b89d1d4b69f8e90ba4"
+  },
+  "tokenUsage": {
+    "input": 17144,
+    "cachedInput": 0,
+    "output": 303
+  },
+  "outcome": "FAIL"
+}

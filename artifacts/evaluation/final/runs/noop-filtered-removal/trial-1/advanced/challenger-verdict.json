@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [
+    "The proposal lists obs-filtered-quarterbacks as both evidenceUsed and evidenceRejected, creating contradictory evidence provenance for the central basis of the NO_ACTION decision."
+  ],
+  "residualRisks": [
+    "No unfiltered authoritative roster observation or explicit removal transaction establishes athlete-61's current roster status."
+  ],
+  "summary": "The no-mutation conclusion is supported by the scoped QB observation and policy, but the proposal's contradictory treatment of that same observation prevents a clean confirmation."
+}

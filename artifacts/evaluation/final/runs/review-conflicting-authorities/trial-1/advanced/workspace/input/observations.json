@@ -1,0 +1,39 @@
+[
+  {
+    "id": "obs-athletics-active",
+    "sourceId": "official-athletics-roster",
+    "observedAt": "2026-08-27T15:00:00.000Z",
+    "effectiveAt": "2026-08-27T14:00:00.000Z",
+    "authorityScope": [
+      "participation-status"
+    ],
+    "subjectId": "athlete-71",
+    "kind": "official-roster",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "athletics-roster-v6",
+    "facts": {
+      "status": "active",
+      "supersedes": null
+    }
+  },
+  {
+    "id": "obs-registrar-withdrawn",
+    "sourceId": "official-registrar",
+    "observedAt": "2026-08-27T15:04:00.000Z",
+    "effectiveAt": "2026-08-27T14:00:00.000Z",
+    "authorityScope": [
+      "enrollment-status",
+      "participation-status"
+    ],
+    "subjectId": "athlete-71",
+    "kind": "official-enrollment",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "registrar-status-v3",
+    "facts": {
+      "status": "withdrawn",
+      "supersedes": null
+    }
+  }
+]

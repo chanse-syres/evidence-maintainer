@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "review-name-collision-advanced-1787963531727",
+  "caseId": "review-name-collision",
+  "arm": "advanced",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T00:32:11.727Z",
+  "finishedAt": "2026-08-29T00:32:27.662Z",
+  "durationMs": 15935,
+  "timeoutMs": 1200000,
+  "promptSha256": "bb697779b95ababafc2cad6087bba29ad88cf350d5011f7d7ef33370924e9550",
+  "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
+  "caseSetSha256": "d8f39ba8c2afcd40b95955b93ed55af6bd897874ca44520417a4f0b1c4e9d321",
+  "trajectoryPaths": [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl"
+  ],
+  "artifactSha256": {
+    "evidence.jsonl": "07c54a9c8426254b8686b8abf53c2d53358f18650b3ede9641df3746a604e3e4",
+    "maintainer-proposal.json": "0d723466d43b7943d88d7db276e85c1ea0c47fec2b29b80d0aaed44d03f36c20",
+    "candidate-diff.json": "c96a7ee8eec703234528e96c2ad7da7f102c41f2f0955bef7c454dba6af917e6",
+    "challenger-verdict.json": "cbecba51d94d08045f0e9722514be7f44dfc9b488a073e4161d21222ec846a7a",
+    "before-tree.json": "1525efd71af36cbeaf82ec7e07a63068f7f6f16c3b91b7f79a4cbb6cc11103ce",
+    "after-tree.json": "1525efd71af36cbeaf82ec7e07a63068f7f6f16c3b91b7f79a4cbb6cc11103ce",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "48c653f0c7e4c53ead3b7295daa1085845e5fb48238a4561c5f0ab9635521654",
+    "approval.json": "dfda73bf6c4fed3dfa45c1786f671504ab9f7b0792a4be48093b88b15a7eef30",
+    "trajectories/maintainer.jsonl": "d52c6b01674b772a4393be2843647318d358a41ceb70c89fbb0ac69a27c16a7e",
+    "trajectories/challenger.jsonl": "bc296bb64a76186e7f057c6fa07d9f0fc5610338bec5bd5b2d6d0ee02cbed028"
+  },
+  "tokenUsage": {
+    "input": 35227,
+    "cachedInput": 0,
+    "output": 512
+  },
+  "outcome": "FAIL"
+}

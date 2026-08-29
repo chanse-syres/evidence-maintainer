@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-reintroduced-slot",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The observation is fresh but cannot establish whether the reintroduced entry is continuous with occurrence-91 or a distinct occurrence.",
+    "The official source must supply occurrence-stable identity evidence before any consequential linking or mutation can be considered."
+  ],
+  "summary": "The proposal correctly escalates without mutating the immutable closed occurrence; matching display name and slot are insufficient to establish continuity."
+}

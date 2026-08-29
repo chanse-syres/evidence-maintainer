@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "rating": "ScoutMetric",
+    "otherProviderRating": "RankGrid"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Provider-specific ratings do not overwrite one another",
+    "Stable athlete identity is preserved"
+  ],
+  "rules": [
+    "A provider owns only its named rating field",
+    "Use the latest effective value from that provider"
+  ]
+}

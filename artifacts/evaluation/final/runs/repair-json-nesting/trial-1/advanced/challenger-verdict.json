@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "adapter.test.ts",
+    "adapter.ts",
+    "evt-003",
+    "evt-004",
+    "evt-005"
+  ],
+  "violations": [
+    "The proposal incorrectly claims that the required deterministic test could not be executed; the supplied command result shows it executed and failed specifically for the new data.roster envelope.",
+    "The proposal's assertion that the current adapter implementation and test outcome could not be independently inspected is unsupported by the supplied workspace evidence and command result."
+  ],
+  "residualRisks": [
+    "The required gate remains failing for the documented new envelope.",
+    "No simulated approval is recorded for any consequential repair."
+  ],
+  "summary": "Reject the proposal as factually inconsistent with the supplied test evidence. Its no-mutation posture is appropriate while the gate fails, but the stated basis must be corrected to the observed new-envelope failure."
+}

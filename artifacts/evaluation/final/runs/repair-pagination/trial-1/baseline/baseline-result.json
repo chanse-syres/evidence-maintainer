@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The adapter must follow opaque response-provided nextPage continuation tokens and stop only when that continuation is null; its current implementation could not be inspected in the restricted workspace.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-pagination-token"
+  ],
+  "evidenceRejected": [
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json",
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json"
+  ],
+  "affectedEntities": [
+    "pagination collection",
+    "fixture records"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The workspace denied all local command execution, so no exact, test-validated bounded adapter replacement can be justified; consequential changes also require simulated approval."
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [
+    "The current adapter implementation, test expectations, and exact continuation field shape could not be inspected.",
+    "The required test command could not run because local process creation was blocked."
+  ],
+  "minimumInformationRequest": [
+    "Provide readable adapter.ts and adapter.test.ts contents, or enable the required test command, together with simulated approval for the adapter change."
+  ],
+  "retryCondition": "Retry when adapter.ts and adapter.test.ts are readable and `node --experimental-strip-types --test adapter.test.ts` can execute in the isolated workspace.",
+  "approvalLevel": "NONE",
+  "summary": "Evidence establishes a pagination-contract change, but the environment prevented inspection and deterministic validation of a precise adapter repair.",
+  "arm": "baseline",
+  "executedCommands": [
+    "Get-Content -Raw adapter.ts; Get-Content -Raw adapter.test.ts; Get-Content -Raw fixtures/new.json; Get-Content -Raw fixtures/old.json; Get-Content -Raw input/canonical.json; Get-Content -Raw input/observations.json; Get-Content -Raw input/policy.json",
+    "node --experimental-strip-types --test adapter.test.ts"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "requested": true,
+  "eligible": false,
+  "decision": "REJECTED",
+  "reason": "Approval is ineligible because the deterministic gate failed.",
+  "recordedAt": "2026-08-29T00:32:11.708Z"
+}

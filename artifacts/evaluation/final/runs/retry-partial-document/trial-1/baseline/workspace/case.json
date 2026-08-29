@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-partial-document",
+  "title": "Reject a partial 200 response and wait for a complete document",
+  "description": "HTTP succeeds but a closing marker and expected schema fingerprint are absent.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Partial public-document response pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "33b349c627e6bd9e26b65d1405f8294391506a36edc31173a954996093373a82"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "009f38812aacc1bf894461a000d5ef740dc17cf37afe90b6853e7ab7743dcdbc"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "63d2fb0d096d6d59af677ea99155aa1dce76d62154ee40ab97e03f5d8d2ccd73"
+    }
+  ]
+}

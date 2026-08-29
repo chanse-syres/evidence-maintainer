@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "Roster payload moved from players to data.roster.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-json-nesting"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "roster normalization",
+    "player record IDs"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The required deterministic test command could not be executed in the restricted workspace, so no consequential adapter change is justified yet."
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable"
+  ],
+  "unresolvedUncertainty": [
+    "The current adapter implementation could not be inspected.",
+    "The required deterministic gate could not be run."
+  ],
+  "minimumInformationRequest": [
+    "Provide successful output from node --experimental-strip-types --test adapter.test.ts after a bounded adapter.ts update supporting data.roster."
+  ],
+  "retryCondition": "Retry when adapter.ts is inspectable and the required test command can run successfully with the documented envelope transition.",
+  "approvalLevel": "NONE",
+  "summary": "Recorded authoritative evidence supports an adapter repair for the stable data.roster envelope, but execution and verification are unavailable; defer mutation until the deterministic gate succeeds and simulated approval is available.",
+  "arm": "baseline",
+  "executedCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ]
+}

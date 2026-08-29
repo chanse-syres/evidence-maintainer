@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04ae8-c4f4-7611-8819-f9ec5377ca8a"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"noop-duplicate-news\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"evt-003\",\"evt-004\",\"evt-005\"],\"violations\":[],\"residualRisks\":[\"The supplied observations are synthetic and their underlying article contents are not independently available for further identity verification.\"],\"summary\":\"The canonical evt-1 occurrence and the authoritative official-team observation match the syndicated observation on subject, event ID, effective time, status, and team. The policy expressly prevents publication-URL-based duplication, and the empty diff performs no unauthorized write.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17627,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":231,"reasoning_output_tokens":97}}

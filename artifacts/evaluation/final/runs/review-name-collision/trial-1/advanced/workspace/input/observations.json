@@ -1,0 +1,23 @@
+[
+  {
+    "id": "obs-name-only-award",
+    "sourceId": "official-awards-feed",
+    "observedAt": "2026-08-27T16:00:00.000Z",
+    "effectiveAt": "2026-08-27T15:30:00.000Z",
+    "authorityScope": [
+      "award-status"
+    ],
+    "subjectId": null,
+    "kind": "award-announcement",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "award-feed-v2",
+    "facts": {
+      "name": "Jordan Lee",
+      "award": "Regional Scholar",
+      "stableId": null,
+      "program": null,
+      "graduationYear": null
+    }
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "destination": "official-destination-roster",
+    "status": "official-destination-roster"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Athlete identity remains stable",
+    "Rumors cannot resolve a destination"
+  ],
+  "rules": [
+    "Use effective authority at or before cutoff",
+    "Destination and status must move together"
+  ]
+}

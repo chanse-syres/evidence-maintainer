@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "verdict": "ESCALATE",
+  "evidenceIds": [
+    "obs-partial-document",
+    "input/policy.json",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [
+    "The proposal cannot demonstrate that a subsequent response has a known complete schema fingerprint: no complete fingerprint is supplied in the evidence.",
+    "The proposal cannot establish that another retry remains within the retryLimit of 2 because consumed retry attempts are not evidenced."
+  ],
+  "residualRisks": [
+    "A retry may exceed the bounded limit.",
+    "A structurally incomplete or incorrect document could be accepted without the missing complete-fingerprint reference."
+  ],
+  "summary": "Preserving canonical state and rejecting the observed partial response are supported, but scheduling RETRY_LATER requires missing retry-count and complete-fingerprint evidence."
+}

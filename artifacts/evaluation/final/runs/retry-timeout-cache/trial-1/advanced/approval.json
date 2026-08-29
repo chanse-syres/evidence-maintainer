@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "requested": true,
+  "eligible": false,
+  "decision": "REJECTED",
+  "reason": "Approval is ineligible because the deterministic gate failed.",
+  "recordedAt": "2026-08-29T00:31:31.899Z"
+}

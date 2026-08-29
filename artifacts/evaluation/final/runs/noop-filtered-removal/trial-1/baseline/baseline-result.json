@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "No material divergence: the observation is explicitly scoped to quarterbacks and cannot establish removal of athlete-61, a defensive back.",
+  "failureOwner": "No failure owner; the source observation is correctly interpreted as a filtered subset.",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json",
+    "obs-filtered-quarterbacks"
+  ],
+  "evidenceRejected": [
+    "obs-filtered-quarterbacks"
+  ],
+  "affectedEntities": [
+    "athlete-61"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "A quarterback-filtered roster omission is not authoritative evidence that the out-of-scope defensive back was removed."
+    }
+  ],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity",
+    "Removal requires an unfiltered authoritative view or explicit transaction"
+  ],
+  "unresolvedUncertainty": [
+    "Whether athlete-61 appears in a current unfiltered authoritative roster view."
+  ],
+  "minimumInformationRequest": [
+    "An unfiltered official-roster observation covering athlete-61 or an explicit authoritative removal transaction."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Retain Taylor Moss as active. The only observation is a QB-subset result and does not support a roster-removal update.",
+  "arm": "baseline",
+  "executedCommands": []
+}

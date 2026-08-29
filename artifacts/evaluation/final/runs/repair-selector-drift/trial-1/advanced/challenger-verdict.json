@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "evt-003",
+    "evt-005"
+  ],
+  "violations": [
+    "The proposed replacement does not preserve old-fixture behavior: the recorded required test command fails both old and new fixture assertions.",
+    "The claimed preserved invariant that old and new fixtures return athlete identities is not demonstrated; both extractions return an empty array."
+  ],
+  "residualRisks": [
+    "The selector replacement may be syntactically incompatible with the adapter's extraction implementation, since both fixtures fail after the candidate change."
+  ],
+  "summary": "Reject the proposal because its candidate fails the mandatory deterministic test for both fixtures, so it cannot be approved as a behavior-preserving semantic-selector repair."
+}

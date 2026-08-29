@@ -1,0 +1,19 @@
+[
+  {
+    "id": "obs-deferred-406",
+    "sourceId": "public-provider",
+    "observedAt": "2026-08-28T16:50:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [],
+    "subjectId": null,
+    "kind": "deferred-response",
+    "status": 406,
+    "contentType": "text/html",
+    "schemaFingerprint": "deferred-contract-v1",
+    "facts": {
+      "deferred": true,
+      "retryAfterMinutes": 30,
+      "cacheValid": true
+    }
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004",
+    "evt-005"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The supplied observations are synthetic and their underlying article contents are not independently available for further identity verification."
+  ],
+  "summary": "The canonical evt-1 occurrence and the authoritative official-team observation match the syndicated observation on subject, event ID, effective time, status, and team. The policy expressly prevents publication-URL-based duplication, and the empty diff performs no unauthorized write."
+}

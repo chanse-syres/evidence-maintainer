@@ -1,0 +1,21 @@
+[
+  {
+    "id": "obs-json-nesting",
+    "sourceId": "official-api",
+    "observedAt": "2026-08-26T11:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "roster-shape"
+    ],
+    "subjectId": null,
+    "kind": "schema-change",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "roster-envelope-v2",
+    "facts": {
+      "oldPath": "players",
+      "newPath": "data.roster",
+      "itemIdentity": "id"
+    }
+  }
+]

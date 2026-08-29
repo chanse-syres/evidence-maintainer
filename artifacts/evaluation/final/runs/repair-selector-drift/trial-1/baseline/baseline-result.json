@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The adapter’s presentation-class selector no longer matches the redesigned roster markup.",
+  "failureOwner": "adapter selector logic",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The required deterministic adapter test could not be executed because local command execution was blocked; no exact bounded replacement can be verified."
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority"
+  ],
+  "unresolvedUncertainty": [
+    "The current adapter selector and its exact replacement text could not be inspected.",
+    "Deterministic gate success is unavailable."
+  ],
+  "minimumInformationRequest": [
+    "Provide the current adapter.ts selector expression and a passing result for node --experimental-strip-types --test adapter.test.ts after changing it to use data-athlete-id."
+  ],
+  "retryCondition": "Retry when local inspection and the required deterministic test command are available.",
+  "approvalLevel": "NONE",
+  "summary": "Evidence indicates a selector-drift defect and supports an adapter repair anchored to data-athlete-id, but execution restrictions prevented verifying the exact patch and required gate.",
+  "arm": "baseline",
+  "executedCommands": [
+    "node --experimental-strip-types --test adapter.test.ts (blocked by local execution policy)"
+  ]
+}

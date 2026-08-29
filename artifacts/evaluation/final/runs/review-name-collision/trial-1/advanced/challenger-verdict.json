@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The authoritative award observation remains unresolved because it lacks a stable identifier and any disambiguating attributes."
+  ],
+  "summary": "The proposal correctly preserves both identity and award-attachment invariants by escalating the duplicate-name observation without mutation."
+}

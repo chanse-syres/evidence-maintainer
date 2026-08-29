@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04aee-22d2-75e1-bdd8-2d58b9f99a83"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-conflicting-authorities\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"obs-athletics-active\",\"obs-registrar-withdrawn\",\"input/canonical.json\",\"input/policy.json\"],\"violations\":[],\"residualRisks\":[\"The correct status remains unresolved pending signed cross-system resolution evidence with an effective timestamp.\",\"A later valid supersession record could change the outcome.\"],\"summary\":\"The proposal correctly escalates the same-time conflict between fresh co-authoritative status observations, performs no mutation, and preserves canonical state as required.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":18027,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":219,"reasoning_output_tokens":90}}

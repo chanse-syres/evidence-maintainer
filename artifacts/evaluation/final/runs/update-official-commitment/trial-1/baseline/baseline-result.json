@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "athlete-11 canonical status and team remain offered/null after the authoritative official commitment.",
+  "failureOwner": "canonical-data",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/policy.json",
+    "obs-official-commitment"
+  ],
+  "evidenceRejected": [
+    "obs-older-aggregator"
+  ],
+  "affectedEntities": [
+    "athlete-11"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-11",
+      "assignments": [
+        {
+          "field": "status",
+          "value": "committed"
+        },
+        {
+          "field": "team",
+          "value": "Coastal State"
+        },
+        {
+          "field": "effectiveAt",
+          "value": "2026-08-20T20:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "preservedInvariants": [
+    "Stable athlete identity is preserved",
+    "Only an authoritative commitment source may set committed status"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The official-team announcement is authoritative for status and team, is effective before cutoff, and supersedes the older discovery observation.",
+  "arm": "baseline",
+  "executedCommands": []
+}

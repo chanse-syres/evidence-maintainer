@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-deferred-406",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "Prior retry-attempt count is absent; any future retry must verify that it remains below 2.",
+    "The next provider response may remain unusable."
+  ],
+  "summary": "The deferred 406 explicitly preserves cache validity and specifies a 30-minute delay; retaining the 42-record cache with no mutation complies with both invariants. The proposed retry condition correctly bounds any future retry."
+}

@@ -1,0 +1,7 @@
+{
+  "node --experimental-strip-types --test adapter.test.ts": {
+    "exitCode": 1,
+    "stdout": "✔ old fixture remains supported (1.2615ms)\n✖ new fixture uses the stable semantic athlete ID (1.1911ms)\nℹ tests 2\nℹ suites 0\nℹ pass 1\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.5044\n\n✖ failing tests:\n\ntest at adapter.test.ts:7:1\n✖ new fixture uses the stable semantic athlete ID (1.1911ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  \n  + []\n  - [\n  -   {\n  -     id: 'p-2',\n  -     name: 'Sam West'\n  -   }\n  - ]\n  \n      at TestContext.<anonymous> (file:///C:/Work/micro1-grounded-maintainer/artifacts/evaluation/final/runs/repair-selector-drift/trial-1/baseline/workspace/adapter.test.ts:7:70)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1325:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)\n      at Test.postRun (node:internal/test_runner/test:1465:19)\n      at Test.run (node:internal/test_runner/test:1390:12)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: [],\n    expected: [ { id: 'p-2', name: 'Sam West' } ],\n    operator: 'deepStrictEqual',\n    diff: 'simple'\n  }\n",
+    "stderr": ""
+  }
+}

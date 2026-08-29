@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The correct status remains unresolved pending signed cross-system resolution evidence with an effective timestamp.",
+    "A later valid supersession record could change the outcome."
+  ],
+  "summary": "The proposal correctly escalates the same-time conflict between fresh co-authoritative status observations, performs no mutation, and preserves canonical state as required."
+}

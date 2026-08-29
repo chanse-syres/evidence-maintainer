@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-transfer-destination",
+  "requested": true,
+  "eligible": true,
+  "decision": "APPROVED",
+  "reason": "The deterministic gate passed and isolated application was requested.",
+  "recordedAt": "2026-08-29T00:34:18.936Z"
+}

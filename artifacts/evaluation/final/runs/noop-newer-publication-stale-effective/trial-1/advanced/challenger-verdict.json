@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The archive observation's authority scope is historical-status rather than the policy's official-team status authority; it should remain non-authoritative for a status update.",
+    "The ledger provides an observation time but no distinct publication-time field, so the retrospective-publication characterization is not independently verifiable."
+  ],
+  "summary": "The sole differing observation is effective before the canonical committed state, so the NO_ACTION proposal preserves the effective-state invariant and performs no out-of-scope write."
+}

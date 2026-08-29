@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "status": "official-team"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Effective state never rolls backward because publication is newer"
+  ],
+  "rules": [
+    "Compare effective time before publication time",
+    "Historical archives are evidence of past state"
+  ]
+}

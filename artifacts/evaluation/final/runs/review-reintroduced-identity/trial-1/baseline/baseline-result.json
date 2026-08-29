@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "obs-reintroduced-slot reintroduces Casey Quinn at slot 14 after occurrence-91 closed, without a sourceOccurrenceId establishing continuity.",
+  "failureOwner": "official-roster publisher",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json",
+    "obs-reintroduced-slot"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "occurrence-91",
+    "Casey Quinn",
+    "slot-14"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The new entry cannot be linked to the immutable closed occurrence using display name and slot alone."
+    }
+  ],
+  "preservedInvariants": [
+    "A closed occurrence is immutable",
+    "Display name and physical slot do not establish identity continuity"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the active roster entry is a continuation of occurrence-91 or a new occurrence."
+  ],
+  "minimumInformationRequest": [
+    "Provide an occurrence-stable identifier for the 2026-08-27 active roster entry, or an explicit authoritative continuity statement linking it to occurrence-91."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Escalate identity resolution before any record update; no supported mutation is justified from the available observation.",
+  "arm": "baseline",
+  "executedCommands": []
+}
