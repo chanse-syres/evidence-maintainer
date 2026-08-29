@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "noop-filtered-removal-baseline-1787962954005",
+  "runId": "noop-filtered-removal-baseline-1787964233327",
   "caseId": "noop-filtered-removal",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:34.005Z",
-  "finishedAt": "2026-08-29T00:22:34.015Z",
-  "durationMs": 10,
+  "startedAt": "2026-08-29T00:43:53.327Z",
+  "finishedAt": "2026-08-29T00:43:53.336Z",
+  "durationMs": 9,
   "timeoutMs": 300000,
   "promptSha256": "33c655fd23a2d501915a50b7510167af02923d4a62b6ab31d7d8d34a34ded62d",
   "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
@@ -22,8 +22,8 @@
     "after-tree.json": "d60358774b7f17ceb22e0e07eeb1e5af5781f5475b01fcfcf001a8049a038d20",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "3f08451c3e009fad11f1031ba464e0a2cb9233ef770ef77c3712cb40e90a47dd",
-    "approval.json": "bc4a1dba7fa677660a3be9eb8d5775b86cac5d74c690096ec3352e810e24313a",
-    "trajectories/baseline.jsonl": "83565aabb1f03f464d722a68c291a85c937e287e6d03504e3de117cd9ffd6f7b"
+    "approval.json": "c8200c3be7c6d1db8d49deb1c818fdc7e1ab1afbfc26ac6f37ea93e7c570e6e6",
+    "trajectories/baseline.jsonl": "6dd87dc4ffac44746b94a3c7dba734cf7d61f88284e7544031e08dddbd2a641c"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

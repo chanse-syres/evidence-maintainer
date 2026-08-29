@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "noop-newer-publication-stale-effective-advanced-1787962954100",
+  "runId": "noop-newer-publication-stale-effective-advanced-1787964233418",
   "caseId": "noop-newer-publication-stale-effective",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:34.100Z",
-  "finishedAt": "2026-08-29T00:22:34.109Z",
-  "durationMs": 9,
+  "startedAt": "2026-08-29T00:43:53.418Z",
+  "finishedAt": "2026-08-29T00:43:53.425Z",
+  "durationMs": 7,
   "timeoutMs": 300000,
-  "promptSha256": "284aa62b3f369eb6b3bc1fae373124fde6d523045e31cba5b46bb9bb345ccef2",
+  "promptSha256": "9dc62b49feac056eae5a0ebf1bf7f7f59287d2b5cd93d4ae1824f035a736bc78",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "45dbaa2d4e2973b6007134e88ad192e78ca644621775191472a460e62ad1635d",
   "trajectoryPaths": [
@@ -26,9 +26,9 @@
     "after-tree.json": "a07521b915df91012095d6b6467b7727301fd03c1ef4860eeb7f8790c7ba0455",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
-    "approval.json": "2195ac95475639650785e3f1428e321fe09600108ec2df0fc9eb8086f99294c5",
-    "trajectories/maintainer.jsonl": "c092edac88148be15092d0f8df59f77c3b0dbaedb0b4d35ec93834967c59b983",
-    "trajectories/challenger.jsonl": "04ed44b5a965b1d544afc34cf56d9b3fc9bf2fd9201ae0b3a89357e82ede9d14"
+    "approval.json": "f1ad66de67bc8a9c5106e175d3992464c14f1da934b9646a9274225368181839",
+    "trajectories/maintainer.jsonl": "9575bd69058875cf4eb0e8b3c4be988a88f524959bac1243ddb741d6a58c44e4",
+    "trajectories/challenger.jsonl": "082fc1e98132c4a72d6488541564a0dfe7f917c4f656ef2e5151d5704dd2f71d"
   },
   "tokenUsage": null,
   "outcome": "PASS"

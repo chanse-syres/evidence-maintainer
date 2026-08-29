@@ -12,6 +12,22 @@ propose that change with `UPDATE_DATA` or `REPAIR_ADAPTER`. The later workflow
 will apply it only inside the sandbox, run the declared checks, and decide
 whether it is eligible for approval.
 
+## Action routing
+
+- `UPDATE_DATA` means authoritative evidence establishes a bounded canonical
+  fact change.
+- `REPAIR_ADAPTER` means writable adapter code is present and a reproducible
+  fixture or check shows that stable extraction logic is broken.
+- `RETRY_LATER` means a temporary or incomplete source state requires a bounded
+  retry while preserving valid canonical and cached state.
+- `NO_ACTION` means the evidence establishes that canonical state should remain
+  unchanged and no decisive information is missing.
+- `HUMAN_REVIEW` means missing decisive evidence, identity, or authority requires
+  a person before a consequential decision.
+
+Never choose `REPAIR_ADAPTER` when no writable adapter code is provided. Never
+use `NO_ACTION` while requesting decisive new information; use `HUMAN_REVIEW`.
+
 ## Case context
 
 {{CASE_CONTEXT}}

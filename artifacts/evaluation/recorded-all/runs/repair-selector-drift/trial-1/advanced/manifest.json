@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "repair-selector-drift-advanced-1787962955271",
+  "runId": "repair-selector-drift-advanced-1787964234592",
   "caseId": "repair-selector-drift",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.271Z",
-  "finishedAt": "2026-08-29T00:22:35.495Z",
-  "durationMs": 224,
+  "startedAt": "2026-08-29T00:43:54.592Z",
+  "finishedAt": "2026-08-29T00:43:54.795Z",
+  "durationMs": 203,
   "timeoutMs": 300000,
-  "promptSha256": "d46eb0de25915818fc3ece025f3a03c4e7bb06b3c5c370c7e08a4bc789f62387",
+  "promptSha256": "1cb63ca5478d9ec4e6d4d6778a5749f00e18bbc0cf939b8d4f40421de3974b21",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "a055fd2c6f6722aaa11f34ec3d8dee06db72406014533f8240ab33a332bed60d",
   "trajectoryPaths": [
@@ -24,11 +24,11 @@
     "challenger-verdict.json": "288da009e01db681716367cb080baa4ee8f737d10ecd1c9c54ff3c3f60bf5c96",
     "before-tree.json": "74287ecae70b8633dd9dc7a00e1519d541c746376d9a6faddee24e57431b5e97",
     "after-tree.json": "f3d51f71d463559862a74504834bd08ed9a51d5ee4efbde81ab07cf72e77b97a",
-    "command-results.json": "cc83e5a12936ce2abd4fdcad237727418945e4cb54a56d46c11d04e7f5fabd0d",
+    "command-results.json": "6df0725f843f5989bae30fe558cc6d6a95b11c6c465d94e05a8a65e3d8b8f53c",
     "gate.json": "56bb85f5f825300d26b51174f90cb5cb95eff2b8a0eff13269eab3fed0046f92",
-    "approval.json": "3497c9c2bc393ab5ac56d1c31b418155ad8233e84cd677dcb3a0b8a225ebb86b",
-    "trajectories/maintainer.jsonl": "3bf5b9dfb7e7b568be3b2550ca72881f4d1d1f905d026228b8e3efa19d01e347",
-    "trajectories/challenger.jsonl": "736d869e5971dcc187592e1494da26c7674a11c946e481c9df948ad0b1f2f75b"
+    "approval.json": "9b71d294713f8ce9f1cf9a2eba13bef727cbfd2a86b8e360e75d6548a275e311",
+    "trajectories/maintainer.jsonl": "2da224c8d67617fff86839a6bfe618f2eb6731a0e4262795b3311b20acfe5756",
+    "trajectories/challenger.jsonl": "3bf77aaf190f93da90a556ef63b019704947a7fc111670360fc86de4cba3ca9b"
   },
   "tokenUsage": null,
   "outcome": "PASS"

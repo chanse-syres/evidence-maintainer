@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "repair-pagination-advanced-1787962954818",
+  "runId": "repair-pagination-advanced-1787964234129",
   "caseId": "repair-pagination",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:34.818Z",
-  "finishedAt": "2026-08-29T00:22:35.027Z",
-  "durationMs": 209,
+  "startedAt": "2026-08-29T00:43:54.130Z",
+  "finishedAt": "2026-08-29T00:43:54.325Z",
+  "durationMs": 195,
   "timeoutMs": 300000,
-  "promptSha256": "5bcb7f4d89a2f27ba50441816ca25deac7e6021a6b11644955aded0a13eb7139",
+  "promptSha256": "f208788415c371d1ce6718c673cf148dc09a4e142a6d3a625eae3028b889d02b",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "e91ba01f68ad5e65fd9ab7a31824d3e885872def99f79f6594933c7adea8a2f7",
   "trajectoryPaths": [
@@ -24,11 +24,11 @@
     "challenger-verdict.json": "0ad07e88afb3d4b770b41bf52ff9f53da30fdc12c6cb39823f3316bc13436ccf",
     "before-tree.json": "83871bf2be9dd35e3bf6a94bc48bd5941a421ac60d490c5824cac4ba7cb1f2e0",
     "after-tree.json": "001bdb6b51c942609d5b53925997bf6751b30901dd9608f23113f1f31dc08fa1",
-    "command-results.json": "7c50b333853e18e7d31e56844820e37ef3fa064f92b76ad3ae0422ac9758a1e4",
+    "command-results.json": "1a1b07e805624b11467b056dc8e83d445d6b8396699f02f88249687fa1dcdec4",
     "gate.json": "56bb85f5f825300d26b51174f90cb5cb95eff2b8a0eff13269eab3fed0046f92",
-    "approval.json": "ba3b2540760e6780a12c4555004161287fa12008cfe820cde35bd9b8126892f0",
-    "trajectories/maintainer.jsonl": "96159e1e741d60bd8a1831ae4b6ee7b367d4edb540403d50a880e45b47e9193a",
-    "trajectories/challenger.jsonl": "91039c4d9c7a2ca03636a2b75fad90eb1b24e399e8b055da5494bb0086f41638"
+    "approval.json": "561acb18e6392ce50dc971f67e1d5cabaaac2b9ba14b6d6f05549a3b6de6ce5c",
+    "trajectories/maintainer.jsonl": "b04aca34f908521870918727e779db80547acba823d53a45f27fdf740f24e01f",
+    "trajectories/challenger.jsonl": "5d517f3c91be693f0ea5e8fa160b5368f7e3fc601f554a78255ead6a3a94a839"
   },
   "tokenUsage": null,
   "outcome": "PASS"

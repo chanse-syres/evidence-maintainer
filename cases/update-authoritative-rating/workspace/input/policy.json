@@ -3,6 +3,7 @@
   "cutoff": "2026-08-28T17:00:00.000Z",
   "authorityByField": {
     "rating": "ScoutMetric",
+    "ratingAsOf": "ScoutMetric",
     "otherProviderRating": "RankGrid"
   },
   "freshnessWindowMinutes": 10080,
@@ -12,7 +13,7 @@
     "Stable athlete identity is preserved"
   ],
   "rules": [
-    "A provider owns only its named rating field",
+    "A provider owns only its named rating field and its publication timestamp",
     "Use the latest effective value from that provider"
   ]
 }

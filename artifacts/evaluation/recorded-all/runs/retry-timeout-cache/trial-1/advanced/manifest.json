@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "retry-timeout-cache-advanced-1787962955652",
+  "runId": "retry-timeout-cache-advanced-1787964234941",
   "caseId": "retry-timeout-cache",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.652Z",
-  "finishedAt": "2026-08-29T00:22:35.660Z",
-  "durationMs": 8,
+  "startedAt": "2026-08-29T00:43:54.942Z",
+  "finishedAt": "2026-08-29T00:43:54.948Z",
+  "durationMs": 6,
   "timeoutMs": 300000,
-  "promptSha256": "a45cfd8c4ebf5098e74efd54a53a004ba05d0e9dba96e5105d7021029f183cc2",
+  "promptSha256": "0b0be3ba0f0eb2ab5001ad9b5aa03fbb9e84e95560fa799787f4883340f4f5ce",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "06e4b98043d48db854cef75375507a33d507ad47fefd5efc8caa756b16bdcaf4",
   "trajectoryPaths": [
@@ -26,9 +26,9 @@
     "after-tree.json": "66b6c9c358e30ab6a1fdf01353f6c9a66748852896cfedc7674fcaedbe5e9d09",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
-    "approval.json": "17d83e9ac4ed575efa3b8dd2ea1587a40cc05df5c13bdb08ff416f90c1bfd18a",
-    "trajectories/maintainer.jsonl": "3eaddf1ac5f805c621a34cb390e95e835c92f5b267084c24ab24332258616882",
-    "trajectories/challenger.jsonl": "6e72c8e1f31c0b70986a5092ecd068962321ed98d97972da9a60b7046da2a3fe"
+    "approval.json": "fa0ad621e1cb8eb065be4fe60738c33e44c5880922ed23864d828ba34d98b5d4",
+    "trajectories/maintainer.jsonl": "73d01cae16f22d60da2518d7c0c583735c4c4cd00db49afd351e823ea57bf948",
+    "trajectories/challenger.jsonl": "115f9fc8a750c16df228e905cabcfeb14a2ca4c9e10e14827b9522cb493ac339"
   },
   "tokenUsage": null,
   "outcome": "PASS"

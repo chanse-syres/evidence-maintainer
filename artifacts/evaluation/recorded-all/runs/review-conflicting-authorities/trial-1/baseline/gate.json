@@ -33,9 +33,7 @@
       "summary": "The candidate artifact, exact change set, retry condition, or minimum-information request is incomplete.",
       "details": [
         "input/canonical.json",
-        "input/canonical.json",
-        "signed cross-system resolution",
-        "effective timestamp"
+        "input/canonical.json"
       ]
     },
     {

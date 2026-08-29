@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "update-transfer-destination-advanced-1787962955985",
+  "runId": "update-transfer-destination-advanced-1787964235267",
   "caseId": "update-transfer-destination",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.985Z",
-  "finishedAt": "2026-08-29T00:22:35.995Z",
+  "startedAt": "2026-08-29T00:43:55.267Z",
+  "finishedAt": "2026-08-29T00:43:55.277Z",
   "durationMs": 10,
   "timeoutMs": 300000,
-  "promptSha256": "84127ad38e23d8f11a6b947ff57667b943118a47dcde86ea5320833c63eb7bc5",
+  "promptSha256": "6386ca9b2b57dd46d0a697484bdef0d58fe2a9079c1aa539c2bf908bd603f364",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "d4666619f508f3a934d5cbca9c83339029a3f1c81d53ef7149fa9d85ca53a9f1",
   "trajectoryPaths": [
@@ -26,9 +26,9 @@
     "after-tree.json": "41c06fa4e0d4979d7d7dead720230802aa5d9f81484d0b1c2042746c009b1eb4",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "664bfcb059b9188f7182aad55bca3c0ddcd7a6f338b1fddc1cd75c10bfd9f661",
-    "approval.json": "cec8eba8c34419361d4b96c6029d18727ba8dacf604752484edd54f88a0b65f6",
-    "trajectories/maintainer.jsonl": "8962ae2e83e6482281bbba0c61c6f99f756825c8aede4cb1d82ae0d117f82d2d",
-    "trajectories/challenger.jsonl": "c646f5d6581e8de03e61f6e9bdd0003ed9bada9595f8bdda15d909ed4a61af99"
+    "approval.json": "6305d92464885aa0c1bfb98d15505641b1c9537beb1e4bb8e7045bd089632098",
+    "trajectories/maintainer.jsonl": "b498b497e4c5bcd6fe546af0575a82489f7dfb396c53915c75f57103a38a28d0",
+    "trajectories/challenger.jsonl": "270a417f85e4c77e5e7c26547030ff3da09a878362ab5aa4c0860052abf4973b"
   },
   "tokenUsage": null,
   "outcome": "PASS"

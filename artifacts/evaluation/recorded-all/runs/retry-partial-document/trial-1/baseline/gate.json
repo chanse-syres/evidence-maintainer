@@ -27,12 +27,9 @@
     },
     {
       "id": "required-artifact",
-      "passed": false,
-      "summary": "The candidate artifact, exact change set, retry condition, or minimum-information request is incomplete.",
-      "details": [
-        "20 minutes",
-        "complete document"
-      ]
+      "passed": true,
+      "summary": "The required candidate artifact is present.",
+      "details": []
     },
     {
       "id": "expected-data-state",

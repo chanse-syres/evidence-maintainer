@@ -22,7 +22,8 @@
     "observedAt": "2026-08-25T18:00:00.000Z",
     "effectiveAt": "2026-08-25T17:30:00.000Z",
     "authorityScope": [
-      "ScoutMetric.rating"
+      "ScoutMetric.rating",
+      "ScoutMetric.ratingAsOf"
     ],
     "subjectId": "athlete-31",
     "kind": "rating",

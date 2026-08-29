@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "repair-json-nesting-advanced-1787962954365",
+  "runId": "repair-json-nesting-advanced-1787964233675",
   "caseId": "repair-json-nesting",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:34.366Z",
-  "finishedAt": "2026-08-29T00:22:34.554Z",
-  "durationMs": 188,
+  "startedAt": "2026-08-29T00:43:53.676Z",
+  "finishedAt": "2026-08-29T00:43:53.865Z",
+  "durationMs": 189,
   "timeoutMs": 300000,
-  "promptSha256": "aea45f3e14a6067fec316acf9a47228beb349d81df0992d003ca1de02ed3c376",
+  "promptSha256": "36ccacc4b49a553f5ebb10fc1fe93d1570cf47fea191201acba13d174e0db651",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "52dcd1ca8c513542fc472599fa57a3ef0cc188b5fb1bad18191f3c4439007f63",
   "trajectoryPaths": [
@@ -24,11 +24,11 @@
     "challenger-verdict.json": "cedc5e98d650ccaa52f9f61b3da9fe428e8805a1f7ae145a3bb9c3f97530bb58",
     "before-tree.json": "53cb2ae25d558e538c13aa877fc78ab2cce6ac13265f7e3210647ead41a103af",
     "after-tree.json": "d99ac5dfc39fd96475b1caa4e7bb08e1aa655e425854180041b5a430619a4760",
-    "command-results.json": "8cb1583ad3ebedd7bfdaa39403822ea0d6d21e1eed61703c4395f8ce0e04fa16",
+    "command-results.json": "f6cc070be235473b03b47f244acd4bae7e485a7a9b13eda282725057114e7860",
     "gate.json": "56bb85f5f825300d26b51174f90cb5cb95eff2b8a0eff13269eab3fed0046f92",
-    "approval.json": "79676e1139cf7780d6a577dfdb591fb363613267bf586d7689bd1ac63f919a8b",
-    "trajectories/maintainer.jsonl": "d8f57125b5152d645a1a5c368bc4b71cac3a1b3fff7186a01e57f0e63baf09da",
-    "trajectories/challenger.jsonl": "cc5d9288ce055cf12e4f53d4b6d8541d9c530cd3a890aeaa3378758f34d0e9b4"
+    "approval.json": "48dd88f8a1d115d0ebd3e341668e46269ab77de3348ac5b188e2802e64908add",
+    "trajectories/maintainer.jsonl": "d4a38213f5098564dd79ab3d34a025ee881f9a71d2bc1181f9589333c32e0baf",
+    "trajectories/challenger.jsonl": "08217e2741c2db5f9caac80d2224b0174f7494f43f3c72cbd3e3e5d0139c98c8"
   },
   "tokenUsage": null,
   "outcome": "PASS"

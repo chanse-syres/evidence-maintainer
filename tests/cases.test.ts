@@ -67,6 +67,23 @@ test("the full suite contains fifteen hash-verified cases with a balanced action
         }
       }
     }
+    if (oracle.expectedAction === "UPDATE_DATA") {
+      for (const expectation of oracle.expectedRecords) {
+        const records = JSON.parse(
+          await readFile(join(caseDir, "workspace", ...expectation.file.split("/")), "utf8"),
+        ) as Array<Record<string, unknown>>;
+        const current = records.find((entry) => entry.id === expectation.recordId);
+        assert.ok(current, `${caseId} must expose the adjudicated record`);
+        for (const [field, expectedValue] of Object.entries(expectation.fields)) {
+          if (JSON.stringify(current[field]) !== JSON.stringify(expectedValue)) {
+            assert.ok(
+              loaded.policy.authorityByField[field],
+              `${caseId} must publicly identify authority for changed field ${field}`,
+            );
+          }
+        }
+      }
+    }
     distribution.set(oracle.expectedAction, (distribution.get(oracle.expectedAction) ?? 0) + 1);
   }
   assert.deepEqual(Object.fromEntries([...distribution].sort()), {

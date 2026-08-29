@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "review-reintroduced-identity-baseline-1787962955788",
+  "runId": "review-reintroduced-identity-baseline-1787964235070",
   "caseId": "review-reintroduced-identity",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.788Z",
-  "finishedAt": "2026-08-29T00:22:35.795Z",
-  "durationMs": 7,
+  "startedAt": "2026-08-29T00:43:55.070Z",
+  "finishedAt": "2026-08-29T00:43:55.079Z",
+  "durationMs": 9,
   "timeoutMs": 300000,
   "promptSha256": "799457a26e10cb85a96fa581b9d3b5e106e3378129dabf5abfe287da02b09b2a",
   "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
@@ -21,9 +21,9 @@
     "before-tree.json": "edb1c1bf7c95d912463483a0172cfb0dd3f9a84bbb51aff6e0350230ecf6c092",
     "after-tree.json": "d6eb58a25800c7b7e7fe2000e1971f4aa9c25ec9a47584e0a0559dab2606b45e",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-    "gate.json": "4ee2ad90274b445f8d5358fcfcec07409dd9e141719c0412ad50181f287a9529",
-    "approval.json": "dc847e76e56f0226e47b77613bf4173f8de35fdd5130967d77127be5cd806b23",
-    "trajectories/baseline.jsonl": "04298d3d492ebc9ae0a4843759a5a7a98b5a8c73209daa77ce1f39943e00a2cd"
+    "gate.json": "968ff41cc6b1c6900b45b9b5eddd949bd6dcae7c209948b8b4853d2897185658",
+    "approval.json": "83fb1a465297122f10be939f766830a81860f80bd0032f4c07f56843f8cbd84c",
+    "trajectories/baseline.jsonl": "6a26fe1aadf818956f8ae79c128e2f0670097b579c629a93eed91c200516d43b"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

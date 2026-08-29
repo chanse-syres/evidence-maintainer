@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "retry-partial-document-baseline-1787962955571",
+  "runId": "retry-partial-document-baseline-1787964234866",
   "caseId": "retry-partial-document",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.571Z",
-  "finishedAt": "2026-08-29T00:22:35.578Z",
-  "durationMs": 7,
+  "startedAt": "2026-08-29T00:43:54.866Z",
+  "finishedAt": "2026-08-29T00:43:54.872Z",
+  "durationMs": 6,
   "timeoutMs": 300000,
   "promptSha256": "86a0c0fbc382ac6d6a4b70c1b153f1772c090c3db0c0981e106f3114e3abb2a0",
   "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
@@ -21,9 +21,9 @@
     "before-tree.json": "cf95872c902e01925f62b8263fa6eca8a497843ffdc99c9e41083258a442be19",
     "after-tree.json": "cf95872c902e01925f62b8263fa6eca8a497843ffdc99c9e41083258a442be19",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-    "gate.json": "fd12b20cbfd11b05e207afce2f0c298e52b6d1c87fe02b6cb0d00f50171cd97a",
-    "approval.json": "dbb8aaa66a30e4b1d333613d01f0777fb05cd3c2e77357a54fc5a03256798f65",
-    "trajectories/baseline.jsonl": "1f974dd0997c35f865be7f7a38a6aa14ca09dc04ef931e87362de87f731c84e2"
+    "gate.json": "5f1f42ab910fb8304281f973d90eb9add3075d02a1743032881f8faeaba8fd61",
+    "approval.json": "23e2b074b360f1b581740b053f097658288f312d51487b939105d3cf5f7a3e6b",
+    "trajectories/baseline.jsonl": "f1698938c9d34df2f38d3cc1e013b4119de1e713096a8a13cf1660c41ee20943"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

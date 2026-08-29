@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "repair-selector-drift-baseline-1787962955054",
+  "runId": "repair-selector-drift-baseline-1787964234352",
   "caseId": "repair-selector-drift",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.054Z",
-  "finishedAt": "2026-08-29T00:22:35.242Z",
-  "durationMs": 188,
+  "startedAt": "2026-08-29T00:43:54.352Z",
+  "finishedAt": "2026-08-29T00:43:54.563Z",
+  "durationMs": 211,
   "timeoutMs": 300000,
   "promptSha256": "72a9fa78d41ada0664b3118f1a92d4a42005dbed7c9c0a10549cdf9eae68105f",
   "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
@@ -20,10 +20,10 @@
     "baseline-result.json": "6b551192bec6b38217534539912e209e5b4a556fd1821fa2286f9edc0c5a97c8",
     "before-tree.json": "74287ecae70b8633dd9dc7a00e1519d541c746376d9a6faddee24e57431b5e97",
     "after-tree.json": "715ea673d37091813983239ec0eb0a8815c4f209aaa4fe019ae5da67d610d52e",
-    "command-results.json": "0ad70b6c9932981af05994ddefb722d704c4217f096b08f8699d5758624006cd",
+    "command-results.json": "616c3dfaf05dc5ae177e84e2d5c2b2f701f3cf460b0f8c9e8ad298d5f4b95a31",
     "gate.json": "2934257bfd9125e9d5d8b8dce482b9ed0bd6f44b9ae1e6c84ecf4668136ccba7",
-    "approval.json": "3f1c67501a6c339aa541541f28178ec6efa8092f78ed58873e67e8d5adc5e1d6",
-    "trajectories/baseline.jsonl": "3c594840f0c2a467225de1653f4ebbc7954bc72dc5cd935127d201849aa3722d"
+    "approval.json": "6f30b4ed997c919d623e99f8a453aa49d827304f65765be7d830f5a307f3a753",
+    "trajectories/baseline.jsonl": "9e05f2e5d50b888360e437304a21c434ed726ac4e789e28aa53790c87da297aa"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

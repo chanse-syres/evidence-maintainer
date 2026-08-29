@@ -90,6 +90,10 @@ test("advanced workflow runs Maintainer then Challenger and approves a verified 
   assert.deepEqual(runner.roles, ["maintainer", "challenger"]);
   assert.match(runner.prompts[0], /gate and simulated approval run after/i);
   assert.match(runner.prompts[0], /not\s+prerequisites/i);
+  assert.match(runner.prompts[0], /RETRY_LATER[^]*temporary or incomplete source state/i);
+  assert.match(runner.prompts[0], /REPAIR_ADAPTER[^]*writable adapter code/i);
+  assert.match(runner.prompts[0], /HUMAN_REVIEW[^]*missing decisive evidence/i);
+  assert.match(runner.prompts[0], /NO_ACTION[^]*canonical state should remain\s+unchanged/i);
   assert.equal(run.outcome, "PASS");
   const canonical = JSON.parse(await readFile(join(root, "workspace", "input", "canonical.json"), "utf8"));
   const gate = JSON.parse(await readFile(join(root, "gate.json"), "utf8"));

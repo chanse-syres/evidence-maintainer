@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "review-name-collision-advanced-1787962955760",
+  "runId": "review-name-collision-advanced-1787964235044",
   "caseId": "review-name-collision",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:22:35.760Z",
-  "finishedAt": "2026-08-29T00:22:35.768Z",
-  "durationMs": 8,
+  "startedAt": "2026-08-29T00:43:55.044Z",
+  "finishedAt": "2026-08-29T00:43:55.051Z",
+  "durationMs": 7,
   "timeoutMs": 300000,
-  "promptSha256": "bf435668ffb3c6a78eb16a931d411f877fd6f79a17c4c67f38932c511c9a46e9",
+  "promptSha256": "93be1f8869f1e91e9b4d34d760973b3128f2e6fb6d6ab306134d9e8c33108ce3",
   "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "d8f39ba8c2afcd40b95955b93ed55af6bd897874ca44520417a4f0b1c4e9d321",
   "trajectoryPaths": [
@@ -26,9 +26,9 @@
     "after-tree.json": "1525efd71af36cbeaf82ec7e07a63068f7f6f16c3b91b7f79a4cbb6cc11103ce",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
-    "approval.json": "54fc1610c994b5304b531c8883881e6babf2f0852e5be18103773a64bedca987",
-    "trajectories/maintainer.jsonl": "89a10ddb624c6eb2584a203c37bb103d2566cd53b684638a0f91b6996d5d2a2e",
-    "trajectories/challenger.jsonl": "861210f461e0ec90bb5bc0d676625b8e1b33ec4a388dea916f09c8d8a5d737a9"
+    "approval.json": "cd2dbca1521bbceb4fef73d4d5a5011298d6c9634a86942df184f6794be75f55",
+    "trajectories/maintainer.jsonl": "5448f1fd20d58ebefabd80c85ccdb76db5bc8fc559703bfe9d46f77204fdf317",
+    "trajectories/challenger.jsonl": "e1bb25b311004f80147ae7adccfa7fba55a9b6b2aae195d053e828934299c1e2"
   },
   "tokenUsage": null,
   "outcome": "PASS"
