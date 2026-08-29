@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-transfer-destination",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The canonical athlete-21 record remains transfer-out with no destination after the authoritative official roster established transferred status and Summit State as the destination.",
+  "failureOwner": "canonical data",
+  "evidenceUsed": [
+    "obs-official-destination",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-transfer-rumor"
+  ],
+  "affectedEntities": [
+    "athlete-21"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-21",
+      "assignments": [
+        {
+          "field": "status",
+          "value": "transferred"
+        },
+        {
+          "field": "destination",
+          "value": "Summit State"
+        },
+        {
+          "field": "effectiveAt",
+          "value": "2026-08-24T16:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "preservedInvariants": [
+    "Athlete identity remains stable",
+    "Rumors cannot resolve a destination"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Apply the bounded authoritative destination and status update from the official destination roster; the Lakeside rumor is not authority for resolving the destination."
+}

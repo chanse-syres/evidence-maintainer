@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-timeout",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "Public-provider availability at the bounded retry time remains unknown."
+  ],
+  "summary": "The sole timeout is non-contradictory, the source-42 cache was 10 minutes old at observation and within the 45-minute freshness window, and the proposed single 15-minute retry is bounded below the retry limit without mutating cached records."
+}

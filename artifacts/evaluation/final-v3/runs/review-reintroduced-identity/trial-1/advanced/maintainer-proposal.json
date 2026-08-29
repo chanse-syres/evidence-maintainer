@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The official roster reports an active Casey Quinn in slot 14 after occurrence-91 was closed, but omits an occurrence-stable identifier needed to determine whether it is a new occurrence or continuity.",
+  "failureOwner": "official-roster source publication",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-reintroduced-slot",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "occurrence-91",
+    "unidentified active roster entry: Casey Quinn, slot 14"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The evidence cannot establish identity continuity or authorize modifying the immutable closed occurrence; no canonical record for the newly observed entry can be safely created from the supplied identity data."
+    }
+  ],
+  "preservedInvariants": [
+    "A closed occurrence is immutable",
+    "Display name and physical slot do not establish identity continuity"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the active Casey Quinn entry is the same occurrence as occurrence-91 or a distinct new occurrence.",
+    "The occurrence-stable identifier for the active roster entry."
+  ],
+  "minimumInformationRequest": [
+    "An authoritative occurrence-stable identifier for the active Casey Quinn roster entry, or explicit authoritative confirmation that it is a new occurrence distinct from occurrence-91."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Escalation is required before linking or creating a consequential canonical occurrence because the post-gap official observation lacks the required occurrence-stable identity."
+}

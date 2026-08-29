@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "No material divergence: athlete-61 is outside the observation's declared QB-subset scope, so its omission does not contradict the active canonical record.",
+  "failureOwner": "No failure owner; the filtered source view is being interpreted within its declared scope.",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-filtered-quarterbacks",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-61"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The observation is a quarterback-filtered result set and lacks authority to establish a status or roster-removal change for defensive back athlete-61."
+    }
+  ],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "unresolvedUncertainty": [
+    "The filtered observation does not establish athlete-61's presence or absence in an unfiltered authoritative roster view."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Retain the canonical active record unchanged. Policy requires an unfiltered authoritative roster view or explicit transaction to support removal, neither of which is supplied."
+}

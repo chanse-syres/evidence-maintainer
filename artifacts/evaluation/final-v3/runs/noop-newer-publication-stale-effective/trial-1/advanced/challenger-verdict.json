@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-new-publication-old-state",
+    "input/policy.json",
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The retrospective observation's authority scope is historical-status rather than the policy-required official-team authority for status; it should remain non-authoritative for a current-state update."
+  ],
+  "summary": "The only observation is effective before the canonical committed state, so NO_ACTION preserves the required monotonic effective-state invariant. The candidate diff contains no writes."
+}

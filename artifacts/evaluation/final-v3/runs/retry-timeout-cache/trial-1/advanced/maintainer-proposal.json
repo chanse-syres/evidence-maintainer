@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "A network timeout occurred while fetching public-provider at 2026-08-28T16:50:00.000Z.",
+  "failureOwner": "public-provider transport",
+  "evidenceUsed": [
+    "obs-timeout",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "source-42",
+    "public-provider"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Retain the fresh cached record; schedule one bounded retry after 15 minutes."
+    }
+  ],
+  "preservedInvariants": [
+    "A transient timeout cannot erase cached records",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the public-provider is available at the bounded retry time."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry public-provider once at or after 2026-08-28T17:05:00.000Z, only while the total retry count remains below 2; retain source-42 cache if it fails again.",
+  "approvalLevel": "NONE",
+  "summary": "The cache is 10 minutes old at the 2026-08-28T16:50 timeout, within the 45-minute freshness window. Preserve its 18 records and perform the policy-directed bounded retry."
+}

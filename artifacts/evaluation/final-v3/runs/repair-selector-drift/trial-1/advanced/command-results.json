@@ -1,0 +1,7 @@
+{
+  "node --experimental-strip-types --test adapter.test.ts": {
+    "exitCode": 0,
+    "stdout": "✔ old fixture remains supported (1.4129ms)\n✔ new fixture uses the stable semantic athlete ID (0.3038ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 118.3695\n",
+    "stderr": ""
+  }
+}

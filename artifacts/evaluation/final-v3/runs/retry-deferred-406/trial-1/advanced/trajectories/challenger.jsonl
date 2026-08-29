@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b0d-7208-7160-842f-54322bd69e2c"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"retry-deferred-406\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"input/canonical.json\",\"obs-deferred-406\",\"input/policy.json\"],\"violations\":[],\"residualRisks\":[\"A later provider response after the two allowed retries may require a separately evaluated refresh decision.\"],\"summary\":\"The 406 is explicitly marked deferred, the cache is valid and within the 60-minute freshness window at policy cutoff, and the proposal preserves all 42 cached records with a retry limited to two attempts.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17664,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":241,"reasoning_output_tokens":116}}

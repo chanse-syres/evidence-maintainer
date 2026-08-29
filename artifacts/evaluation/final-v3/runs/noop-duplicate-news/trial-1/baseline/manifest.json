@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-duplicate-news-baseline-1787965322843",
+  "caseId": "noop-duplicate-news",
+  "arm": "baseline",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T01:02:02.843Z",
+  "finishedAt": "2026-08-29T01:02:12.175Z",
+  "durationMs": 9332,
+  "timeoutMs": 1200000,
+  "promptSha256": "d5a06ebfc14a126ae2d1299c179983a878c13175eb22c8face0873cd3a2c081c",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "af57172b78fd90b0827c7a88b28f02906ceb3e77fe4faa525c3d507963cebede",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "320789cdbbd3d52cfb80bb01a554961285045493dc0c9848978fa527f70f02d8",
+    "before-tree.json": "393f2e67351e85710ad25bdefc5d075e26676347373ab3a386301db9eee26d56",
+    "after-tree.json": "393f2e67351e85710ad25bdefc5d075e26676347373ab3a386301db9eee26d56",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
+    "approval.json": "b250ce3da53dc9833e37e7b2737e054c7c8ddd5ec6775d3e69cf8a8847b23b97",
+    "trajectories/baseline.jsonl": "777cbe0540763329004af3aa1fb8fa43915daaae02d9e2a6d451d5e31dc55168"
+  },
+  "tokenUsage": {
+    "input": 18001,
+    "cachedInput": 0,
+    "output": 306
+  },
+  "outcome": "PASS"
+}

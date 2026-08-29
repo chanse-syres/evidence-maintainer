@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "repair-selector-drift-advanced-1787965524305",
+  "caseId": "repair-selector-drift",
+  "arm": "advanced",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T01:05:24.307Z",
+  "finishedAt": "2026-08-29T01:05:46.929Z",
+  "durationMs": 22622,
+  "timeoutMs": 1200000,
+  "promptSha256": "6006d7e677785bf867c4c6a3865992c9f3006b4e191243e680a72846c7d6b735",
+  "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
+  "caseSetSha256": "a055fd2c6f6722aaa11f34ec3d8dee06db72406014533f8240ab33a332bed60d",
+  "trajectoryPaths": [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl"
+  ],
+  "artifactSha256": {
+    "evidence.jsonl": "3e85f44157cd086e380e814e671efb0748f54ba7e2b643488e07ac986e1c52dd",
+    "maintainer-proposal.json": "4def1a06625e990d8ae2261f5da2fef181eb1e1d505624596abff5247ad7a412",
+    "candidate-diff.json": "559ffbfce2da4ad1b6a660ca564979e829f0c4495f685580ada6bf0ddd192c65",
+    "challenger-verdict.json": "4f9a6ca777fb0a66b0d9a7231ecbafbe12d7710405e3202655de1be4dca409b2",
+    "before-tree.json": "74287ecae70b8633dd9dc7a00e1519d541c746376d9a6faddee24e57431b5e97",
+    "after-tree.json": "56d147d4ac462d794aa39137c32249c587f1701e44b388692549c36643853a37",
+    "command-results.json": "4d397d87d256b54a531a010015f75f161d9dd77f6c06b1d1b31266f965e65764",
+    "gate.json": "56bb85f5f825300d26b51174f90cb5cb95eff2b8a0eff13269eab3fed0046f92",
+    "approval.json": "03139f49d8685ea653ec91888fa548f2be4782500dd008efd3c73c210dbd1426",
+    "trajectories/maintainer.jsonl": "c57d27a93d6bc1ffccdc71c022117ca90835c1f3683319be915d251c3c98ac76",
+    "trajectories/challenger.jsonl": "f47b569595cb13065f2d1523d48a86b3328bbf68309f76a1bdc878506d1adf09"
+  },
+  "tokenUsage": {
+    "input": 37780,
+    "cachedInput": 0,
+    "output": 830
+  },
+  "outcome": "PASS"
+}

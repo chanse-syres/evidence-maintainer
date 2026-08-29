@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "obs-deferred-406 reports the expected deferred 406 response while the valid cached canonical record remains authoritative.",
+  "failureOwner": "public-provider temporary deferral state",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-deferred-406",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "source-41",
+    "public-provider"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The policy requires retaining the valid cache during an expected 406 deferral; no writable surface is allowed."
+    }
+  ],
+  "preservedInvariants": [
+    "A deferred response cannot delete cached records",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [
+    "Whether a subsequent provider response after the bounded retry window supplies a newer authoritative record."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry public-provider after 30 minutes, with at most two retries, while retaining source-41 cached records unchanged.",
+  "approvalLevel": "NONE",
+  "summary": "Defer refresh processing and preserve the authoritative cache of 42 records; schedule only the policy-bounded retry."
+}

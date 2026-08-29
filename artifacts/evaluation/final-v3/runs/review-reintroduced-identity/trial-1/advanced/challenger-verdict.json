@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "obs-reintroduced-slot",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The active entry remains unresolved until authoritative occurrence-stable identity evidence is supplied."
+  ],
+  "summary": "The proposal correctly preserves the immutable closed occurrence and does not infer continuity from the reused display name and slot. The current authoritative observation is fresh but omits the identifier required by policy, so HUMAN_REVIEW with no mutation is appropriate."
+}

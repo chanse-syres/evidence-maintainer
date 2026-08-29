@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-004",
+    "evt-005"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "No conflicting authoritative observation is present in the supplied evidence ledger."
+  ],
+  "summary": "The official-team observation is authoritative for both status and team, is before cutoff, and correctly updates the existing athlete record without altering identity or exceeding the allowed write surface."
+}

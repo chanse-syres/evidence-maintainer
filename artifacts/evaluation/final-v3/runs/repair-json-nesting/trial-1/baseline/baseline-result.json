@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "adapter.ts reads only the top-level players path; the documented payload uses data.roster.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-json-nesting",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "players",
+    "roster records"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "  const players = (payload as { players?: Player[] }).players ?? [];\n  return players.map(({ id, name }) => ({ id, name }));",
+      "replace": "  const source = payload as { players?: Player[]; data?: { roster?: Player[] } };\n  const players = source.players ?? source.data?.roster ?? [];\n  return players.map(({ id, name }) => ({ id, name }));",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable",
+    "Unrelated arrays are not accepted"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "A bounded adapter repair supports the authoritative data.roster envelope while retaining top-level players compatibility. The required test command could not run because local command execution was blocked by policy.",
+  "arm": "baseline",
+  "executedCommands": [
+    "node --experimental-strip-types --test adapter.test.ts (blocked by execution policy)"
+  ]
+}

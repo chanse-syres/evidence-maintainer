@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn",
+    "input/policy.json",
+    "input/canonical.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The authoritative status remains unresolved until a signed cross-system resolution with an effective timestamp is supplied."
+  ],
+  "summary": "The proposal correctly escalates the same-effective-time conflict between two co-authoritative status records, makes no write, and preserves the existing canonical state as required."
+}

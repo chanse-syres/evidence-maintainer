@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The authoritative award observation names Jordan Lee but supplies neither a stable identifier nor any disambiguator, while two active canonical records share that name.",
+  "failureOwner": "official-awards-feed",
+  "evidenceUsed": [
+    "obs-name-only-award",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "person-81",
+    "person-82"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Neither canonical Jordan Lee record can be resolved from the name-only award observation under the entity-resolution policy."
+    }
+  ],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the award belongs to person-81, person-82, or another person named Jordan Lee."
+  ],
+  "minimumInformationRequest": [
+    "Provide a stable source identifier for the award recipient, or two independent disambiguators that uniquely resolve the recipient."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Escalate the unresolved identity collision; no canonical award mutation is justified."
+}

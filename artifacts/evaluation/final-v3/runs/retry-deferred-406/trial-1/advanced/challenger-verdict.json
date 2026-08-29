@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-deferred-406",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "A later provider response after the two allowed retries may require a separately evaluated refresh decision."
+  ],
+  "summary": "The 406 is explicitly marked deferred, the cache is valid and within the 60-minute freshness window at policy cutoff, and the proposal preserves all 42 cached records with a retry limited to two attempts."
+}

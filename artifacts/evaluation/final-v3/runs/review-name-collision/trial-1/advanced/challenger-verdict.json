@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-name-only-award",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The authoritative award remains unresolved until a stable recipient identifier or two independent disambiguators are provided."
+  ],
+  "summary": "The name-only observation cannot distinguish either of the two active Jordan Lee records, and the proposal correctly escalates without mutating canonical award data."
+}

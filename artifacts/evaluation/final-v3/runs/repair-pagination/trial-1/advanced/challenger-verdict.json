@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json",
+    "obs-pagination-token",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The adapter assumes the continuation chain is acyclic and that each page supplies a valid nextPage value; malformed or cyclic responses could loop or duplicate records."
+  ],
+  "summary": "The replacement follows the response-provided nextPage address until null, preserves numeric-address traversal, changes only the allowed adapter.ts surface, and passes both supplied fixture tests."
+}

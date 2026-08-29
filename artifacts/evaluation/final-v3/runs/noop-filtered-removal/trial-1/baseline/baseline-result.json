@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The quarterback-filtered roster omits athlete-61, but its declared QB-subset scope cannot assert a DB roster removal.",
+  "failureOwner": "No failure; the observation is correctly treated as non-authoritative for athlete-61 status.",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-filtered-quarterbacks"
+  ],
+  "affectedEntities": [
+    "athlete-61"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "A filtered QB result is outside the authoritative unfiltered-roster scope required to change the active DB record."
+    }
+  ],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Taylor Moss remains active; no authoritative unfiltered roster view or explicit removal transaction supports a change.",
+  "arm": "baseline",
+  "executedCommands": []
+}

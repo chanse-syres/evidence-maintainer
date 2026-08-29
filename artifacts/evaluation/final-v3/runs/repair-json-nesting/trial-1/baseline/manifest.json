@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "repair-json-nesting-baseline-1787965410824",
+  "caseId": "repair-json-nesting",
+  "arm": "baseline",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T01:03:30.825Z",
+  "finishedAt": "2026-08-29T01:03:49.785Z",
+  "durationMs": 18960,
+  "timeoutMs": 1200000,
+  "promptSha256": "117630a012f0f81fea2f8b1b8b5e5c6fe225beb6e13e6b57d4df7a0bc4dec5ef",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "52dcd1ca8c513542fc472599fa57a3ef0cc188b5fb1bad18191f3c4439007f63",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "f9241be3a6d8efc2e50eaa6733e5caf9575096717be038a898c0cdfb49b4c0e6",
+    "before-tree.json": "53cb2ae25d558e538c13aa877fc78ab2cce6ac13265f7e3210647ead41a103af",
+    "after-tree.json": "8a50d02ccdc96ec6f851ab681da637be68f28d89c7af1c2709c73d091bb83db9",
+    "command-results.json": "047c6ddf2c1bb4934ce57f3663ca4f58362c75aca4da11a9d1b86bc05446e686",
+    "gate.json": "56bb85f5f825300d26b51174f90cb5cb95eff2b8a0eff13269eab3fed0046f92",
+    "approval.json": "7344f7014cfa9f26b568d5d3d0d6a6865c9d83a18414f3b5acda8db88644a932",
+    "trajectories/baseline.jsonl": "251cfe59c1f7053412140af26547be85f523510cc74fdc0c19bb271d346a889b"
+  },
+  "tokenUsage": {
+    "input": 35910,
+    "cachedInput": 0,
+    "output": 751
+  },
+  "outcome": "PASS"
+}

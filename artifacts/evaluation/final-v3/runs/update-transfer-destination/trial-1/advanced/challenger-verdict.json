@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-transfer-destination",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "obs-official-destination",
+    "input/policy.json",
+    "evt-006"
+  ],
+  "violations": [
+    "The proposed consequential canonical-data update has approvalLevel \"NONE\" and supplies no deterministic gate-success or simulated-approval evidence required before applying the change."
+  ],
+  "residualRisks": [
+    "The official observation otherwise matches the policy’s designated source, is within the cutoff and freshness window, and moves destination and status together."
+  ],
+  "summary": "The factual update is supported, but the proposal lacks the required pre-application gate and simulated approval, so it cannot be confirmed for application."
+}

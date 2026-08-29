@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b0e-fc99-7930-9c6d-453eae0d75a4"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-conflicting-authorities\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"obs-athletics-active\",\"obs-registrar-withdrawn\",\"input/policy.json\",\"input/canonical.json\"],\"violations\":[],\"residualRisks\":[\"The authoritative status remains unresolved until a signed cross-system resolution with an effective timestamp is supplied.\"],\"summary\":\"The proposal correctly escalates the same-effective-time conflict between two co-authoritative status records, makes no write, and preserves the existing canonical state as required.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":18667,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":209,"reasoning_output_tokens":86}}

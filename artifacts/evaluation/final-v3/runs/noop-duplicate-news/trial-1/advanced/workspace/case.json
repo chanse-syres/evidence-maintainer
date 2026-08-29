@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-duplicate-news",
+  "title": "Duplicate coverage is not a new event",
+  "description": "Two differently published stories describe one already-canonical commitment occurrence.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Public-data maintainer duplicate-event pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "canonical-fixture",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic canonical state modeled on public recruiting data",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a3a12cebce564665dbdd631e3fc30542792710fc9642582c7cabe58f54ba159c"
+    },
+    {
+      "sourceId": "observation-fixture",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic observations with public-example URLs",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a369dfc199b7a31e0bdb92a6c05e4ee080d328e77e0e1faa1b23045978ee5fca"
+    },
+    {
+      "sourceId": "policy-fixture",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Benchmark-specific authority and occurrence policy",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "40247aa8a5a5d00d85b8e1bea7025f2509528ffcd7731a2d2d2daf8e62af9bb4"
+    }
+  ]
+}

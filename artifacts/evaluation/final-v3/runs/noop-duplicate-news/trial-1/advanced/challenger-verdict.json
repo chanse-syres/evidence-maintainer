@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004",
+    "evt-005"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "Evidence is synthetic and limited to the supplied observations; no independent source corpus is available to test a conflicting occurrence."
+  ],
+  "summary": "The canonical record and both observations identify the same athlete, commitment, effective time, and evt-1. The official-team source is authoritative for status and team, and policy explicitly prevents a distinct publication URL from creating another occurrence. The NO_ACTION proposal preserves both stated invariants and makes no writes."
+}

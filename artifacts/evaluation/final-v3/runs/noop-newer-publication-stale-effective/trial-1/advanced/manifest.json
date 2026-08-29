@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-newer-publication-stale-effective-advanced-1787965394529",
+  "caseId": "noop-newer-publication-stale-effective",
+  "arm": "advanced",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T01:03:14.531Z",
+  "finishedAt": "2026-08-29T01:03:30.777Z",
+  "durationMs": 16246,
+  "timeoutMs": 1200000,
+  "promptSha256": "56f0be79567f38d14b6246c8499662f4b96ed1e8ac90885d058ffe49f36d156a",
+  "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
+  "caseSetSha256": "45dbaa2d4e2973b6007134e88ad192e78ca644621775191472a460e62ad1635d",
+  "trajectoryPaths": [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl"
+  ],
+  "artifactSha256": {
+    "evidence.jsonl": "a6ffd3ff4c176b982aa1e7386b69c17c0c6d1a1eda069251e09f1e0627aea8eb",
+    "maintainer-proposal.json": "e383ab89485f451a9b8f18d3f040a36cdc14699da8048c03e6b92c9a11f5e82f",
+    "candidate-diff.json": "c96a7ee8eec703234528e96c2ad7da7f102c41f2f0955bef7c454dba6af917e6",
+    "challenger-verdict.json": "15313b7211ec7f7b938f7df75d21a6bc45c858f5fdd7c2709c2a445b261c40f3",
+    "before-tree.json": "a07521b915df91012095d6b6467b7727301fd03c1ef4860eeb7f8790c7ba0455",
+    "after-tree.json": "a07521b915df91012095d6b6467b7727301fd03c1ef4860eeb7f8790c7ba0455",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
+    "approval.json": "9fb57a294c28eb6c844a340eb81fe4fe085d738260b1f767d21d35c3dedb51af",
+    "trajectories/maintainer.jsonl": "a19b0a018975749a935e9a12bf83cee24021853ce6e27568e04ae3df46cd6da3",
+    "trajectories/challenger.jsonl": "de5a25761bf5cf6f87f0d625b6389bf0cb7ea36c1c103e959b10f28dcec6b430"
+  },
+  "tokenUsage": {
+    "input": 36323,
+    "cachedInput": 0,
+    "output": 539
+  },
+  "outcome": "PASS"
+}

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "update-official-commitment",
+  "title": "Official commitment supersedes discovery data",
+  "description": "A later official announcement authoritatively changes status while an older aggregator remains stale.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Public-data maintainer authority-scope pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "input/canonical.json"
+  ],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "canonical-fixture",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic canonical state modeled on public recruiting data",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "74c89c0060dbe10852a67a26102cab30baaaef1afacb81648fd3854f56689e4f"
+    },
+    {
+      "sourceId": "observation-fixture",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic observations preserving source authority distinctions",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "7010ac39e630d188ca38da19603e7c7f9747300b9f2008c2f397952f4ab595ab"
+    },
+    {
+      "sourceId": "policy-fixture",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Benchmark-specific field-authority policy",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "fc6c37ef8bc7ffcaab95293e71b80c87f3664600500b719669fd69e3b5b7631c"
+    }
+  ]
+}

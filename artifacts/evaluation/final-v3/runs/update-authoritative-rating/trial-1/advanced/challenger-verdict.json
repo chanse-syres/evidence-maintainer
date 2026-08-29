@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-scoutmetric-rating",
+    "input/policy.json",
+    "evt-003"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The ScoutMetric observation does not include an explicit ratingAsOf fact; the proposal derives it from the authoritative observation's effectiveAt timestamp."
+  ],
+  "summary": "The ScoutMetric observation is the authoritative, latest effective, and fresh evidence for athlete-31's rating. The proposed update changes only ScoutMetric-owned fields, preserves the stable record identity, retains RankGrid-owned otherProviderRating at 91, and writes only the allowed canonical file."
+}

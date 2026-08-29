@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b10-f3cd-7b60-a18f-9e884da7719e"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"update-official-commitment\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"evt-004\",\"evt-005\"],\"violations\":[],\"residualRisks\":[\"No conflicting authoritative observation is present in the supplied evidence ledger.\"],\"summary\":\"The official-team observation is authoritative for both status and team, is before cutoff, and correctly updates the existing athlete record without altering identity or exceeding the allowed write surface.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":18354,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":179,"reasoning_output_tokens":70}}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-selector-drift",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.html",
+    "fixtures/new.html",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "Evidence establishes only the supplied article/span structure; nested name markup and materially different element ordering remain unsupported."
+  ],
+  "summary": "The proposed adapter-only repair anchors extraction on the observed stable data-athlete-id attribute, removes presentation-class authority, preserves the old fixture, and passes the required deterministic test command."
+}

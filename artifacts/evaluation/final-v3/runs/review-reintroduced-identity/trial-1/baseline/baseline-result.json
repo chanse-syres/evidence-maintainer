@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The active post-gap roster entry omits sourceOccurrenceId, so it cannot be linked to closed occurrence-91.",
+  "failureOwner": "official-roster publisher",
+  "evidenceUsed": [
+    "obs-reintroduced-slot",
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "occurrence-91",
+    "obs-reintroduced-slot"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The closed occurrence must remain immutable; display name and slot are insufficient to establish continuity."
+    }
+  ],
+  "preservedInvariants": [
+    "A closed occurrence is immutable",
+    "Display name and physical slot do not establish identity continuity"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the active Casey Quinn slot 14 entry is the same occurrence as occurrence-91 or a new occurrence."
+  ],
+  "minimumInformationRequest": [
+    "Provide an occurrence-stable identifier for the active roster entry, or simulated human approval explicitly authorizing its identity linkage or creation as a new occurrence."
+  ],
+  "retryCondition": "Retry when the official roster publication includes an occurrence-stable identifier for the active entry, or after simulated human approval resolves identity.",
+  "approvalLevel": "NONE",
+  "summary": "Human review is required because a reintroduced name and slot after a closed gap cannot establish identity continuity without an occurrence-stable identifier.",
+  "arm": "baseline",
+  "executedCommands": []
+}

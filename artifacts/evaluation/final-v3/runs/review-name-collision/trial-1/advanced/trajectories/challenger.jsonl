@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b0f-6dac-7732-9923-69b70385d0e3"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-name-collision\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"obs-name-only-award\",\"input/canonical.json\",\"input/policy.json\"],\"violations\":[],\"residualRisks\":[\"The authoritative award remains unresolved until a stable recipient identifier or two independent disambiguators are provided.\"],\"summary\":\"The name-only observation cannot distinguish either of the two active Jordan Lee records, and the proposal correctly escalates without mutating canonical award data.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17899,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":200,"reasoning_output_tokens":87}}

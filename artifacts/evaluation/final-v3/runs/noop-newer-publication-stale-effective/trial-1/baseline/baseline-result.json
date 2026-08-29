@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The observation's effectiveAt (2026-08-10T12:00:00.000Z) predates athlete-51's canonical effectiveAt (2026-08-20T18:00:00.000Z), so its newer publication time cannot supersede the canonical state.",
+  "failureOwner": "No failure; the historical archive observation is correctly non-authoritative for the later effective state.",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-new-publication-old-state"
+  ],
+  "affectedEntities": [
+    "athlete-51"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Retain canonical status committed: the retrospective observation describes an older effective state and is outside the configured authority scope for status."
+    }
+  ],
+  "preservedInvariants": [
+    "Effective state never rolls backward because publication is newer"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "No change is justified. The newly published archive item records offered status effective before the canonical committed state and therefore cannot roll the record backward.",
+  "arm": "baseline",
+  "executedCommands": []
+}

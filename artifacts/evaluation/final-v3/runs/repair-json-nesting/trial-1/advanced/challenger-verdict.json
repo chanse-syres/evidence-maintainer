@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-json-nesting",
+    "adapter.ts",
+    "adapter.test.ts",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The documented evidence does not specify precedence if both players and data.roster are present; the candidate selects players.",
+    "Payload and roster item runtime validation remain outside the demonstrated fixtures."
+  ],
+  "summary": "The change is limited to adapter.ts, supports exactly the documented data.roster transition while retaining players, preserves id mapping, rejects unrelated array paths, and the required test command passed."
+}

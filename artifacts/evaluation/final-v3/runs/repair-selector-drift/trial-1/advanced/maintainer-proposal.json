@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter anchors extraction to the presentation-only `player-card` class, so it returns no athlete from the redesigned `roster-person` fixture despite the preserved `data-athlete-id`.",
+  "failureOwner": "adapter.ts extraction selector",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.html",
+    "fixtures/new.html",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "official-roster athlete extraction"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "  const pattern = /<article class=\"player-card\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+      "replace": "  const pattern = /<article\\b[^>]*\\bdata-athlete-id=\"([^\"]+)\"[^>]*>\\s*<span\\b[^>]*\\bdata-name(?:=\"[^\"]*\")?[^>]*>([^<]+)<\\/span>\\s*<\\/article>/g;",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority"
+  ],
+  "unresolvedUncertainty": [
+    "The supplied fixtures do not establish support requirements for nested name markup or alternative element ordering."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Repair the writable adapter selector to use the stable semantic athlete ID and name data attribute while preserving the old fixture behavior; no canonical data change is proposed."
+}

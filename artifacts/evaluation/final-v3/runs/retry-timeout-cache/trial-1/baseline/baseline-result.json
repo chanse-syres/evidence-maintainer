@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "network-timeout from public-provider at 2026-08-28T16:50:00.000Z",
+  "failureOwner": "public-provider",
+  "evidenceUsed": [
+    "obs-timeout",
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "source-42",
+    "public-provider"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The cache is within the 45-minute freshness window and the timeout has no contradictory evidence."
+    }
+  ],
+  "preservedInvariants": [
+    "A transient timeout cannot erase cached records",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry public-provider once at or after 2026-08-28T17:05:00.000Z, subject to the retry limit of 2; retain source-42 cached records unless contradictory evidence arrives.",
+  "approvalLevel": "NONE",
+  "summary": "Retain the 18 cached records and schedule a bounded retry after 15 minutes; no data or adapter change is justified.",
+  "arm": "baseline",
+  "executedCommands": []
+}

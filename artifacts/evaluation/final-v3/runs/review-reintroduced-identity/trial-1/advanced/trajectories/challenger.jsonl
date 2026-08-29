@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b0f-e875-7873-a070-d933c5186cab"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-reintroduced-identity\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"obs-reintroduced-slot\",\"evt-004\"],\"violations\":[],\"residualRisks\":[\"The active entry remains unresolved until authoritative occurrence-stable identity evidence is supplied.\"],\"summary\":\"The proposal correctly preserves the immutable closed occurrence and does not infer continuity from the reused display name and slot. The current authoritative observation is fresh but omits the identifier required by policy, so HUMAN_REVIEW with no mutation is appropriate.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":18017,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":234,"reasoning_output_tokens":109}}

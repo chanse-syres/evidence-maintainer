@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b0e-74c8-7183-b911-277d18c520d0"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"retry-timeout-cache\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"obs-timeout\",\"input/canonical.json\",\"input/policy.json\"],\"violations\":[],\"residualRisks\":[\"Public-provider availability at the bounded retry time remains unknown.\"],\"summary\":\"The sole timeout is non-contradictory, the source-42 cache was 10 minutes old at observation and within the 45-minute freshness window, and the proposed single 15-minute retry is bounded below the retry limit without mutating cached records.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17618,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":259,"reasoning_output_tokens":132}}

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "obs-partial-document",
+    "sourceId": "public-provider",
+    "observedAt": "2026-08-28T16:55:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [],
+    "subjectId": null,
+    "kind": "partial-document",
+    "status": 200,
+    "contentType": "text/html",
+    "schemaFingerprint": "incomplete:6f21",
+    "facts": {
+      "closingMarkerPresent": false,
+      "contentLength": 4096,
+      "expectedMinimumLength": 18000
+    }
+  }
+]
