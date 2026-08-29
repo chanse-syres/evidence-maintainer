@@ -46,12 +46,12 @@ export default async function Home() {
           </div>
         </div>
         <aside className="hero-proof" aria-label="Measured improvement">
-          <div className="proof-label">Safe Decision Rate</div>
-          <div className="proof-number">+{(overview.absoluteSdrChange * 100).toFixed(1)}</div>
+          <div className="proof-label">Operational Decision Integrity</div>
+          <div className="proof-number">+{(overview.absoluteOdiChange * 100).toFixed(1)}</div>
           <div className="proof-unit">percentage points</div>
           <div className="proof-comparison">
-            <span><b>{percent(overview.baseline.sdr)}</b> direct baseline</span>
-            <span><b>{percent(overview.advanced.sdr)}</b> evidence-first</span>
+            <span><b>{percent(overview.baseline.odi)}</b> direct baseline</span>
+            <span><b>{percent(overview.advanced.odi)}</b> evidence-first</span>
           </div>
         </aside>
       </section>
@@ -59,13 +59,13 @@ export default async function Home() {
       <section className="metric-grid" aria-label="Evaluation summary">
         <article className="metric-card baseline-card">
           <div className="metric-label">Direct agent baseline</div>
-          <div className="metric-value">{percent(overview.baseline.sdr)}</div>
-          <div className="metric-foot">{overview.baseline.safeDecisions}/{overview.baseline.caseCount} safe decisions</div>
+          <div className="metric-value">{percent(overview.baseline.odi)}</div>
+          <div className="metric-foot">{overview.baseline.operationalDecisions}/{overview.baseline.caseCount} operationally correct decisions</div>
         </article>
         <article className="metric-card advanced-card">
           <div className="metric-label">Evidence-first system</div>
-          <div className="metric-value">{percent(overview.advanced.sdr)}</div>
-          <div className="metric-foot">{overview.advanced.safeDecisions}/{overview.advanced.caseCount} safe decisions</div>
+          <div className="metric-value">{percent(overview.advanced.odi)}</div>
+          <div className="metric-foot">{overview.advanced.operationalDecisions}/{overview.advanced.caseCount} operationally correct decisions</div>
         </article>
         <article className="metric-card">
           <div className="metric-label">Unsafe mutations</div>
@@ -105,8 +105,8 @@ export default async function Home() {
             <Link className={`case-row ${item.harmfulChange ? "has-risk" : ""}`} href={item.detailHref} key={item.caseId}>
               <div className="case-title"><b>{item.title}</b><code>{item.caseId}</code></div>
               <span className={`action-badge tone-${item.actionBadge.tone}`}>{item.actionBadge.label}</span>
-              <div className="arm-result"><span>Direct</span><b className={item.baseline.sdr === 1 ? "is-safe" : "is-failed"}>{percent(item.baseline.sdr)}</b></div>
-              <div className="arm-result"><span>Evidence-first</span><b className={item.advanced.sdr === 1 ? "is-safe" : "is-failed"}>{percent(item.advanced.sdr)}</b></div>
+              <div className="arm-result"><span>Direct</span><b className={item.baseline.odi === 1 ? "is-safe" : "is-failed"}>{percent(item.baseline.odi)}</b></div>
+              <div className="arm-result"><span>Evidence-first</span><b className={item.advanced.odi === 1 ? "is-safe" : "is-failed"}>{percent(item.advanced.odi)}</b></div>
               <span className="row-arrow" aria-hidden="true">↗</span>
             </Link>
           ))}

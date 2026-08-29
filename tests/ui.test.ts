@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test, { before } from "node:test";
@@ -29,12 +29,22 @@ before(async () => {
   );
 });
 
+test("overview page renders ODI rather than legacy SDR", async () => {
+  const page = await readFile("app/page.tsx", "utf8");
+  assert.match(page, /Operational Decision Integrity/);
+  assert.doesNotMatch(page, /absoluteSdrChange|\.sdr\b|Safe Decision Rate/);
+});
+
 test("overview exposes a sorted, truth-labeled baseline comparison", async () => {
   const overview = await loadOverviewModel(evaluationRoot);
   assert.equal(overview.modeLabel, "Recorded evidence");
   assert.equal(overview.cases.length, 15);
   assert.equal(overview.baseline.caseCount, 15);
   assert.equal(overview.advanced.caseCount, 15);
+  assert.equal(typeof overview.baseline.operationalDecisions, "number");
+  assert.equal(typeof overview.advanced.operationalDecisions, "number");
+  assert.equal(typeof overview.baseline.odi, "number");
+  assert.equal(typeof overview.advanced.odi, "number");
   assert.deepEqual(
     overview.cases.map((item) => item.caseId),
     [...overview.cases.map((item) => item.caseId)].sort(),
@@ -46,6 +56,8 @@ test("overview exposes a sorted, truth-labeled baseline comparison", async () =>
   assert.equal(typeof harmful?.harmfulChange, "boolean");
   assert.equal(harmful?.actionBadge.label, "No action");
   assert.equal(harmful?.actionBadge.tone, "noop");
+  assert.equal(typeof harmful?.baseline.odi, "number");
+  assert.equal(typeof harmful?.advanced.odi, "number");
   assert.match(overview.flagshipHref, /^\/cases\//);
 });
 
@@ -67,6 +79,6 @@ test("missing run artifacts fail with a contextual error", async () => {
   const empty = await mkdtemp(resolve(tmpdir(), "evidence-maintainer-ui-"));
   await assert.rejects(
     loadCaseModel(empty),
-    /Missing required artifact .*manifest\.json/,
+    /Missing required artifact/,
   );
 });

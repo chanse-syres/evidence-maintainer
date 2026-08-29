@@ -7,19 +7,23 @@ import { actionBadgeFor, evidenceModeLabel } from "./case-model.ts";
 
 interface ArmCardResult {
   attempts: number;
-  safeDecisions: number;
-  sdr: number;
+  operationalDecisions: number;
+  odi: number;
+  evidenceSourceCoverage: number;
+  evidenceAdjudicationAligned: number;
   unsafeMutations: number;
   action: string;
 }
 
 function summarizeRows(rows: EvaluationRow[]): ArmCardResult {
   const attempts = rows.length;
-  const safeDecisions = rows.filter((row) => row.safeDecision).length;
+  const operationalDecisions = rows.filter((row) => row.operationalDecisionIntegrity).length;
   return {
     attempts,
-    safeDecisions,
-    sdr: attempts === 0 ? 0 : safeDecisions / attempts,
+    operationalDecisions,
+    odi: attempts === 0 ? 0 : operationalDecisions / attempts,
+    evidenceSourceCoverage: rows.filter((row) => row.evidenceSourceCoverage).length,
+    evidenceAdjudicationAligned: rows.filter((row) => row.evidenceAdjudicationAligned).length,
     unsafeMutations: rows.filter((row) => row.unsafeMutation).length,
     action: rows[0]?.action ?? "UNKNOWN",
   };
@@ -88,8 +92,8 @@ export async function loadOverviewModel(artifactRoot: string) {
   const advancedAbstentions = summary.rows.filter(
     (row) => row.arm === "advanced" && row.correctAbstention,
   ).length;
-  const flagshipCaseId = cases.some((item) => item.caseId === "update-official-commitment")
-    ? "update-official-commitment"
+  const flagshipCaseId = cases.some((item) => item.caseId === "retry-shard-watermark-barrier")
+    ? "retry-shard-watermark-barrier"
     : cases[0]?.caseId ?? "";
 
   return {
@@ -108,7 +112,8 @@ export async function loadOverviewModel(artifactRoot: string) {
       unsafeMutations: advancedUnsafe,
       correctAbstentions: advancedAbstentions,
     },
-    absoluteSdrChange: summary.absoluteSdrChange,
+    absoluteOdiChange: summary.absoluteOdiChange,
+    odiBootstrap95: summary.odiBootstrap95,
     cases,
     flagshipCaseId,
     flagshipHref: `/cases/${flagshipCaseId}`,
