@@ -80,7 +80,7 @@ test("advanced workflow runs Maintainer then Challenger and approves a verified 
     approve: true,
   });
   assert.deepEqual(runner.roles, ["maintainer", "challenger"]);
-  assert.match(runner.prompts[0], /gate and simulated approval run after/i);
+  assert.match(runner.prompts[0], /deterministic\s+checks and an eligibility record run after/i);
   assert.match(runner.prompts[0], /not\s+prerequisites/i);
   assert.match(runner.prompts[0], /RETRY_LATER[^]*temporary or incomplete source state/i);
   assert.match(runner.prompts[0], /REPAIR_ADAPTER[^]*writable adapter code/i);
