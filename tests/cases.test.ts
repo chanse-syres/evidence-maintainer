@@ -7,6 +7,7 @@ import { join, resolve } from "node:path";
 import test from "node:test";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../src/core/case-loader.ts";
 import { BaselineResultSchema, ChallengerVerdictSchema, MaintainerProposalSchema } from "../src/core/schemas.ts";
+import { snapshotTree } from "../src/core/tree-snapshot.ts";
 import { generateHoldoutCases, HOLDOUT_CASE_IDS } from "../scripts/generate-holdout-cases.ts";
 
 export const CORE_CASE_IDS = [
@@ -111,6 +112,14 @@ test("the untouched holdout generator creates one hash-verified case per action"
     [...actions].sort(),
     ["HUMAN_REVIEW", "NO_ACTION", "REPAIR_ADAPTER", "RETRY_LATER", "UPDATE_DATA"],
   );
+});
+
+test("the checked-in untouched holdout is byte-identical to the generator output", async () => {
+  const generatedRoot = await mkdtemp(join(tmpdir(), "evidence-holdout-byte-check-"));
+  await generateHoldoutCases(generatedRoot);
+  const checkedIn = await snapshotTree(resolve("holdout", "cases"));
+  const generated = await snapshotTree(generatedRoot);
+  assert.deepEqual(checkedIn, generated);
 });
 
 test("human-review cases require escalation, exact missing information, and zero mutation", async () => {

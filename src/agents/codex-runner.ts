@@ -3,26 +3,13 @@ import { createWriteStream } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { once } from "node:events";
-import type { AgentRequest, AgentResult, AgentRunner } from "./runner.ts";
-
-export class AgentExecutionError extends Error {
-  readonly trajectoryPath: string;
-  readonly stderrPath: string;
-  readonly exitCode: number | null;
-
-  constructor(
-    message: string,
-    trajectoryPath: string,
-    stderrPath: string,
-    exitCode: number | null,
-  ) {
-    super(message);
-    this.name = "AgentExecutionError";
-    this.trajectoryPath = trajectoryPath;
-    this.stderrPath = stderrPath;
-    this.exitCode = exitCode;
-  }
-}
+import {
+  InfrastructureExecutionError,
+  ModelExecutionError,
+  type AgentRequest,
+  type AgentResult,
+  type AgentRunner,
+} from "./runner.ts";
 
 export function createCodexArgs<T>(request: AgentRequest<T>): string[] {
   return [
@@ -132,10 +119,10 @@ export class CodexRunner implements AgentRunner {
     const stderr = Buffer.concat(stderrChunks).toString("utf8");
     await writeFile(stderrPath, stderr, "utf8");
     if (timedOut) {
-      throw new AgentExecutionError(`Codex run timed out after ${request.timeoutMs}ms`, request.trajectoryPath, stderrPath, exitCode);
+      throw new ModelExecutionError("TIMEOUT", `Codex run timed out after ${request.timeoutMs}ms`);
     }
     if (exitCode !== 0) {
-      throw new AgentExecutionError(`Codex exited with code ${exitCode}`, request.trajectoryPath, stderrPath, exitCode);
+      throw new InfrastructureExecutionError(`Codex process exited with code ${exitCode}`);
     }
     const stdout = Buffer.concat(stdoutChunks).toString("utf8");
     const events = stdout.split(/\r?\n/).filter(Boolean).map((line) => JSON.parse(line) as unknown);
@@ -143,11 +130,9 @@ export class CodexRunner implements AgentRunner {
     try {
       output = request.parse(extractOutput(events));
     } catch (error) {
-      throw new AgentExecutionError(
+      throw new ModelExecutionError(
+        "INVALID_OUTPUT",
         `Codex output validation failed: ${error instanceof Error ? error.message : String(error)}`,
-        request.trajectoryPath,
-        stderrPath,
-        exitCode,
       );
     }
     const finished = new Date();

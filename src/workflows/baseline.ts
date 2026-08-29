@@ -3,12 +3,13 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { once } from "node:events";
 import type { AgentRunner } from "../agents/runner.ts";
+import { ModelExecutionError } from "../agents/runner.ts";
 import { loadPrompt } from "../agents/prompt-loader.ts";
 import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
 import { runDeterministicGate, type CommandResult } from "../core/deterministic-gate.ts";
-import { applyOperations } from "../core/mutation-engine.ts";
+import { applyOperations, MutationApplicationError } from "../core/mutation-engine.ts";
 import {
   BaselineResultSchema,
   MaintainerProposalSchema,
@@ -138,7 +139,14 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     approvalLevel: agent.output.approvalLevel,
     summary: agent.output.summary,
   });
-  await applyOperations(workspace, proposal.operations);
+  try {
+    await applyOperations(workspace, proposal.operations);
+  } catch (error) {
+    if (error instanceof MutationApplicationError) {
+      throw new ModelExecutionError("INVALID_OPERATION", error.message);
+    }
+    throw error;
+  }
   const commandResults = await runRequiredCommands(workspace, loadedCase.manifest.requiredCommands);
   await writeJson(join(runRoot, "command-results.json"), commandResults);
   const after = await snapshotTree(workspace);

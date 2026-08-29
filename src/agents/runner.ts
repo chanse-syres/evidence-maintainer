@@ -1,5 +1,24 @@
 export type AgentRole = "baseline" | "maintainer" | "challenger";
 
+export type ModelExecutionFailureKind = "TIMEOUT" | "INVALID_OUTPUT" | "INVALID_OPERATION";
+
+export class ModelExecutionError extends Error {
+  readonly kind: ModelExecutionFailureKind;
+
+  constructor(kind: ModelExecutionFailureKind, message: string) {
+    super(message);
+    this.name = "ModelExecutionError";
+    this.kind = kind;
+  }
+}
+
+export class InfrastructureExecutionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InfrastructureExecutionError";
+  }
+}
+
 export interface AgentRequest<T> {
   runId: string;
   role: AgentRole;

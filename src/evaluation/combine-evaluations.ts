@@ -30,6 +30,10 @@ export interface CombinedEvaluationSummary extends AggregateSummary {
   timeoutMs: number;
   trialsPerCase: number;
   inputCommit: string | null;
+  inputCommitVerification: {
+    resolvedCommit: string;
+    verifiedPaths: string[];
+  } | null;
   failureTaxonomy: {
     modelExecutionErrors: number;
     infrastructureErrors: number;
@@ -57,6 +61,10 @@ export interface CombineEvaluationConfig {
   caseRoot: string;
   expectedTrialsPerCase: number;
   inputCommit?: string;
+  inputCommitVerification?: {
+    resolvedCommit: string;
+    verifiedPaths: string[];
+  };
   modelErrorKeys?: string[];
   replaceGeneratedOutput?: boolean;
 }
@@ -216,6 +224,14 @@ export async function combineEvaluationSources(
 ): Promise<CombinedEvaluationSummary> {
   if (config.sources.length === 0) throw new Error("At least one evaluation source is required");
   assertPositiveInteger(config.expectedTrialsPerCase, "expectedTrialsPerCase");
+  if (config.inputCommit) {
+    if (!config.inputCommitVerification) {
+      throw new Error("inputCommit requires verified Git provenance");
+    }
+    if (config.inputCommitVerification.resolvedCommit !== config.inputCommit) {
+      throw new Error("inputCommit does not match the resolved verified commit");
+    }
+  }
   const outDir = resolve(config.outDir);
   const existing: string[] = await readdir(outDir).catch(() => [] as string[]);
   if (existing.length > 0) {
@@ -304,8 +320,13 @@ export async function combineEvaluationSources(
       const destinationRelative = relative(outDir, destinationRunPath).replaceAll("\\", "/");
 
       let combinedRow: CombinedEvaluationRow;
+      let manifestText: string | null = null;
       try {
-        const manifestText = await readFile(join(sourceRunPath, "manifest.json"), "utf8");
+        manifestText = await readFile(join(sourceRunPath, "manifest.json"), "utf8");
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      }
+      if (manifestText !== null) {
         const manifest = RunManifestSchema.parse(JSON.parse(manifestText));
         if (manifest.caseId !== parsed.caseId || manifest.arm !== parsed.arm) {
           throw new Error(`Manifest identity mismatch in ${sourceRunPath}`);
@@ -342,10 +363,7 @@ export async function combineEvaluationSources(
           executionErrorMessage: null,
           modelSessions: sessions.total,
         };
-      } catch (error) {
-        if (!(error instanceof Error) || !/ENOENT/.test(String((error as NodeJS.ErrnoException).code))) {
-          throw error;
-        }
+      } else {
         const errorArtifactText = await readFile(join(sourceRunPath, "error.json"), "utf8");
         const errorArtifact = JSON.parse(errorArtifactText) as { message?: unknown };
         const errorMessage = typeof errorArtifact.message === "string"
@@ -421,6 +439,7 @@ export async function combineEvaluationSources(
     timeoutMs,
     trialsPerCase: config.expectedTrialsPerCase,
     inputCommit: config.inputCommit ?? null,
+    inputCommitVerification: config.inputCommitVerification ?? null,
     failureTaxonomy: {
       modelExecutionErrors: consumedModelErrors.size,
       infrastructureErrors: 0,

@@ -1,3 +1,4 @@
+import { execFile } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -16,6 +17,34 @@ export interface CombineCliOptions {
   caseRoot: string;
   inputCommit: string;
   replace: boolean;
+}
+
+function git(args: string[], cwd: string): Promise<string> {
+  return new Promise((resolvePromise, reject) => {
+    execFile("git", args, { cwd, windowsHide: true }, (error, stdout, stderr) => {
+      if (error) {
+        reject(new Error(`Git provenance check failed: ${stderr.trim() || error.message}`));
+        return;
+      }
+      resolvePromise(stdout.trim());
+    });
+  });
+}
+
+export async function verifyFrozenInputCommit(
+  inputCommit: string,
+  verifiedPaths = ["cases", "prompts", "schemas"],
+  cwd = process.cwd(),
+): Promise<{ resolvedCommit: string; verifiedPaths: string[] }> {
+  const resolvedCommit = await git(["rev-parse", "--verify", `${inputCommit}^{commit}`], cwd);
+  if (!/^[a-f0-9]{40}$/.test(resolvedCommit)) {
+    throw new Error(`Git returned an invalid commit ID: ${resolvedCommit}`);
+  }
+  const changed = await git(["diff", "--name-only", resolvedCommit, "--", ...verifiedPaths], cwd);
+  if (changed) {
+    throw new Error(`Frozen evaluation inputs differ from ${resolvedCommit}: ${changed.replaceAll("\n", ", ")}`);
+  }
+  return { resolvedCommit, verifiedPaths: [...verifiedPaths] };
 }
 
 export function parseCombineArgs(argv: string[]): CombineCliOptions {
@@ -50,6 +79,7 @@ export async function combineCli(argv: string[]): Promise<void> {
   const pricingPath = resolve("config", "pricing-gpt-5.6-terra-2026-08-28.json");
   const pricingText = await readFile(pricingPath, "utf8");
   const pricingSnapshot = JSON.parse(pricingText) as UsagePricing & Record<string, unknown>;
+  const inputCommitVerification = await verifyFrozenInputCommit(options.inputCommit);
   const summary = await combineEvaluationSources({
     sources: [
       { label: "initial", root: resolve(options.initial), trialOffset: 0 },
@@ -58,7 +88,8 @@ export async function combineCli(argv: string[]): Promise<void> {
     outDir: resolve(options.out),
     caseRoot: resolve(options.caseRoot),
     expectedTrialsPerCase: 3,
-    inputCommit: options.inputCommit,
+    inputCommit: inputCommitVerification.resolvedCommit,
+    inputCommitVerification,
     modelErrorKeys: ["repeat:1:repair-selector-drift:advanced"],
     replaceGeneratedOutput: options.replace,
   });

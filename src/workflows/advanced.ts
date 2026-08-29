@@ -1,12 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
+import { ModelExecutionError } from "../agents/runner.ts";
 import { loadPrompt } from "../agents/prompt-loader.ts";
 import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
 import { runDeterministicGate } from "../core/deterministic-gate.ts";
 import { buildEvidenceLedger } from "../core/evidence-ledger.ts";
-import { applyOperations } from "../core/mutation-engine.ts";
+import { applyOperations, MutationApplicationError } from "../core/mutation-engine.ts";
 import { PROJECT_ID } from "../core/project.ts";
 import {
   ChallengerVerdictSchema,
@@ -79,7 +80,14 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     parse: (value) => MaintainerProposalSchema.parse(value),
   });
   await writeJson(join(runRoot, "maintainer-proposal.json"), maintainer.output);
-  await applyOperations(workspace, maintainer.output.operations);
+  try {
+    await applyOperations(workspace, maintainer.output.operations);
+  } catch (error) {
+    if (error instanceof MutationApplicationError) {
+      throw new ModelExecutionError("INVALID_OPERATION", error.message);
+    }
+    throw error;
+  }
   const commandResults = await runRequiredCommands(workspace, loadedCase.manifest.requiredCommands);
   await writeJson(join(runRoot, "command-results.json"), commandResults);
   const after = await snapshotTree(workspace);

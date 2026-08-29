@@ -2,7 +2,7 @@ import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { CodexRunner } from "../agents/codex-runner.ts";
 import { RecordedRunner } from "../agents/recorded-runner.ts";
-import type { AgentRunner } from "../agents/runner.ts";
+import { ModelExecutionError, type AgentRunner } from "../agents/runner.ts";
 import { loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json } from "../core/canonical-json.ts";
 import { CaseOracleSchema } from "../core/schemas.ts";
@@ -29,6 +29,10 @@ export interface EvaluationSummary extends AggregateSummary {
   model: string;
   mode: "live" | "recorded";
   trialsPerCase: number;
+  failureTaxonomy: {
+    modelExecutionErrors: number;
+    infrastructureOrEvaluatorErrors: number;
+  };
   rows: EvaluationRow[];
 }
 
@@ -99,6 +103,7 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
     expectedActions.set(caseId, oracle.expectedAction);
   }
   const rows: EvaluationRow[] = [];
+  let modelExecutionErrors = 0;
   for (const caseId of config.caseIds) {
     for (let trial = 1; trial <= config.trials; trial += 1) {
       for (const arm of ["baseline", "advanced"] as const) {
@@ -122,9 +127,15 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
           await writeJson(join(runPath, "error.json"), {
             caseId,
             arm,
+            classification: error instanceof ModelExecutionError
+              ? "MODEL_EXECUTION"
+              : "INFRASTRUCTURE_OR_EVALUATOR",
+            kind: error instanceof ModelExecutionError ? error.kind : null,
             message: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : undefined,
           });
+          if (!(error instanceof ModelExecutionError)) throw error;
+          modelExecutionErrors += 1;
           rows.push(createExecutionErrorRow({
             caseId,
             arm,
@@ -146,6 +157,10 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
     model: config.model,
     mode: config.mode,
     trialsPerCase: config.trials,
+    failureTaxonomy: {
+      modelExecutionErrors,
+      infrastructureOrEvaluatorErrors: 0,
+    },
     ...aggregate,
     rows,
   };

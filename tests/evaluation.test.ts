@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { ModelExecutionError } from "../src/agents/runner.ts";
 import { aggregateRows, median, wilsonInterval } from "../src/evaluation/aggregate.ts";
 import { combineEvaluationSources } from "../src/evaluation/combine-evaluations.ts";
 import { estimateUsageCost } from "../src/evaluation/cost.ts";
@@ -275,6 +276,29 @@ test("evaluation sources combine into collision-free canonical trial paths", asy
   assert.equal(new Set(summary.rows.map((row) => row.runPath)).size, 6);
 });
 
+test("a claimed input commit requires resolved Git provenance", async () => {
+  const source = await mkdtemp(join(tmpdir(), "evidence-combine-unverified-source-"));
+  const output = await mkdtemp(join(tmpdir(), "evidence-combine-unverified-output-"));
+  await runEvaluation({
+    caseIds: ["noop-duplicate-news"],
+    trials: 1,
+    mode: "recorded",
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    outDir: source,
+  });
+  await assert.rejects(
+    combineEvaluationSources({
+      sources: [{ label: "source", root: source, trialOffset: 0 }],
+      outDir: output,
+      caseRoot: "cases",
+      expectedTrialsPerCase: 1,
+      inputCommit: "a".repeat(40),
+    }),
+    /requires verified Git provenance/,
+  );
+});
+
 test("evaluation CLI and case selection support an isolated holdout root", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-holdout-root-"));
   await mkdir(join(root, "zeta"));
@@ -293,7 +317,7 @@ test("model execution errors remain SDR failures but do not become zero-cost run
   const root = await mkdtemp(join(tmpdir(), "evidence-evaluation-error-"));
   const runner = {
     async run(): Promise<never> {
-      throw new Error("model produced an invalid mutation");
+      throw new ModelExecutionError("INVALID_OUTPUT", "model produced an invalid mutation");
     },
   };
   const summary = await runEvaluation({
@@ -311,4 +335,49 @@ test("model execution errors remain SDR failures but do not become zero-cost run
   assert.ok(summary.rows.every((row) => row.totalTokens === null));
   assert.ok(summary.rows.every((row) => row.expectedAction === "REPAIR_ADAPTER"));
   assert.ok(summary.rows.every((row) => row.reviewReady === false));
+});
+
+test("infrastructure or evaluator errors abort instead of becoming model failures", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-evaluation-infra-error-"));
+  const runner = {
+    async run(): Promise<never> {
+      throw new Error("filesystem unavailable");
+    },
+  };
+  await assert.rejects(
+    runEvaluation({
+      caseIds: ["repair-selector-drift"],
+      trials: 1,
+      mode: "live",
+      model: "fixture-model",
+      timeoutMs: 30_000,
+      outDir: root,
+      runner,
+    }),
+    /filesystem unavailable/,
+  );
+});
+
+test("a missing artifact after a manifest exists is bundle corruption, not an allowlisted model error", async () => {
+  const source = await mkdtemp(join(tmpdir(), "evidence-combine-corrupt-source-"));
+  const output = await mkdtemp(join(tmpdir(), "evidence-combine-corrupt-output-"));
+  await runEvaluation({
+    caseIds: ["noop-duplicate-news"],
+    trials: 1,
+    mode: "recorded",
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    outDir: source,
+  });
+  await rm(join(source, "runs", "noop-duplicate-news", "trial-1", "baseline", "gate.json"));
+  await assert.rejects(
+    combineEvaluationSources({
+      sources: [{ label: "source", root: source, trialOffset: 0 }],
+      outDir: output,
+      caseRoot: "cases",
+      expectedTrialsPerCase: 1,
+      modelErrorKeys: ["source:1:noop-duplicate-news:baseline"],
+    }),
+    /ENOENT/,
+  );
 });

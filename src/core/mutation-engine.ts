@@ -6,27 +6,41 @@ import {
   type MutationOperation,
 } from "./schemas.ts";
 
+export class MutationApplicationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "MutationApplicationError";
+  }
+}
+
 function containedPath(workspace: string, requested: string): string {
   if (isAbsolute(requested) || requested.includes("\\") || /^[A-Za-z]:/.test(requested)) {
-    throw new Error(`Unsafe normalized relative path: ${requested}`);
+    throw new MutationApplicationError(`Unsafe normalized relative path: ${requested}`);
   }
   const segments = requested.split("/");
   if (segments.some((segment) => !segment || segment === "." || segment === "..")) {
-    throw new Error(`Unsafe relative path: ${requested}`);
+    throw new MutationApplicationError(`Unsafe relative path: ${requested}`);
   }
   const root = resolve(workspace);
   const target = resolve(root, ...segments);
   const rel = relative(root, target);
   if (rel.startsWith("..") || isAbsolute(rel)) {
-    throw new Error(`Path escapes workspace: ${requested}`);
+    throw new MutationApplicationError(`Path escapes workspace: ${requested}`);
   }
   return target;
 }
 
 async function assertRegularFile(path: string): Promise<void> {
-  const stat = await lstat(path);
+  let stat;
+  try {
+    stat = await lstat(path);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") throw new MutationApplicationError(`Mutation target does not exist: ${path}`);
+    throw error;
+  }
   if (stat.isSymbolicLink() || !stat.isFile()) {
-    throw new Error(`Mutation target is not a regular file: ${path}`);
+    throw new MutationApplicationError(`Mutation target is not a regular file: ${path}`);
   }
 }
 
@@ -62,7 +76,7 @@ export async function applyOperations(workspace: string, operations: readonly Mu
       const original = await readFile(path, "utf8");
       const actualCount = countOccurrences(original, operation.find);
       if (actualCount !== operation.expectedCount) {
-        throw new Error(
+        throw new MutationApplicationError(
           `Expected ${operation.expectedCount} replacement target(s) in ${operation.file}, found ${actualCount}`,
         );
       }
@@ -72,24 +86,24 @@ export async function applyOperations(workspace: string, operations: readonly Mu
 
     const fields = Object.fromEntries(operation.assignments.map(({ field, value }) => [field, value]));
     if (Object.keys(fields).length !== operation.assignments.length) {
-      throw new Error("Record field assignments must be unique");
+      throw new MutationApplicationError("Record field assignments must be unique");
     }
     if (Object.hasOwn(fields, "id")) {
-      throw new Error("Stable record identity cannot be mutated");
+      throw new MutationApplicationError("Stable record identity cannot be mutated");
     }
     const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
     if (!Array.isArray(parsed)) {
-      throw new Error(`SET_RECORD_FIELDS requires an array JSON root: ${operation.file}`);
+      throw new MutationApplicationError(`SET_RECORD_FIELDS requires an array JSON root: ${operation.file}`);
     }
     const matches = parsed.filter(
       (entry): entry is Record<string, unknown> =>
         typeof entry === "object" && entry !== null && !Array.isArray(entry) && entry.id === operation.recordId,
     );
     if (matches.length > 1) {
-      throw new Error(`Duplicate record ID ${operation.recordId} in ${operation.file}`);
+      throw new MutationApplicationError(`Duplicate record ID ${operation.recordId} in ${operation.file}`);
     }
     if (matches.length === 0) {
-      throw new Error(`Record ${operation.recordId} not found in ${operation.file}`);
+      throw new MutationApplicationError(`Record ${operation.recordId} not found in ${operation.file}`);
     }
     Object.assign(matches[0], fields);
     await atomicWrite(path, `${JSON.stringify(parsed, null, 2)}\n`);
