@@ -98,11 +98,13 @@ test("future condition requires values for comparisons and forbids them for EXIS
   const selector = {
     sourceId: "official-roster",
     subjectId: "athlete-7",
+    kind: null,
     factPath: "facts.status",
   };
-  assert.equal(FutureConditionSchema.parse({ selector, operator: "EXISTS" }).operator, "EXISTS");
+  assert.equal(FutureConditionSchema.parse({ selector, operator: "EXISTS", expectedValue: null }).operator, "EXISTS");
   assert.equal(FutureConditionSchema.parse({ selector, operator: "EQUALS", expectedValue: "active" }).operator, "EQUALS");
-  assert.throws(() => FutureConditionSchema.parse({ selector, operator: "EQUALS" }), /requires expectedValue/i);
+  assert.throws(() => FutureConditionSchema.parse({ selector, operator: "EQUALS" }));
+  assert.throws(() => FutureConditionSchema.parse({ selector, operator: "EXISTS" }));
   assert.throws(() => FutureConditionSchema.parse({ selector, operator: "EXISTS", expectedValue: true }), /does not accept expectedValue/i);
 });
 
@@ -116,6 +118,7 @@ test("retry plans use future selectors and keep escalation within the retry budg
       selector: {
         sourceId: "official-roster",
         subjectId: "athlete-7",
+        kind: null,
         factPath: "facts.status",
       },
       operator: "EQUALS",
@@ -260,5 +263,35 @@ test("generated contracts encode required empty arrays without empty tuple schem
     const document = await readFile(join(root, name), "utf8");
     assert.equal(document.includes('"prefixItems": []'), false);
     assert.equal((JSON.parse(document) as { type?: string }).type, "object");
+  }
+});
+
+test("generated contracts require every declared object property", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-strict-object-schema-"));
+  await writeSchemas(root);
+  for (const name of [
+    "decision-package.schema.json",
+    "challenger-critique.schema.json",
+  ]) {
+    const document = JSON.parse(await readFile(join(root, name), "utf8"));
+    const missing: string[] = [];
+    const visit = (value: unknown, path = "$."): void => {
+      if (Array.isArray(value)) {
+        value.forEach((entry, index) => visit(entry, `${path}[${index}]`));
+        return;
+      }
+      if (value === null || typeof value !== "object") return;
+      const record = value as Record<string, unknown>;
+      if (record.type === "object" && record.properties && typeof record.properties === "object") {
+        const keys = Object.keys(record.properties);
+        const required = Array.isArray(record.required) ? record.required : [];
+        for (const key of keys) {
+          if (!required.includes(key)) missing.push(`${path}${key}`);
+        }
+      }
+      for (const [key, entry] of Object.entries(record)) visit(entry, `${path}${key}.`);
+    };
+    visit(document);
+    assert.deepEqual(missing, [], `${name} must satisfy strict structured-output object requirements`);
   }
 });

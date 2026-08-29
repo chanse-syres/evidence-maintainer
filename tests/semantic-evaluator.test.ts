@@ -175,6 +175,7 @@ const generationCondition = {
   selector: {
     sourceId: "official-register",
     subjectId: "subject-1",
+    kind: "status-event",
     factPath: "facts.generation",
   },
   operator: "GREATER_THAN_OR_EQUAL",
@@ -186,9 +187,11 @@ test("semantic evaluator accepts reordered conditions, duplicate harmless eviden
     selector: {
       sourceId: "official-register",
       subjectId: "subject-1",
+      kind: null,
       factPath: "facts.status",
     },
     operator: "EXISTS",
+    expectedValue: null,
   };
   const packageValue = retryPackage([statusExists, generationCondition]);
   packageValue.evidenceAssessments.push({ ...packageValue.evidenceAssessments[0] });

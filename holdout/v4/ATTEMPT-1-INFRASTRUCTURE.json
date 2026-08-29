@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "campaign": "holdout-v4",
+  "attempt": 1,
+  "status": "INVALID_INFRASTRUCTURE",
+  "startedAt": "2026-08-29T20:46:42.000Z",
+  "failedAt": "2026-08-29T20:46:59.000Z",
+  "freezeTag": "holdout-freeze-v4",
+  "frozenCommit": "edecc9e9d7c72d98bde207a5716b9f2d2f23934a",
+  "evaluationHarnessCommit": "70f0c9e30b020c45d68a6fcba03101b04cc7b012",
+  "model": "gpt-5.6-terra",
+  "firstSlot": {
+    "caseId": "noop-post-cutoff-reclassification",
+    "trial": 1,
+    "arm": "baseline"
+  },
+  "completedModelSessions": 0,
+  "acceptedUpstreamRequests": 0,
+  "rejectedUpstreamRequests": 1,
+  "tokenUsageCaptured": false,
+  "comparisonProduced": false,
+  "failure": {
+    "owner": "infrastructure",
+    "upstreamStatus": 400,
+    "code": "invalid_json_schema",
+    "message": "The upstream structured-output validator rejected an optional selector field before inference."
+  },
+  "disposition": "No target output was produced. Repair the structured-output contract, create a new immutable freeze, and restart all slots in a fresh campaign directory.",
+  "evidenceSha256": {
+    "freezeLock": "a837178d35a5c91f69bcbac818dfebd05bb622a8be23f0b21accdac4ef0aefe4",
+    "campaignConsole": "ff7eed4f4a283533ffc816b332321df5e5f446de1240f2ae2b123b68e13933bf",
+    "typedError": "e200660790ed16a80d490621a754a62767c31581a8e56e4469f694d8b16249bb",
+    "proxyLedger": "2349ee138f14e02b9171ad2172ccb814730f4413ea1571a5951fdc6147417ac1"
+  }
+}

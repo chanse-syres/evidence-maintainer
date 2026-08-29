@@ -5,7 +5,7 @@ function selectorMatches(condition: FutureCondition, observation: SourceObservat
   const { selector } = condition;
   return observation.sourceId === selector.sourceId
     && observation.subjectId === selector.subjectId
-    && (selector.kind === undefined || observation.kind === selector.kind);
+    && (selector.kind === null || observation.kind === selector.kind);
 }
 function comparisonMatches(condition: FutureCondition, actual: unknown): boolean {
   switch (condition.operator) {

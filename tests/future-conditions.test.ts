@@ -46,9 +46,11 @@ test("future condition EXISTS distinguishes present null from a missing fact", (
     selector: {
       sourceId: "official-roster",
       subjectId: "athlete-7",
+      kind: null,
       factPath: "facts.note",
     },
     operator: "EXISTS",
+    expectedValue: null,
   });
   assert.equal(conditionMatches(exists, [observation()]), true);
   assert.equal(conditionMatches(exists, [observation({ facts: {} })]), false);
@@ -63,6 +65,7 @@ test("future condition evaluation reports every satisfied condition index in dec
     selector: {
       sourceId: "official-roster",
       subjectId: "athlete-7",
+      kind: null,
       factPath: "facts.status",
     },
     operator: "EQUALS",

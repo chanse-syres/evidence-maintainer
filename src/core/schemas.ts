@@ -175,7 +175,7 @@ export const LegacyRetryPlanSchema = z.object({
 export const ObservationSelectorSchema = z.object({
   sourceId: z.string().min(1),
   subjectId: z.string().min(1),
-  kind: z.string().min(1).optional(),
+  kind: z.string().min(1).nullable(),
   factPath: z.string().regex(/^facts(?:\.[A-Za-z0-9_-]+)+$/),
 }).strict();
 
@@ -188,13 +188,10 @@ export const FutureConditionSchema = z.object({
     "LESS_THAN_OR_EQUAL",
     "EXISTS",
   ]),
-  expectedValue: MutationFieldValueSchema.optional(),
+  expectedValue: MutationFieldValueSchema,
 }).strict().superRefine((condition, ctx) => {
-  if (condition.operator !== "EXISTS" && condition.expectedValue === undefined) {
-    ctx.addIssue({ code: "custom", message: "A comparison condition requires expectedValue" });
-  }
-  if (condition.operator === "EXISTS" && condition.expectedValue !== undefined) {
-    ctx.addIssue({ code: "custom", message: "EXISTS does not accept expectedValue" });
+  if (condition.operator === "EXISTS" && condition.expectedValue !== null) {
+    ctx.addIssue({ code: "custom", message: "EXISTS does not accept expectedValue unless it is null" });
   }
 });
 

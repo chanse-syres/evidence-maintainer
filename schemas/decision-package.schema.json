@@ -266,8 +266,15 @@
                         "minLength": 1
                       },
                       "kind": {
-                        "type": "string",
-                        "minLength": 1
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "factPath": {
                         "type": "string",
@@ -277,6 +284,7 @@
                     "required": [
                       "sourceId",
                       "subjectId",
+                      "kind",
                       "factPath"
                     ],
                     "additionalProperties": false
@@ -302,7 +310,8 @@
                 },
                 "required": [
                   "selector",
-                  "operator"
+                  "operator",
+                  "expectedValue"
                 ],
                 "additionalProperties": false
               }
