@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "The HTTP 200 response is a partial document: its closing marker is absent and its schema fingerprint is incomplete.",
+  "failureOwner": "public-provider document delivery",
+  "evidenceUsed": [
+    "obs-partial-document",
+    "input/policy.json",
+    "input/canonical.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "source-43",
+    "public-provider"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Preserve the complete cached canonical record until a document with the required closing marker and complete known schema fingerprint is observed."
+    }
+  ],
+  "preservedInvariants": [
+    "Partial documents cannot replace complete state",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the provider will return a complete document on a subsequent fetch.",
+    "The complete document's resulting record count and content are not yet observed."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry for a complete document after 20 minutes from the partial observation, with no more than 2 retries total; accept only if the closing marker is present and the schema fingerprint is known complete.",
+  "approvalLevel": "NONE",
+  "summary": "Reject the incomplete 200 response, retain the 63-record canonical cache, and perform the policy-bounded retry."
+}

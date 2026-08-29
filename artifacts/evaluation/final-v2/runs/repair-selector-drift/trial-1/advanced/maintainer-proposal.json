@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter anchors roster extraction to the presentation-only player-card selector, which no longer matches the redesigned roster-person markup despite the stable data-athlete-id attribute.",
+  "failureOwner": "adapter roster extraction selector",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.html",
+    "fixtures/new.html"
+  ],
+  "evidenceRejected": [
+    "input/canonical.json"
+  ],
+  "affectedEntities": [
+    "official-roster athlete identity extraction"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": ".player-card",
+      "replace": "[data-athlete-id]",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Replace the presentation-class selector with the stable semantic attribute selector in the writable adapter; no canonical data change is proposed."
+}

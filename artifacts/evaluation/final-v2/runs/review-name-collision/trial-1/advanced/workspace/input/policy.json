@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "award": "official-awards-feed"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "rules": [
+    "Entity resolution requires a stable source identifier or two independent disambiguators",
+    "Escalate a name collision rather than choosing the first record"
+  ]
+}

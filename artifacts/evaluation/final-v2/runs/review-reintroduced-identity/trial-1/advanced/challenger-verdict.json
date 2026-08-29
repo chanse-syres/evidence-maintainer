@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-reintroduced-slot",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The active entry's occurrence identity remains unresolved until authoritative continuity or occurrence-stable identifier evidence is provided."
+  ],
+  "summary": "The proposal correctly preserves the immutable closed occurrence and avoids inferring continuity from a matching display name and slot; no mutation or unsupported linkage is proposed."
+}

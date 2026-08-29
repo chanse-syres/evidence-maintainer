@@ -1,0 +1,21 @@
+[
+  {
+    "id": "obs-selector-drift",
+    "sourceId": "official-roster",
+    "observedAt": "2026-08-26T10:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "roster-shape"
+    ],
+    "subjectId": null,
+    "kind": "schema-change",
+    "status": 200,
+    "contentType": "text/html",
+    "schemaFingerprint": "roster-semantic-id-v2",
+    "facts": {
+      "stableAttribute": "data-athlete-id",
+      "oldClass": "player-card",
+      "newClass": "roster-person"
+    }
+  }
+]

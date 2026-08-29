@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "obs-deferred-406",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "A fresh replacement payload remains unavailable until a bounded retry succeeds; cache authority must be re-evaluated when its freshness window expires."
+  ],
+  "summary": "The 406 is explicitly marked deferred with a valid cache, and the cached snapshot is within the 60-minute freshness window at policy cutoff. The no-mutation action preserves cached records and the retry condition enforces the two-retry limit."
+}

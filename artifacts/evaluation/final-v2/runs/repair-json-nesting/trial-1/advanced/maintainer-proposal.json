@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The official roster payload moved from top-level `players` to `data.roster`, causing the adapter's current top-level extraction to normalize the new fixture as an empty roster.",
+  "failureOwner": "adapter.ts roster extraction logic",
+  "evidenceUsed": [
+    "obs-json-nesting",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.json",
+    "fixtures/new.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "roster payload normalization",
+    "player records"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "payload.players ?? []",
+      "replace": "payload.players ?? payload.data?.roster ?? []",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Support the documented stable envelope transition in the adapter only, retaining the legacy path and existing player-ID normalization."
+}

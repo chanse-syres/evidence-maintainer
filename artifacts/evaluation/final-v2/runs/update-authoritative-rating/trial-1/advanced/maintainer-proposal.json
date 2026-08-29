@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "ScoutMetric-owned rating for athlete-31 is 88 in canonical state but 93 in the latest authoritative ScoutMetric observation.",
+  "failureOwner": "canonical data freshness",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-scoutmetric-rating",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-other-provider"
+  ],
+  "affectedEntities": [
+    "athlete-31"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-31",
+      "assignments": [
+        {
+          "field": "rating",
+          "value": 93
+        },
+        {
+          "field": "ratingAsOf",
+          "value": "2026-08-25T17:30:00.000Z"
+        }
+      ]
+    }
+  ],
+  "preservedInvariants": [
+    "Provider-specific ratings do not overwrite one another",
+    "Stable athlete identity is preserved"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Propose a bounded sandbox-only update of ScoutMetric-owned fields from its authoritative observation; retain RankGrid-owned otherProviderRating at 91."
+}

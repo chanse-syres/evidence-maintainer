@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter's presentation-class selector no longer matches the redesigned roster markup.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "adapter.ts",
+    "fixtures/old.html",
+    "fixtures/new.html",
+    "adapter.test.ts"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "roster athlete identities"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": ".player-card",
+      "replace": "[data-athlete-id]",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority",
+    "Preserve old fixture behavior"
+  ],
+  "unresolvedUncertainty": [
+    "The required test command could not run because local command execution was blocked by the environment."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Replace the presentation-only class selector with the observed stable semantic athlete-ID attribute, then validate both fixtures with the required test command before applying the approved change.",
+  "arm": "baseline",
+  "executedCommands": []
+}

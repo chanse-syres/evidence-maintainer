@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b02-f890-7891-9e83-8466b9889f73"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"update-transfer-destination\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"input/canonical.json\",\"obs-official-destination\",\"input/policy.json\",\"obs-transfer-rumor\"],\"violations\":[],\"residualRisks\":[\"The supplied ledger contains no later official-destination-roster observation before the cutoff.\"],\"summary\":\"The authorized official roster observation is effective before cutoff and within freshness, and supports the coupled destination and status update. The rumor is correctly excluded; the sole write is within the allowed surface.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17687,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":241,"reasoning_output_tokens":116}}

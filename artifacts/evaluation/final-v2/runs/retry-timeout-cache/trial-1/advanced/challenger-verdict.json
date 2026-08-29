@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-timeout",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The retry outcome remains unknown; any later retrieval must remain bounded to two retries and must not replace the cache without supporting evidence."
+  ],
+  "summary": "The cached source-42 record was 20 minutes old at the policy cutoff, within the 45-minute freshness window. The sole observation is a non-contradictory network timeout, and the proposed retry at 17:05 is 15 minutes later and explicitly bounded. No writes are proposed."
+}

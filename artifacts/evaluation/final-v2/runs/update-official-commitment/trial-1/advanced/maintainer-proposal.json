@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The canonical athlete-11 record remains offered with no team after the authoritative official-team commitment observation became effective at 2026-08-20T20:00:00.000Z.",
+  "failureOwner": "canonical data synchronization",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-official-commitment",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-older-aggregator"
+  ],
+  "affectedEntities": [
+    "athlete-11"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-11",
+      "assignments": [
+        {
+          "field": "status",
+          "value": "committed"
+        },
+        {
+          "field": "team",
+          "value": "Coastal State"
+        },
+        {
+          "field": "effectiveAt",
+          "value": "2026-08-20T20:00:00.000Z"
+        },
+        {
+          "field": "eventIds",
+          "value": "obs-official-commitment"
+        }
+      ]
+    }
+  ],
+  "preservedInvariants": [
+    "Stable athlete identity is preserved",
+    "Only an authoritative commitment source may set committed status"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Propose updating athlete-11 from offered to committed at Coastal State using the later official-team announcement; the older discovery-only aggregator observation cannot override it."
+}

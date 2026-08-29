@@ -1,0 +1,10 @@
+[
+  {
+    "id": "athlete-11",
+    "name": "Avery Stone",
+    "status": "committed",
+    "team": "Coastal State",
+    "effectiveAt": "2026-08-20T20:00:00.000Z",
+    "eventIds": "obs-official-commitment"
+  }
+]

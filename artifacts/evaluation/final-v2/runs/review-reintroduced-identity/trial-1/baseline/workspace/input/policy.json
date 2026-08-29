@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "status": "official-roster"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "A closed occurrence is immutable",
+    "Display name and physical slot do not establish identity continuity"
+  ],
+  "rules": [
+    "A reintroduced entry requires an occurrence-stable identifier",
+    "Escalate before linking a post-gap entry to a closed occurrence"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "Any inference that athlete-61 was removed from the roster based solely on its absence from the position=QB filtered result set.",
+  "failureOwner": "Downstream reconciliation logic interpreting filtered-scope absence as a roster removal.",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-filtered-quarterbacks",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-61"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The observation is explicitly limited to the QB subset, while athlete-61 is a DB; policy requires an unfiltered authoritative view or explicit transaction for removal."
+    }
+  ],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Retain athlete-61 unchanged; the filtered quarterback roster does not establish removal of an out-of-scope defensive player."
+}

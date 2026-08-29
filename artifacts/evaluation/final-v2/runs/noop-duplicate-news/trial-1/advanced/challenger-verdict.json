@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-1",
+    "obs-2",
+    "input/policy.json",
+    "evt-006"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The conclusion depends on the supplied observation facts and their asserted source authority; no independent live verification is permitted in this case."
+  ],
+  "summary": "The syndicated observation matches canonical evt-1 on subject, event type, effective time, event ID, status, and team. The authoritative official-team observation supports the existing canonical event, and the empty diff preserves both invariants without writes."
+}

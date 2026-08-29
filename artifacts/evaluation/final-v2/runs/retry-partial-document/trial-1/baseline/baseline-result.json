@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "Document completeness validation: the HTTP 200 response lacks the required closing marker and a known complete schema fingerprint.",
+  "failureOwner": "public-provider",
+  "evidenceUsed": [
+    "input/observations.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-partial-document"
+  ],
+  "affectedEntities": [
+    "source-43"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The observed document is partial and cannot replace the complete canonical state."
+    }
+  ],
+  "preservedInvariants": [
+    "Partial documents cannot replace complete state",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [
+    "Whether a complete document will be available on the next bounded retry."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry no earlier than 2026-08-28T17:15:00.000Z; accept only a response with the closing marker present and a known complete schema fingerprint, within the policy retry limit.",
+  "approvalLevel": "NONE",
+  "summary": "Reject the partial 200 response and retain the existing complete state pending a bounded retry for a validated complete document.",
+  "arm": "baseline",
+  "executedCommands": []
+}

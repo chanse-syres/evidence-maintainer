@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The adapter must follow opaque response-provided nextPage tokens rather than assuming numeric page addresses.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-pagination-token",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "pagination collection",
+    "historical fixture records"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The adapter source and required deterministic test could not be inspected or run in the restricted terminal, so an exact bounded replacement and simulated approval cannot be grounded."
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [
+    "The current adapter implementation and test outcome are unavailable.",
+    "The exact code change needed to follow nextPage tokens without duplicates is unverified."
+  ],
+  "minimumInformationRequest": [
+    "Provide readable adapter.ts and adapter.test.ts contents, plus the result of node --experimental-strip-types --test adapter.test.ts."
+  ],
+  "retryCondition": "Retry after adapter source is inspectable and the required deterministic test can run successfully for a proposed bounded change.",
+  "approvalLevel": "NONE",
+  "summary": "Evidence establishes a cursor-pagination contract change, but no adapter mutation is justified without source-level verification, deterministic gate success, and simulated approval.",
+  "arm": "baseline",
+  "executedCommands": []
+}

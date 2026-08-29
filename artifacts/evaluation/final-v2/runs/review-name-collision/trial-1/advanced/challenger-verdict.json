@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The award recipient remains unresolved until the source supplies a stable identifier or two independent disambiguators."
+  ],
+  "summary": "The authoritative, fresh observation names two active canonical matches but supplies no stable identifier or disambiguators; the no-mutation human-review proposal preserves both identity and award-attachment invariants."
+}

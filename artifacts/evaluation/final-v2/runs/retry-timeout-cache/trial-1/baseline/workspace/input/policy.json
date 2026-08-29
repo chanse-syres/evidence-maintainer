@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 45,
+  "retryLimit": 2,
+  "invariants": [
+    "A transient timeout cannot erase cached records",
+    "Retries are bounded"
+  ],
+  "rules": [
+    "Retain cache inside freshness window",
+    "Retry after 15 minutes"
+  ]
+}

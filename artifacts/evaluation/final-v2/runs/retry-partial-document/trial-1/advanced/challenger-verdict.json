@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-partial-document",
+    "evt-002",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "No complete follow-up document or complete fingerprint is available yet; any later acceptance must validate both requirements and remain within the two-retry limit."
+  ],
+  "summary": "The 200 response is demonstrably incomplete, while the existing 63-record canonical cache is retained without mutation. RETRY_LATER matches the policy and preserves both stated invariants."
+}

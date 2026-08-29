@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-official-commitment",
+    "evt-002",
+    "evt-004"
+  ],
+  "violations": [
+    "The proposed SET_RECORD_FIELDS operation assigns eventIds the scalar string \"obs-official-commitment\", while the canonical record establishes eventIds as an array. This changes the field’s data shape and cannot safely preserve canonical behavior or provenance semantics."
+  ],
+  "residualRisks": [
+    "The official observation otherwise supports the status, team, and effectiveAt updates before the policy cutoff; resubmit with eventIds represented as an array containing the observation ID."
+  ],
+  "summary": "Reject the proposal because its provenance-field assignment is schema-incompatible, despite the official commitment evidence supporting the substantive update."
+}

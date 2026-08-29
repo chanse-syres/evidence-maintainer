@@ -1,0 +1,20 @@
+{
+  "1": {
+    "records": [
+      "a"
+    ],
+    "nextPage": "2"
+  },
+  "2": {
+    "records": [
+      "b"
+    ],
+    "nextPage": "3"
+  },
+  "3": {
+    "records": [
+      "c"
+    ],
+    "nextPage": null
+  }
+}

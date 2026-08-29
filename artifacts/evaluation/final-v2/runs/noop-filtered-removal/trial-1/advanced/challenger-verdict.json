@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-filtered-quarterbacks",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "A later unfiltered authoritative roster view or explicit transaction could establish a status change."
+  ],
+  "summary": "The sole observation is explicitly scoped to quarterbacks while athlete-61 is a DB; it cannot support a roster-removal inference. The no-action proposal preserves the required invariant and makes no writes."
+}

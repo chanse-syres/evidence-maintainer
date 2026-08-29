@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "At effectiveAt 2026-08-27T14:00:00.000Z, co-authoritative observations disagree: official-athletics-roster reports active while official-registrar reports withdrawn; neither supplies a supersession edge.",
+  "failureOwner": "Cross-system status-governance resolution owner",
+  "evidenceUsed": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn",
+    "input/policy.json",
+    "input/canonical.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-71"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Policy requires escalation for same-time disagreement among co-authoritative sources and a signed cross-system resolution with its effective timestamp before changing canonical status."
+    }
+  ],
+  "preservedInvariants": [
+    "Conflicting co-authoritative records cannot be resolved by source order",
+    "Canonical state remains unchanged without a supersession edge"
+  ],
+  "unresolvedUncertainty": [
+    "Which status is the signed cross-system resolution for athlete-71.",
+    "What effective timestamp the signed cross-system resolution assigns."
+  ],
+  "minimumInformationRequest": [
+    "Provide a signed cross-system resolution for athlete-71 that states the resolved participation status and its effective timestamp."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Escalate without mutation: the evidence establishes an unresolved, same-time conflict between two authoritative status records, and policy does not permit choosing either value absent a signed resolution."
+}

@@ -1,0 +1,6 @@
+{
+  "caseId": "repair-selector-drift",
+  "arm": "advanced",
+  "message": "Expected 1 replacement target(s) in adapter.ts, found 0",
+  "stack": "Error: Expected 1 replacement target(s) in adapter.ts, found 0\n    at applyOperations (file:///C:/Work/micro1-grounded-maintainer/src/core/mutation-engine.ts:65:15)\n    at async runAdvanced (file:///C:/Work/micro1-grounded-maintainer/src/workflows/advanced.ts:76:3)\n    at async runEvaluation (file:///C:/Work/micro1-grounded-maintainer/src/evaluation/run-evaluation.ts:90:11)\n    at async evaluateCli (file:///C:/Work/micro1-grounded-maintainer/scripts/evaluate.ts:48:19)\n    at async file:///C:/Work/micro1-grounded-maintainer/scripts/evaluate.ts:61:3"
+}

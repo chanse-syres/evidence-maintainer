@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b00-afee-70d2-9683-4c92c51f7454"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-conflicting-authorities\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"obs-athletics-active\",\"obs-registrar-withdrawn\",\"input/canonical.json\",\"input/policy.json\"],\"violations\":[],\"residualRisks\":[\"A signed cross-system resolution and its effective timestamp remain unavailable, so the canonical status cannot yet be changed.\"],\"summary\":\"The two fresh co-authoritative observations give incompatible status values at the identical effective time, neither has a supersession edge, and the proposal correctly preserves canonical state and escalates without mutation.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17996,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":217,"reasoning_output_tokens":85}}

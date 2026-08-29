@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "obs-deferred-406 returned the contract-defined deferred 406 response instead of a fresh source payload.",
+  "failureOwner": "public-provider source endpoint",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-deferred-406",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "source-41",
+    "public-provider"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Preserve the valid 42-record cache during the expected deferral; schedule a bounded retry rather than removing or altering canonical records."
+    }
+  ],
+  "preservedInvariants": [
+    "A deferred response cannot delete cached records",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [
+    "Whether a subsequent source response after the deferral interval will provide a fresh valid payload."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry public-provider no sooner than 30 minutes after obs-deferred-406, with no more than two retries total; retain the authoritative cache unless a valid replacement payload is obtained.",
+  "approvalLevel": "NONE",
+  "summary": "The observed 406 is explicitly a temporary deferral and the canonical cache is valid within the 60-minute freshness window, so canonical data must remain unchanged while retries are bounded."
+}

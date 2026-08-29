@@ -1,0 +1,73 @@
+{
+  "status": "FAIL",
+  "checks": [
+    {
+      "id": "schema-complete",
+      "passed": true,
+      "summary": "Structured outputs are complete.",
+      "details": []
+    },
+    {
+      "id": "action-correct",
+      "passed": true,
+      "summary": "The selected action matches adjudication.",
+      "details": []
+    },
+    {
+      "id": "challenger-compatible",
+      "passed": true,
+      "summary": "The independent verdict is compatible.",
+      "details": []
+    },
+    {
+      "id": "allowed-write-surface",
+      "passed": true,
+      "summary": "All changes stay inside the allowed surface.",
+      "details": []
+    },
+    {
+      "id": "required-artifact",
+      "passed": true,
+      "summary": "The required candidate artifact is present.",
+      "details": []
+    },
+    {
+      "id": "expected-data-state",
+      "passed": true,
+      "summary": "The adjudicated data state is present.",
+      "details": []
+    },
+    {
+      "id": "required-commands",
+      "passed": true,
+      "summary": "All required commands were executed.",
+      "details": []
+    },
+    {
+      "id": "regression-preserved",
+      "passed": true,
+      "summary": "All executed regression commands passed.",
+      "details": []
+    },
+    {
+      "id": "evidence-supported",
+      "passed": false,
+      "summary": "Evidence support is incomplete.",
+      "details": [
+        "obs-partial-document"
+      ]
+    },
+    {
+      "id": "no-live-write",
+      "passed": true,
+      "summary": "Submission remained sandbox-only.",
+      "details": []
+    }
+  ],
+  "changedFiles": [],
+  "diff": {
+    "added": [],
+    "removed": [],
+    "modified": []
+  }
+}

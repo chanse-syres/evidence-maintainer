@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The archive observation is scoped to historical-status rather than the policy's official-team authority for current status; this does not justify a state mutation."
+  ],
+  "summary": "The sole observation reports an offered state effective before the canonical committed state. Policy requires effective-time comparison, so NO_ACTION preserves the invariant and makes no unauthorized write."
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The retrospective observation reports status \"offered\" effective 2026-08-10T12:00:00.000Z, earlier than athlete-51's canonical \"committed\" state effective 2026-08-20T18:00:00.000Z.",
+  "failureOwner": "No failure: the observation is valid historical evidence but is stale for the current effective state.",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "obs-new-publication-old-state",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-new-publication-old-state"
+  ],
+  "affectedEntities": [
+    "athlete-51"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The observation's effective time predates the canonical record's effective time; its newer publication/observation time cannot roll the effective state backward."
+    }
+  ],
+  "preservedInvariants": [
+    "Effective state never rolls backward because publication is newer"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Keep canonical state unchanged. The official archive observation establishes an older historical offered status, not a newer effective status than the existing committed record."
+}

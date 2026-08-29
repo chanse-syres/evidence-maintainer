@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "update-transfer-destination-baseline-1787964859010",
+  "caseId": "update-transfer-destination",
+  "arm": "baseline",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T00:54:19.010Z",
+  "finishedAt": "2026-08-29T00:54:30.330Z",
+  "durationMs": 11320,
+  "timeoutMs": 1200000,
+  "promptSha256": "90979cf0bb090b65d9ace2b564dc76e70b058fa923c8eeb546b9f09ac8ddbf01",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "d4666619f508f3a934d5cbca9c83339029a3f1c81d53ef7149fa9d85ca53a9f1",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "8d00bc6ae1266c7ff019a105c4bf78bb96b38faf2d81504f65a13c8a34764c28",
+    "before-tree.json": "b0c4333ae458692ddfdab2f14f33ba5bf940d7f6f8e626af935fc30030de25ae",
+    "after-tree.json": "2558178177617100a441c7cf2119978d5f5907d71ab6ff0248ba8eb0cfbc1498",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "664bfcb059b9188f7182aad55bca3c0ddcd7a6f338b1fddc1cd75c10bfd9f661",
+    "approval.json": "04bb8aaf8f0a53f1e71945690a9ae7107c5dd45c394fe109bfb23a86dd5e4b7b",
+    "trajectories/baseline.jsonl": "43bff5b97ed1dbfdee11ec4f94804483d2a9b489237c8dffbf0152751fdba998"
+  },
+  "tokenUsage": {
+    "input": 17252,
+    "cachedInput": 0,
+    "output": 448
+  },
+  "outcome": "PASS"
+}

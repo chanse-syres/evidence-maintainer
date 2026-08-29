@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04aff-0b38-7da1-99ea-739d816332c2"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"retry-deferred-406\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"obs-deferred-406\",\"evt-004\"],\"violations\":[],\"residualRisks\":[\"A fresh replacement payload remains unavailable until a bounded retry succeeds; cache authority must be re-evaluated when its freshness window expires.\"],\"summary\":\"The 406 is explicitly marked deferred with a valid cache, and the cached snapshot is within the 60-minute freshness window at policy cutoff. The no-mutation action preserves cached records and the retry condition enforces the two-retry limit.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17321,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":210,"reasoning_output_tokens":71}}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-newer-publication-stale-effective",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The observation's effectiveAt predates the canonical record's effectiveAt, so it cannot replace the current status despite its newer observedAt.",
+  "failureOwner": "none",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "obs-new-publication-old-state"
+  ],
+  "affectedEntities": [
+    "athlete-51"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The retrospective archive observation describes an older effective state and cannot roll the canonical status backward."
+    }
+  ],
+  "preservedInvariants": [
+    "Effective state never rolls backward because publication is newer"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "No maintenance change is justified: athlete-51 remains committed at the later canonical effective time.",
+  "arm": "baseline",
+  "executedCommands": []
+}

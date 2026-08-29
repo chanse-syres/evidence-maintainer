@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04b01-168c-7a71-90b3-a3d9ece653a6"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-name-collision\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"evt-003\",\"evt-004\"],\"violations\":[],\"residualRisks\":[\"The award recipient remains unresolved until the source supplies a stable identifier or two independent disambiguators.\"],\"summary\":\"The authoritative, fresh observation names two active canonical matches but supplies no stable identifier or disambiguators; the no-mutation human-review proposal preserves both identity and award-attachment invariants.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17394,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":265,"reasoning_output_tokens":147}}

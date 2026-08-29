@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "evt-002",
+    "evt-004",
+    "evt-005"
+  ],
+  "violations": [
+    "The proposed ratingAsOf assignment is unsupported: the ScoutMetric observation supplies only facts.rating=93, while its observedAt and effectiveAt timestamps do not establish a published ratingAsOf value.",
+    "Policy permits ScoutMetric ownership of ratingAsOf but does not authorize inferring that field from an observation timestamp absent a stated mapping or fact."
+  ],
+  "residualRisks": [
+    "The rating-only update to 93 is supported; a corrected proposal would preserve the existing ratingAsOf until authoritative timestamp evidence is supplied."
+  ],
+  "summary": "The proposal correctly scopes the rating update and preserves the RankGrid value, but its bundled ratingAsOf change is not grounded in the authoritative observation."
+}

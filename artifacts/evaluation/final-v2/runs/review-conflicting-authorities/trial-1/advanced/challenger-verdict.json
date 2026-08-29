@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "A signed cross-system resolution and its effective timestamp remain unavailable, so the canonical status cannot yet be changed."
+  ],
+  "summary": "The two fresh co-authoritative observations give incompatible status values at the identical effective time, neither has a supersession edge, and the proposal correctly preserves canonical state and escalates without mutation."
+}

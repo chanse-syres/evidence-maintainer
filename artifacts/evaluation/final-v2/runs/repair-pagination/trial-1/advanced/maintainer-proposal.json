@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter treats continuation as numeric pagination instead of following the response-provided opaque nextPage token, so cursor-based responses are truncated.",
+  "failureOwner": "adapter.ts pagination extraction logic",
+  "evidenceUsed": [
+    "obs-pagination-token",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "pagination collection"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "page = typeof page === \"number\" ? page + 1 : null;",
+      "replace": "page = response.nextPage;",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Repair the adapter to follow the response continuation verbatim; the sandbox gate must verify both cursor fixtures and historical numeric pagination."
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 90,
+  "retryLimit": 2,
+  "invariants": [
+    "Partial documents cannot replace complete state",
+    "Retries are bounded"
+  ],
+  "rules": [
+    "Require closing marker and known complete fingerprint",
+    "Retry for a complete document after 20 minutes"
+  ]
+}

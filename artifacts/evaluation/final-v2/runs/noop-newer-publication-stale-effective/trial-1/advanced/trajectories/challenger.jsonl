@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04afc-6761-7321-9bbf-d7504256ee83"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"noop-newer-publication-stale-effective\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"evt-003\",\"evt-004\"],\"violations\":[],\"residualRisks\":[\"The archive observation is scoped to historical-status rather than the policy's official-team authority for current status; this does not justify a state mutation.\"],\"summary\":\"The sole observation reports an offered state effective before the canonical committed state. Policy requires effective-time comparison, so NO_ACTION preserves the invariant and makes no unauthorized write.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17310,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":258,"reasoning_output_tokens":132}}

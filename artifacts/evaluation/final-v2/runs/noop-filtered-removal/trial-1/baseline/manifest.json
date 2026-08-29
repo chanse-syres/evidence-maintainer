@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-filtered-removal-baseline-1787964404592",
+  "caseId": "noop-filtered-removal",
+  "arm": "baseline",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T00:46:44.592Z",
+  "finishedAt": "2026-08-29T00:46:54.904Z",
+  "durationMs": 10312,
+  "timeoutMs": 1200000,
+  "promptSha256": "33c655fd23a2d501915a50b7510167af02923d4a62b6ab31d7d8d34a34ded62d",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "8cb712c14b57baa328b168890bd89464bf61a1e18416d5940d8ce2b33e46b7e7",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "c8fde5699d06db220610bba06dba8b1fc315597226e1bdab405f8dee734de319",
+    "before-tree.json": "1ed2f0b016c6b051c7d336976b1fb057ec0853f9431784b9a7318ddb5bf6b445",
+    "after-tree.json": "1ed2f0b016c6b051c7d336976b1fb057ec0853f9431784b9a7318ddb5bf6b445",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
+    "approval.json": "d14dce3faeb3dcc7f6a8d30eb841fd6b969e6f927564b5d37d3aa36870fbfbc5",
+    "trajectories/baseline.jsonl": "e6c14fc7014c424deb1e6a221ace46ab03462eab7521f0265c693be155f52540"
+  },
+  "tokenUsage": {
+    "input": 17065,
+    "cachedInput": 0,
+    "output": 366
+  },
+  "outcome": "PASS"
+}

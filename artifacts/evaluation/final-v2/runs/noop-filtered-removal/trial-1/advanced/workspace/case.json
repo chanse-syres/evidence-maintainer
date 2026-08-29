@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-filtered-removal",
+  "title": "Filtered absence is not roster removal",
+  "description": "A source view filtered to quarterbacks omits a defensive player without asserting removal.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Scoped public roster view pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "6b9b9e0c9dd5f3f4918a096e00e0621d4dd95dfb6eae39650d216baf36614053"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "9d4e8e2f7f54c4cc5520f3cf7b62f92fbb58614979ecb6e0a35ca936ec261920"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "1dfbff50306e669589cb461f156262aa05e36df14a2c9cf9166be328515305f3"
+    }
+  ]
+}
