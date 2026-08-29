@@ -1,2 +1,3 @@
-# Benchmark case bytes are provenance-bound; never rewrite their line endings.
-cases/** -text
+# The release contains provenance-bound fixtures and precomputed artifacts.
+# Preserve every committed byte exactly when cloning or creating an archive.
+* -text
