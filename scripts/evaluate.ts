@@ -10,6 +10,7 @@ interface EvaluateOptions {
   model: string;
   timeoutMs: number;
   out: string;
+  lock?: string;
 }
 
 export function parseEvaluateArgs(args: string[]): EvaluateOptions {
@@ -21,7 +22,7 @@ export function parseEvaluateArgs(args: string[]): EvaluateOptions {
       throw new Error(`Invalid evaluation argument near ${name ?? "end"}`);
     }
     const key = name.slice(2);
-    if (!["case-root", "cases", "trials", "mode", "model", "timeout-ms", "out"].includes(key)) {
+    if (!["case-root", "cases", "trials", "mode", "model", "timeout-ms", "out", "lock"].includes(key)) {
       throw new Error(`Unknown argument: ${name}`);
     }
     values[key] = value;
@@ -42,6 +43,7 @@ export function parseEvaluateArgs(args: string[]): EvaluateOptions {
     model: values.model ?? "recorded-fixture",
     timeoutMs,
     out: values.out,
+    ...(values.lock ? { lock: values.lock } : {}),
   };
 }
 
@@ -55,6 +57,7 @@ export async function evaluateCli(args: string[]): Promise<void> {
     timeoutMs: options.timeoutMs,
     outDir: resolve(options.out),
     caseRoot: resolve(options.caseRoot),
+    ...(options.lock ? { lockPath: resolve(options.lock) } : {}),
   });
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
 }

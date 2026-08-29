@@ -243,6 +243,28 @@ test("recorded evaluation preserves one run directory per arm, case, and trial",
   }
 });
 
+test("case-set identity is independent of execution order", async () => {
+  const firstRoot = await mkdtemp(join(tmpdir(), "evidence-case-order-one-"));
+  const secondRoot = await mkdtemp(join(tmpdir(), "evidence-case-order-two-"));
+  const first = await runEvaluation({
+    caseIds: ["noop-duplicate-news", "update-official-commitment"],
+    trials: 1,
+    mode: "recorded",
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    outDir: firstRoot,
+  });
+  const second = await runEvaluation({
+    caseIds: ["update-official-commitment", "noop-duplicate-news"],
+    trials: 1,
+    mode: "recorded",
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    outDir: secondRoot,
+  });
+  assert.equal(first.caseSetHash, second.caseSetHash);
+});
+
 test("evaluation sources combine into collision-free canonical trial paths", async () => {
   const sourceOne = await mkdtemp(join(tmpdir(), "evidence-combine-source-one-"));
   const sourceTwo = await mkdtemp(join(tmpdir(), "evidence-combine-source-two-"));
@@ -309,8 +331,10 @@ test("evaluation CLI and case selection support an isolated holdout root", async
     "--cases", "all",
     "--mode", "recorded",
     "--out", join(root, "out"),
+    "--lock", join(root, "FREEZE.json"),
   ]);
   assert.equal(parsed.caseRoot, root);
+  assert.equal(parsed.lock, join(root, "FREEZE.json"));
 });
 
 test("model execution errors remain SDR failures but do not become zero-cost runs", async () => {

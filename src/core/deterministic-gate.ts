@@ -43,6 +43,60 @@ function check(id: string, passed: boolean, summary: string, details: string[] =
   return CheckResultSchema.parse({ id, passed, summary, details });
 }
 
+const REQUIREMENT_STOP_WORDS = new Set(["a", "an", "and", "for", "of", "or", "the", "to"]);
+
+function normalizeRequirementText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/graduation[-\s]+year/g, "graduation year")
+    .replace(/\bcrs\b/g, "coordinate reference system")
+    .replace(/\bids?\b/g, "identifier")
+    .replace(/\b(?:3|3rd|three)\b/g, "third")
+    .replace(/\bcached?\b/g, "cache")
+    .replace(/\bcanonical\s+(?:record|data)\b/g, "cache")
+    .replace(/\bfull\b/g, "complete")
+    .replace(/[^a-z0-9:+.\-]+/g, " ")
+    .trim();
+}
+
+function candidateHasComputedRetryBoundary(
+  candidate: string,
+  requirement: string,
+  loadedCase: LoadedPublicCase,
+): boolean {
+  const minutesMatch = /^(\d+)\s+minutes?$/.exec(normalizeRequirementText(requirement));
+  if (!minutesMatch) return false;
+  const minutes = Number.parseInt(minutesMatch[1], 10);
+  if (new RegExp(`\\b${minutes}\\s+minutes?\\b`).test(candidate)) return true;
+  const observedTimes = loadedCase.observations
+    .map((observation) => new Date(observation.observedAt).getTime())
+    .filter(Number.isFinite);
+  if (observedTimes.length === 0) return false;
+  const notBefore = Math.max(...observedTimes) + minutes * 60_000;
+  const timestamps = candidate.match(/\d{4}-\d{2}-\d{2}t\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?z/g) ?? [];
+  return timestamps.some((value) => {
+    const parsed = new Date(value).getTime();
+    return Number.isFinite(parsed) && parsed >= notBefore;
+  });
+}
+
+function requirementSatisfied(
+  rawCandidate: string,
+  requirement: string,
+  loadedCase: LoadedPublicCase,
+): boolean {
+  const candidate = normalizeRequirementText(rawCandidate);
+  const normalizedRequirement = normalizeRequirementText(requirement);
+  if (candidate.includes(normalizedRequirement)) return true;
+  if (candidateHasComputedRetryBoundary(candidate, requirement, loadedCase)) return true;
+  return requirement.toLowerCase().split(/\s+or\s+/).some((alternative) => {
+    const tokens = normalizeRequirementText(alternative)
+      .split(/\s+/)
+      .filter((token) => token && !REQUIREMENT_STOP_WORDS.has(token));
+    return tokens.length > 0 && tokens.every((token) => candidate.split(/\s+/).includes(token));
+  });
+}
+
 async function expectedRecordsMatch(workspace: string, oracle: CaseOracle): Promise<{ passed: boolean; details: string[] }> {
   const details: string[] = [];
   for (const expectation of oracle.expectedRecords) {
@@ -117,6 +171,13 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
     (value) => value.trim().length > 0,
   );
   const hasRetryPlan = (input.proposal.retryCondition?.trim().length ?? 0) > 0;
+  const informationText = input.proposal.minimumInformationRequest.join(" ");
+  const missingInformationRequirements = input.oracle.requiredMinimumInformation.filter(
+    (requirement) => !requirementSatisfied(informationText, requirement, input.loadedCase),
+  );
+  const missingRetryRequirements = input.oracle.requiredRetryConditionIncludes.filter(
+    (requirement) => !requirementSatisfied(input.proposal.retryCondition ?? "", requirement, input.loadedCase),
+  );
   const artifactDetails = [...operationFiles, ...changedFiles];
   if (input.proposal.action === "HUMAN_REVIEW" && !hasActionableInformationRequest) {
     artifactDetails.push("HUMAN_REVIEW requires an actionable minimum-information request");
@@ -124,9 +185,17 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
   if (input.proposal.action === "RETRY_LATER" && !hasRetryPlan) {
     artifactDetails.push("RETRY_LATER requires a bounded retry condition");
   }
+  artifactDetails.push(
+    ...missingInformationRequirements.map((requirement) => `Missing requested information concept: ${requirement}`),
+    ...missingRetryRequirements.map((requirement) => `Missing retry condition concept: ${requirement}`),
+  );
   const artifactComplete = requiredArtifact &&
-    (input.proposal.action !== "HUMAN_REVIEW" || hasActionableInformationRequest) &&
-    (input.proposal.action !== "RETRY_LATER" || hasRetryPlan);
+    (input.proposal.action !== "HUMAN_REVIEW" || (
+      hasActionableInformationRequest && missingInformationRequirements.length === 0
+    )) &&
+    (input.proposal.action !== "RETRY_LATER" || (
+      hasRetryPlan && missingRetryRequirements.length === 0
+    ));
 
   const expectedState = await expectedRecordsMatch(input.workspace, input.oracle);
   const commandDetails: string[] = [];

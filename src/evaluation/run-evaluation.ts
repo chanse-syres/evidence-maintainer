@@ -1,11 +1,13 @@
+import { execFile } from "node:child_process";
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { CodexRunner } from "../agents/codex-runner.ts";
 import { RecordedRunner } from "../agents/recorded-runner.ts";
 import { ModelExecutionError, type AgentRunner } from "../agents/runner.ts";
 import { loadPublicCase } from "../core/case-loader.ts";
-import { sha256Json } from "../core/canonical-json.ts";
+import { sha256Json, sha256Text } from "../core/canonical-json.ts";
 import { CaseOracleSchema } from "../core/schemas.ts";
+import { snapshotTree } from "../core/tree-snapshot.ts";
 import { runAdvanced } from "../workflows/advanced.ts";
 import { runBaseline } from "../workflows/baseline.ts";
 import { aggregateRows, type AggregateSummary } from "./aggregate.ts";
@@ -19,6 +21,7 @@ export interface RunEvaluationConfig {
   timeoutMs: number;
   outDir: string;
   caseRoot?: string;
+  lockPath?: string;
   runner?: AgentRunner;
 }
 
@@ -26,6 +29,7 @@ export interface EvaluationSummary extends AggregateSummary {
   schemaVersion: 1;
   generatedAt: string;
   caseSetHash: string;
+  caseDefinitionSetHash: string;
   model: string;
   mode: "live" | "recorded";
   trialsPerCase: number;
@@ -33,7 +37,95 @@ export interface EvaluationSummary extends AggregateSummary {
     modelExecutionErrors: number;
     infrastructureOrEvaluatorErrors: number;
   };
+  lockVerification: {
+    lockSha256: string;
+    evaluationHarnessCommit: string;
+  } | null;
   rows: EvaluationRow[];
+}
+
+interface EvaluationLock {
+  status: string;
+  evaluationHarnessCommit: string;
+  holdoutTreeHash: string;
+  caseSetHash: string;
+  caseDefinitionSetHash: string;
+  model: string;
+  mode: "live" | "recorded";
+  trialsPerCase: number;
+  timeoutMs: number;
+  cases: Array<{ caseId: string; workspaceHash: string }>;
+  contracts: Record<string, string>;
+}
+
+const EXECUTION_PATHS = [
+  "package.json",
+  "scripts/evaluate.ts",
+  "src/agents",
+  "src/core",
+  "src/evaluation",
+  "src/workflows",
+  "prompts",
+  "schemas",
+];
+
+function git(args: string[]): Promise<string> {
+  return new Promise((resolvePromise, reject) => {
+    execFile("git", args, { cwd: process.cwd(), windowsHide: true }, (error, stdout, stderr) => {
+      if (error) {
+        reject(new Error(`Evaluation-lock Git check failed: ${stderr.trim() || error.message}`));
+        return;
+      }
+      resolvePromise(stdout.trim());
+    });
+  });
+}
+
+async function verifyEvaluationLock(input: {
+  lockPath: string;
+  config: RunEvaluationConfig;
+  caseRoot: string;
+  caseHashes: Array<{ caseId: string; workspaceHash: string }>;
+  caseSetHash: string;
+  caseDefinitionSetHash: string;
+}): Promise<EvaluationSummary["lockVerification"]> {
+  const lockText = await readFile(resolve(input.lockPath), "utf8");
+  const lock = JSON.parse(lockText) as EvaluationLock;
+  if (lock.status !== "FROZEN_BEFORE_MODEL_EXECUTION") throw new Error("Evaluation lock is not frozen");
+  if (lock.model !== input.config.model || lock.mode !== input.config.mode) {
+    throw new Error("Evaluation lock model or mode mismatch");
+  }
+  if (lock.trialsPerCase !== input.config.trials || lock.timeoutMs !== input.config.timeoutMs) {
+    throw new Error("Evaluation lock trial count or timeout mismatch");
+  }
+  const caseHashes = [...input.caseHashes].sort((left, right) => left.caseId.localeCompare(right.caseId));
+  const lockedCases = [...lock.cases].sort((left, right) => left.caseId.localeCompare(right.caseId));
+  if (JSON.stringify(caseHashes) !== JSON.stringify(lockedCases)) {
+    throw new Error("Evaluation lock case IDs or workspace hashes mismatch");
+  }
+  if (lock.caseSetHash !== input.caseSetHash) throw new Error("Evaluation lock case-set hash mismatch");
+  if (lock.caseDefinitionSetHash !== input.caseDefinitionSetHash) {
+    throw new Error("Evaluation lock full-case definition hash mismatch");
+  }
+  const rootTree = await snapshotTree(input.caseRoot);
+  if (lock.holdoutTreeHash !== rootTree.sha256) throw new Error("Evaluation lock holdout tree hash mismatch");
+  for (const [path, expectedHash] of Object.entries(lock.contracts)) {
+    const actualHash = sha256Text(await readFile(resolve(path)));
+    if (actualHash !== expectedHash) {
+      throw new Error(`Evaluation lock contract hash mismatch: ${path}`);
+    }
+  }
+  const resolvedCommit = await git(["rev-parse", "--verify", `${lock.evaluationHarnessCommit}^{commit}`]);
+  if (resolvedCommit !== lock.evaluationHarnessCommit) throw new Error("Evaluation harness commit did not resolve exactly");
+  const changed = await git(["diff", "--name-only", resolvedCommit, "--", ...EXECUTION_PATHS]);
+  const untrackedOrModified = await git(["status", "--porcelain=v1", "--", ...EXECUTION_PATHS]);
+  if (changed || untrackedOrModified) {
+    throw new Error(`Execution inputs differ from the frozen harness commit: ${changed || untrackedOrModified}`);
+  }
+  return {
+    lockSha256: sha256Text(lockText),
+    evaluationHarnessCommit: resolvedCommit,
+  };
 }
 
 async function writeJson(path: string, value: unknown): Promise<void> {
@@ -94,14 +186,30 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
       : new CodexRunner()
   );
   const caseHashes = [];
+  const caseDefinitions = [];
   const expectedActions = new Map<string, string>();
   for (const caseId of config.caseIds) {
     const caseDir = join(caseRoot, caseId);
     const loaded = await loadPublicCase(caseDir);
     const oracle = CaseOracleSchema.parse(JSON.parse(await readFile(join(caseDir, "oracle.json"), "utf8")));
     caseHashes.push({ caseId, workspaceHash: loaded.workspaceHash });
+    caseDefinitions.push({ caseId, sha256: (await snapshotTree(caseDir)).sha256 });
     expectedActions.set(caseId, oracle.expectedAction);
   }
+  const canonicalCaseHashes = [...caseHashes].sort((left, right) => left.caseId.localeCompare(right.caseId));
+  const canonicalCaseDefinitions = [...caseDefinitions].sort((left, right) => left.caseId.localeCompare(right.caseId));
+  const caseSetHash = sha256Json(canonicalCaseHashes);
+  const caseDefinitionSetHash = sha256Json(canonicalCaseDefinitions);
+  const lockVerification = config.lockPath
+    ? await verifyEvaluationLock({
+        lockPath: config.lockPath,
+        config,
+        caseRoot,
+        caseHashes: canonicalCaseHashes,
+        caseSetHash,
+        caseDefinitionSetHash,
+      })
+    : null;
   const rows: EvaluationRow[] = [];
   let modelExecutionErrors = 0;
   for (const caseId of config.caseIds) {
@@ -153,7 +261,8 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
   const summary: EvaluationSummary = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
-    caseSetHash: sha256Json(caseHashes),
+    caseSetHash,
+    caseDefinitionSetHash,
     model: config.model,
     mode: config.mode,
     trialsPerCase: config.trials,
@@ -161,6 +270,7 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
       modelExecutionErrors,
       infrastructureOrEvaluatorErrors: 0,
     },
+    lockVerification,
     ...aggregate,
     rows,
   };

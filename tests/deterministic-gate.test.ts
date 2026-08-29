@@ -152,6 +152,21 @@ test("a computed retry plan is complete without copying hidden oracle phrases", 
     "PASS",
     JSON.stringify(result.checks.filter((entry) => !entry.passed), null, 2),
   );
+
+  const generic = await runDeterministicGate({
+    loadedCase,
+    oracle,
+    workspace,
+    before,
+    after,
+    proposal: { ...proposal, retryCondition: "Retry later." },
+    challenger: confirming(proposal.caseId, proposal.evidenceUsed),
+    commandResults: {},
+    submissionMode: true,
+    liveWriteAttempted: false,
+  });
+  assert.equal(generic.status, "FAIL");
+  assert.ok(generic.checks.find((entry) => entry.id === "required-artifact")?.passed === false);
 });
 
 test("an actionable human-review request is complete without a magic phrase", async () => {
@@ -188,6 +203,21 @@ test("an actionable human-review request is complete without a magic phrase", as
     "PASS",
     JSON.stringify(result.checks.filter((entry) => !entry.passed), null, 2),
   );
+
+  const generic = await runDeterministicGate({
+    loadedCase,
+    oracle,
+    workspace,
+    before,
+    after,
+    proposal: { ...proposal, minimumInformationRequest: ["Ask someone to inspect this."] },
+    challenger: confirming(proposal.caseId, proposal.evidenceUsed),
+    commandResults: {},
+    submissionMode: true,
+    liveWriteAttempted: false,
+  });
+  assert.equal(generic.status, "FAIL");
+  assert.ok(generic.checks.find((entry) => entry.id === "required-artifact")?.passed === false);
 });
 
 test("a write outside the allowed surface fails even when the action is correct", async () => {
