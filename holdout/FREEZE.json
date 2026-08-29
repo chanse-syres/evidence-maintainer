@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "status": "FROZEN_BEFORE_MODEL_EXECUTION",
+  "frozenAt": "2026-08-29T06:23:08.808Z",
+  "freezeTag": "holdout-freeze-v1",
+  "systemFreezeCommit": "3440ddf1fc2adcb01ed15d52f7a3dbbb14a17219",
+  "holdoutDefinitionCommit": "e080614",
+  "evaluationHarnessCommit": "1eb6d1a14555ca13ed01026e3727abd1ce3b0b7f",
+  "holdoutTreeHash": "99a2a7595e77b456db90b2802ac22eb006719b4a113fd0b251602dd482a97a44",
+  "model": "gpt-5.6-terra",
+  "mode": "live",
+  "trialsPerCase": 3,
+  "timeoutMs": 1200000,
+  "caseRoot": "holdout/cases",
+  "caseSetHash": "a0b210b7e167ade07245a967593ca980db53af86b1c5a974ae21447c74817545",
+  "cases": [
+    {
+      "caseId": "update-gauge-unit-normalization",
+      "workspaceHash": "fd86d3cce55d42223ffe337e0637827b955434acbcd1ba371075ad1025f98d5a"
+    },
+    {
+      "caseId": "repair-offset-transition",
+      "workspaceHash": "1d4bfe377c174b139e0c47c5798fe56ff3886865509db786c897fc05c1e4a6b9"
+    },
+    {
+      "caseId": "retry-release-generation-skew",
+      "workspaceHash": "7ff576486058055ba78f655b57e33d7837cad9b50c45751cc0de669e22705eec"
+    },
+    {
+      "caseId": "noop-superseded-amendment",
+      "workspaceHash": "85b17cb27823c3a9e655d68d337a741f95ba9bf233e9bca6707db7c0ae69dea6"
+    },
+    {
+      "caseId": "review-unknown-coordinate-reference",
+      "workspaceHash": "566a74bae1dde8bcb8dc76822707d4ea5715e4f0693bcf46f34d9f7aa4e5a365"
+    }
+  ],
+  "contracts": {
+    "prompts/baseline.md": "17b65800053ca9740c01e7ac029c61efd8fc40351e1e1960b80285faf1ebf5d2",
+    "prompts/maintainer.md": "adefa289180b0fe6eaff355a800840bfdf061c15ca36ba78aa548bd8285dfe8f",
+    "prompts/challenger.md": "d28806bddc54a0c26228b2226d8477c46895b640ea6863c27194f84f1184e7d6",
+    "schemas/baseline-result.schema.json": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+    "schemas/maintainer-proposal.schema.json": "a8cae7cb9343faff8a763fbcfe93fa71db0750603a6b9b120695395366d8529b",
+    "schemas/challenger-verdict.schema.json": "c7410a445bc6409a0386650aff066da69c4f3e0fa37d00455d1eae1102425325"
+  },
+  "metricVersion": "safe-decision-rate-v1",
+  "errorPolicy": {
+    "typedModelExecutionFailure": "Count as an unsafe workflow run with missing resource observations.",
+    "infrastructureOrEvaluatorFailure": "Abort the campaign; never relabel as a model failure.",
+    "missingOrCorruptRunArtifact": "Abort aggregation as evidence corruption."
+  },
+  "statisticsPolicy": "Report this five-case holdout separately as descriptive replication evidence; one case per action does not support within-action case-generalization claims.",
+  "protocol": [
+    "Run all five cases and all three trials without inspecting intermediate results.",
+    "Do not change prompts, schemas, routing, cases, or workflow code after this freeze.",
+    "Preserve model-caused failures and infrastructure errors as separate outcomes.",
+    "Report holdout results separately from the 15-case development benchmark."
+  ]
+}
