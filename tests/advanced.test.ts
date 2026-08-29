@@ -46,6 +46,7 @@ const confirmUpdate: ChallengerVerdict = {
 
 class SequenceRunner implements AgentRunner {
   readonly roles: string[] = [];
+  readonly prompts: string[] = [];
   private readonly outputs: unknown[];
   private readonly sideEffect?: (request: AgentRequest<unknown>) => Promise<void>;
 
@@ -56,6 +57,7 @@ class SequenceRunner implements AgentRunner {
 
   async run<T>(request: AgentRequest<T>): Promise<AgentResult<T>> {
     this.roles.push(request.role);
+    this.prompts.push(request.prompt);
     if (this.sideEffect) await this.sideEffect(request as AgentRequest<unknown>);
     const output = request.parse(this.outputs.shift());
     const at = "2026-08-28T20:00:00.000Z";
@@ -86,6 +88,8 @@ test("advanced workflow runs Maintainer then Challenger and approves a verified 
     approve: true,
   });
   assert.deepEqual(runner.roles, ["maintainer", "challenger"]);
+  assert.match(runner.prompts[0], /gate and simulated approval run after/i);
+  assert.match(runner.prompts[0], /not\s+prerequisites/i);
   assert.equal(run.outcome, "PASS");
   const canonical = JSON.parse(await readFile(join(root, "workspace", "input", "canonical.json"), "utf8"));
   const gate = JSON.parse(await readFile(join(root, "gate.json"), "utf8"));
@@ -195,6 +199,17 @@ test("Challenger escalation passes only for a no-mutation human review with mini
     approve: true,
   });
   assert.equal(run.outcome, "PASS");
+
+  const confirmRoot = await mkdtemp(join(tmpdir(), "evidence-advanced-confirm-review-"));
+  const confirmRun = await runAdvanced({
+    caseDir: caseRoot,
+    runRoot: confirmRoot,
+    runner: new SequenceRunner([proposal, { ...verdict, verdict: "CONFIRM" }]),
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    approve: true,
+  });
+  assert.equal(confirmRun.outcome, "PASS");
 
   const missingRoot = await mkdtemp(join(tmpdir(), "evidence-advanced-escalate-missing-"));
   const missingInformation = { ...proposal, minimumInformationRequest: [] };

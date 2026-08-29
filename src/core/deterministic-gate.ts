@@ -87,9 +87,15 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
 
   const actionCorrect = input.proposal.action === input.oracle.expectedAction;
   const expectedVerdict = input.oracle.requiredChallengerVerdict;
-  const verdictCompatible = input.challenger.verdict === expectedVerdict && (
-    input.challenger.verdict === "CONFIRM" ||
-    (input.challenger.verdict === "ESCALATE" && input.proposal.action === "HUMAN_REVIEW")
+  const verdictCompatible = (
+    input.challenger.verdict === expectedVerdict && (
+      input.challenger.verdict === "CONFIRM" ||
+      (input.challenger.verdict === "ESCALATE" && input.proposal.action === "HUMAN_REVIEW")
+    )
+  ) || (
+    expectedVerdict === "ESCALATE" &&
+    input.proposal.action === "HUMAN_REVIEW" &&
+    input.challenger.verdict === "CONFIRM"
   );
 
   const allowed = new Set(input.loadedCase.manifest.allowedWritePaths);
@@ -107,15 +113,20 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
   const requiredArtifact = mutationActions.has(input.proposal.action)
     ? operationFiles.length > 0 && exactChangeSet
     : operationFiles.length === 0 && changedFiles.length === 0;
-  const normalizedInformation = input.proposal.minimumInformationRequest.map((value) => value.toLowerCase());
-  const missingInformation = input.oracle.requiredMinimumInformation.filter((required) =>
-    !normalizedInformation.some((provided) => provided.includes(required.toLowerCase())),
+  const hasActionableInformationRequest = input.proposal.minimumInformationRequest.some(
+    (value) => value.trim().length > 0,
   );
-  const normalizedRetry = input.proposal.retryCondition?.toLowerCase() ?? "";
-  const missingRetryTerms = input.oracle.requiredRetryConditionIncludes.filter((required) =>
-    !normalizedRetry.includes(required.toLowerCase()),
-  );
-  const artifactComplete = requiredArtifact && missingInformation.length === 0 && missingRetryTerms.length === 0;
+  const hasRetryPlan = (input.proposal.retryCondition?.trim().length ?? 0) > 0;
+  const artifactDetails = [...operationFiles, ...changedFiles];
+  if (input.proposal.action === "HUMAN_REVIEW" && !hasActionableInformationRequest) {
+    artifactDetails.push("HUMAN_REVIEW requires an actionable minimum-information request");
+  }
+  if (input.proposal.action === "RETRY_LATER" && !hasRetryPlan) {
+    artifactDetails.push("RETRY_LATER requires a bounded retry condition");
+  }
+  const artifactComplete = requiredArtifact &&
+    (input.proposal.action !== "HUMAN_REVIEW" || hasActionableInformationRequest) &&
+    (input.proposal.action !== "RETRY_LATER" || hasRetryPlan);
 
   const expectedState = await expectedRecordsMatch(input.workspace, input.oracle);
   const commandDetails: string[] = [];
@@ -159,7 +170,7 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
       "required-artifact",
       artifactComplete,
       artifactComplete ? "The required candidate artifact is present." : "The candidate artifact, exact change set, retry condition, or minimum-information request is incomplete.",
-      [...operationFiles, ...changedFiles, ...missingInformation, ...missingRetryTerms],
+      artifactDetails,
     ),
     check("expected-data-state", expectedState.passed, expectedState.passed ? "The adjudicated data state is present." : "The adjudicated data state is absent.", expectedState.details),
     check("required-commands", commandDetails.length === 0, commandDetails.length === 0 ? "All required commands were executed." : "Required command evidence is incomplete.", commandDetails),

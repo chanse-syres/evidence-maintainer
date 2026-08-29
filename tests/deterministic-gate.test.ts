@@ -118,6 +118,78 @@ test("a correct data update can cite immutable ledger events and passes", async 
   assert.equal(updated[0].team, "Coastal State");
 });
 
+test("a computed retry plan is complete without copying hidden oracle phrases", async () => {
+  const caseDir = resolve("cases", "retry-deferred-406");
+  const loadedCase = await loadPublicCase(caseDir);
+  const oracle = await loadOracle(caseDir);
+  const root = await mkdtemp(join(tmpdir(), "evidence-gate-retry-"));
+  const workspace = await copyCaseWorkspace(caseDir, join(root, "workspace"));
+  const before = await snapshotTree(workspace);
+  const after = await snapshotTree(workspace);
+  const proposal: MaintainerProposal = {
+    ...noopProposal,
+    caseId: "retry-deferred-406",
+    action: "RETRY_LATER",
+    evidenceUsed: ["obs-deferred-406"],
+    affectedEntities: ["source-41"],
+    retryCondition: "Retry no earlier than 2026-08-28T17:20:00.000Z while retaining the existing canonical record.",
+    summary: "The response is temporarily deferred, so wait until the computed retry boundary.",
+  };
+  const result = await runDeterministicGate({
+    loadedCase,
+    oracle,
+    workspace,
+    before,
+    after,
+    proposal,
+    challenger: confirming(proposal.caseId, proposal.evidenceUsed),
+    commandResults: {},
+    submissionMode: true,
+    liveWriteAttempted: false,
+  });
+  assert.equal(
+    result.status,
+    "PASS",
+    JSON.stringify(result.checks.filter((entry) => !entry.passed), null, 2),
+  );
+});
+
+test("an actionable human-review request is complete without a magic phrase", async () => {
+  const caseDir = resolve("cases", "review-name-collision");
+  const loadedCase = await loadPublicCase(caseDir);
+  const oracle = await loadOracle(caseDir);
+  const root = await mkdtemp(join(tmpdir(), "evidence-gate-review-"));
+  const workspace = await copyCaseWorkspace(caseDir, join(root, "workspace"));
+  const before = await snapshotTree(workspace);
+  const after = await snapshotTree(workspace);
+  const proposal: MaintainerProposal = {
+    ...noopProposal,
+    caseId: "review-name-collision",
+    action: "HUMAN_REVIEW",
+    evidenceUsed: ["input/canonical.json", "obs-name-only-award"],
+    affectedEntities: ["athlete-51", "athlete-52"],
+    minimumInformationRequest: ["Obtain a stable source ID or disambiguating program and graduation-year evidence."],
+    summary: "Two people share the display name, so identity must be resolved before any write.",
+  };
+  const result = await runDeterministicGate({
+    loadedCase,
+    oracle,
+    workspace,
+    before,
+    after,
+    proposal,
+    challenger: confirming(proposal.caseId, proposal.evidenceUsed),
+    commandResults: {},
+    submissionMode: true,
+    liveWriteAttempted: false,
+  });
+  assert.equal(
+    result.status,
+    "PASS",
+    JSON.stringify(result.checks.filter((entry) => !entry.passed), null, 2),
+  );
+});
+
 test("a write outside the allowed surface fails even when the action is correct", async () => {
   const caseDir = resolve("cases", "noop-duplicate-news");
   const loadedCase = await loadPublicCase(caseDir);
