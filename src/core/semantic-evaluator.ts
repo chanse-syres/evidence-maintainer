@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { canonicalJson } from "./canonical-json.ts";
-import type { LoadedPublicCase } from "./case-loader.ts";
+import type { LoadedPublicCase, LoadedPublicCaseV4 } from "./case-loader.ts";
 import type { CommandResult } from "./deterministic-gate.ts";
 import { evaluateFutureConditions } from "./future-conditions.ts";
 import { readFactPath } from "./fact-path.ts";
@@ -17,7 +17,7 @@ import {
 import { diffTrees, type TreeSnapshot } from "./tree-snapshot.ts";
 
 export interface SemanticEvaluatorInput {
-  loadedCase: LoadedPublicCase;
+  loadedCase: LoadedPublicCase | LoadedPublicCaseV4;
   oracle: CaseOracleV4;
   package: DecisionPackage;
   workspace: string;
