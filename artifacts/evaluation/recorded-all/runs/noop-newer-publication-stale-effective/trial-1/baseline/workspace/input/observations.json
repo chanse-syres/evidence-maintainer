@@ -1,0 +1,19 @@
+[
+  {
+    "id": "obs-new-publication-old-state",
+    "sourceId": "official-archive",
+    "observedAt": "2026-08-27T12:00:00.000Z",
+    "effectiveAt": "2026-08-10T12:00:00.000Z",
+    "authorityScope": [
+      "historical-status"
+    ],
+    "subjectId": "athlete-51",
+    "kind": "retrospective",
+    "status": 200,
+    "contentType": "text/html",
+    "schemaFingerprint": "archive-v1",
+    "facts": {
+      "status": "offered"
+    }
+  }
+]

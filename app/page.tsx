@@ -2,7 +2,7 @@ import Link from "next/link";
 import { resolve } from "node:path";
 import { loadOverviewModel } from "../src/ui/overview-model.ts";
 
-const evaluationRoot = resolve(process.cwd(), "artifacts/evaluation/recorded-core");
+const evaluationRoot = resolve(process.cwd(), "artifacts/evaluation/recorded-all");
 
 function percent(value: number): string {
   return `${(value * 100).toFixed(value === 1 ? 0 : 1)}%`;

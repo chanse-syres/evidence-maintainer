@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The first material divergence is established by obs-reintroduced-slot.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-reintroduced-slot"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "A closed occurrence is immutable",
+    "Display name and physical slot do not establish identity continuity"
+  ],
+  "unresolvedUncertainty": [
+    "The available evidence cannot establish a unique authoritative identity or state transition."
+  ],
+  "minimumInformationRequest": [
+    "occurrence-stable identifier",
+    "continuity or new-occurrence confirmation"
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+}

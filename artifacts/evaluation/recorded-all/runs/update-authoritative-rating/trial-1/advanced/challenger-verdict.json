@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-scoutmetric-rating"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

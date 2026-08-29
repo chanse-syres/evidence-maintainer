@@ -21,6 +21,9 @@ export const CORE_CASE_IDS = [
   "noop-duplicate-news",
   "noop-newer-publication-stale-effective",
   "noop-filtered-removal",
+  "review-conflicting-authorities",
+  "review-name-collision",
+  "review-reintroduced-identity",
 ] as const;
 
 async function run(command: string, cwd: string): Promise<{ code: number; output: string }> {
@@ -34,7 +37,7 @@ async function run(command: string, cwd: string): Promise<{ code: number; output
   return { code: code ?? 1, output: Buffer.concat(chunks).toString("utf8") };
 }
 
-test("the core suite contains twelve hash-verified cases with a balanced action distribution", async () => {
+test("the full suite contains fifteen hash-verified cases with a balanced action distribution", async () => {
   const actual = (await readdir(resolve("cases"), { withFileTypes: true }))
     .filter((entry) => entry.isDirectory() && CORE_CASE_IDS.includes(entry.name as typeof CORE_CASE_IDS[number]))
     .map((entry) => entry.name)
@@ -54,11 +57,29 @@ test("the core suite contains twelve hash-verified cases with a balanced action 
     distribution.set(oracle.expectedAction, (distribution.get(oracle.expectedAction) ?? 0) + 1);
   }
   assert.deepEqual(Object.fromEntries([...distribution].sort()), {
+    HUMAN_REVIEW: 3,
     NO_ACTION: 3,
     REPAIR_ADAPTER: 3,
     RETRY_LATER: 3,
     UPDATE_DATA: 3,
   });
+});
+
+test("human-review cases require escalation, exact missing information, and zero mutation", async () => {
+  for (const caseId of [
+    "review-conflicting-authorities",
+    "review-name-collision",
+    "review-reintroduced-identity",
+  ] as const) {
+    const caseDir = resolve("cases", caseId);
+    const loaded = await loadPublicCase(caseDir);
+    const oracle = await loadOracle(caseDir);
+    assert.deepEqual(loaded.manifest.allowedWritePaths, []);
+    assert.equal(oracle.expectedAction, "HUMAN_REVIEW");
+    assert.equal(oracle.requiredChallengerVerdict, "ESCALATE");
+    assert.deepEqual(oracle.allowedChangedFiles, []);
+    assert.ok(oracle.requiredMinimumInformation.length >= 2);
+  }
 });
 
 test("each untouched adapter case passes its old fixture and fails exactly its new fixture", async () => {

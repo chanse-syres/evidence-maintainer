@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "review-reintroduced-identity",
+  "title": "Treat a reintroduced name and slot as a potentially new occurrence",
+  "description": "A previously closed roster slot is reused by the same display name after a gap, but the new publication omits the occurrence-stable identifier needed to prove continuity.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Occurrence identity under removal and reintroduction",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "888f3c4a04b167b608ef39169e2b4114cb961ad6aed484953fc80a3b9b8821cb"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "7f6321d8fbba63c73bc78cb3a8d4be47ea6c31ada7f16dc9ca67df9b3b8906c4"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a45e6e48e8aa737419f3d7dc787ed8999569400646cfcb8665dcd24654e3e334"
+    }
+  ]
+}

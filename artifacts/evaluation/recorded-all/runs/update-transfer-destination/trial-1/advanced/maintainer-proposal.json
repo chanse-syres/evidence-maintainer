@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-transfer-destination",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-official-destination.",
+  "failureOwner": "canonical-data",
+  "evidenceUsed": [
+    "obs-official-destination"
+  ],
+  "evidenceRejected": [
+    "obs-transfer-rumor"
+  ],
+  "affectedEntities": [
+    "athlete-21"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-21",
+      "fields": {
+        "destination": "Summit State",
+        "status": "transferred"
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "Athlete identity remains stable",
+    "Rumors cannot resolve a destination"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports UPDATE_DATA while preserving declared invariants."
+}

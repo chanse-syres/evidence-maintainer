@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "expectedAction": "HUMAN_REVIEW",
+  "requiredEvidenceIds": [
+    "obs-name-only-award"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "ESCALATE",
+  "requiredMinimumInformation": [
+    "stable source identifier",
+    "program or graduation year"
+  ],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

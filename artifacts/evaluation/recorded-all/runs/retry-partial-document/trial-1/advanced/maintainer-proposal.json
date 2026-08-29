@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "The first material divergence is established by obs-partial-document.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-partial-document"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "Partial documents cannot replace complete state",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry after 20 minutes while retaining complete document.",
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports RETRY_LATER while preserving declared invariants."
+}

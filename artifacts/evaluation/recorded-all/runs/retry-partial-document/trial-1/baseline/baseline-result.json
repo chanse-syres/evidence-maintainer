@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-partial-document",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The first material divergence is established by obs-partial-document.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-partial-document"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "Partial documents cannot replace complete state",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The cached result is retained without a specific retry plan.",
+  "arm": "baseline",
+  "executedCommands": []
+}

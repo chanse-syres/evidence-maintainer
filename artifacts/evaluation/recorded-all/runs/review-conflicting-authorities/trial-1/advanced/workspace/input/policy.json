@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T17:00:00.000Z",
+  "authorityByField": {
+    "status": "official-athletics-roster|official-registrar"
+  },
+  "freshnessWindowMinutes": 60,
+  "retryLimit": 2,
+  "invariants": [
+    "Conflicting co-authoritative records cannot be resolved by source order",
+    "Canonical state remains unchanged without a supersession edge"
+  ],
+  "rules": [
+    "Escalate when co-authoritative values disagree at the same effective time",
+    "Require a signed cross-system resolution and its effective timestamp"
+  ]
+}

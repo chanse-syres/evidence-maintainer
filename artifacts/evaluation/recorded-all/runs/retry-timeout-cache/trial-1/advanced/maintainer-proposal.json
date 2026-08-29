@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-timeout-cache",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "The first material divergence is established by obs-timeout.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-timeout"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "A transient timeout cannot erase cached records",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry after 15 minutes while retaining cache.",
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports RETRY_LATER while preserving declared invariants."
+}

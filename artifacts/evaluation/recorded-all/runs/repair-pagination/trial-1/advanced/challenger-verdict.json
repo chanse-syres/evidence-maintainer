@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-pagination-token"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

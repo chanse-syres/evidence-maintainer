@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "expectedAction": "HUMAN_REVIEW",
+  "requiredEvidenceIds": [
+    "obs-reintroduced-slot"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "ESCALATE",
+  "requiredMinimumInformation": [
+    "occurrence-stable identifier",
+    "continuity or new-occurrence confirmation"
+  ],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

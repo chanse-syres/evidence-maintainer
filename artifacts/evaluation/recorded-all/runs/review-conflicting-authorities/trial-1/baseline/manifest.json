@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "review-conflicting-authorities-baseline-1787962262542",
+  "caseId": "review-conflicting-authorities",
+  "arm": "baseline",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-29T00:11:02.542Z",
+  "finishedAt": "2026-08-29T00:11:02.598Z",
+  "durationMs": 56,
+  "timeoutMs": 300000,
+  "promptSha256": "af90cfc2c7b42e43608b55b12f5554a36fdcd4e6e97162a5f6918bead4f42214",
+  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "caseSetSha256": "3be1cec9c511440c67d98e2b4864bf1153cbe84299483d6f7400b636049c2a06",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "6345a1c3a92808fef82e728562c56e833f61ff9aa734decf36dacd4105c6811a",
+    "before-tree.json": "0654bf91a6af8dfb67f8bee2eeb6799410b4e8cfc5322393a44d6a225e04b1ea",
+    "after-tree.json": "077aa989f06054b1cd42a6f4c31a38585098dced375949e2474fe1fba12aece6",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "f119adf18888bf78510472d977b6bedc1b07438cbc9fad293f872c4834df0ff6",
+    "approval.json": "71b62bc464820c0acd49c43f7954ddc889501f306835c441d356025928c30673",
+    "trajectories/baseline.jsonl": "ce245ce1103efb227210bc26b3e094b7cdbeede237cb0b2972bbb04bab5f4814"
+  },
+  "tokenUsage": null,
+  "outcome": "FAIL"
+}

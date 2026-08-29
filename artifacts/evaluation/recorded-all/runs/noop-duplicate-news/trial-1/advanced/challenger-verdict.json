@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-1",
+    "obs-2"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

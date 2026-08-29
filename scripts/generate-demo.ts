@@ -5,7 +5,7 @@ import { sha256Json } from "../src/core/canonical-json.ts";
 import type { EvaluationSummary } from "../src/evaluation/run-evaluation.ts";
 import { renderDecisionReport } from "../src/reports/render-decision-report.ts";
 
-const evaluationRoot = resolve("artifacts/evaluation/recorded-core");
+const evaluationRoot = resolve("artifacts/evaluation/recorded-all");
 const demoRoot = resolve("artifacts/demo");
 const demoReports = resolve(demoRoot, "reports");
 const publicReports = resolve("public/reports");

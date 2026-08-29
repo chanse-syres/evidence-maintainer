@@ -1,0 +1,12 @@
+[
+  {
+    "id": "athlete-7",
+    "name": "Jordan Vale",
+    "status": "committed",
+    "team": "North Valley",
+    "effectiveAt": "2026-08-20T17:00:00.000Z",
+    "eventIds": [
+      "evt-1"
+    ]
+  }
+]

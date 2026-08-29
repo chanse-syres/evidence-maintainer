@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { loadOverviewModel } from "../../../src/ui/overview-model.ts";
 import { loadCaseModel } from "../../../src/ui/case-model.ts";
 
-const evaluationRoot = resolve(process.cwd(), "artifacts/evaluation/recorded-core");
+const evaluationRoot = resolve(process.cwd(), "artifacts/evaluation/recorded-all");
 
 export const dynamicParams = false;
 

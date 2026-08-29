@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "update-transfer-destination-baseline-1787962263475",
+  "caseId": "update-transfer-destination",
+  "arm": "baseline",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-29T00:11:03.475Z",
+  "finishedAt": "2026-08-29T00:11:03.548Z",
+  "durationMs": 73,
+  "timeoutMs": 300000,
+  "promptSha256": "4b2b55fc00e93051fa022e236616c238966f044ec8d11c4fd3693de23b955803",
+  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "caseSetSha256": "b1136196f919b4b0d560540a1e276426b94ccae7fa46360444cb5cc5da7a5017",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "4409b3aa799146070a09b34823b78c297086f7989bf8c2e1e68327e9fd01ded0",
+    "before-tree.json": "c93b6bf789b8adadf61c44a026066501cc71690a7e81eca7ba609c5b6c6c3bf0",
+    "after-tree.json": "4ffe57b66e9fc6b4aa94b74ec77b358d6ff7b26b16dd0803b71b248043199f99",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "1923001fc296ed46dfe08315001a3cdb9a469f589c3aeb2ab4ea122ff4af04fd",
+    "approval.json": "d84b5e6ab5f95b0816d7df21a9525334d9cd0f55657a3a27b77469123abe820b",
+    "trajectories/baseline.jsonl": "00d464767aaa2922d63cbc360e529e8c2c73645b7de3dd5772f72a9e38064d6c"
+  },
+  "tokenUsage": null,
+  "outcome": "FAIL"
+}

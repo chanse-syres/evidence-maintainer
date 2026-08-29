@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-filtered-removal",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The first material divergence is established by obs-filtered-quarterbacks.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-filtered-quarterbacks"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "Subset absence cannot delete an out-of-scope entity"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports NO_ACTION while preserving declared invariants."
+}

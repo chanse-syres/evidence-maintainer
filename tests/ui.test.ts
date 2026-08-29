@@ -6,7 +6,7 @@ import test from "node:test";
 import { loadCaseModel } from "../src/ui/case-model.ts";
 import { loadOverviewModel } from "../src/ui/overview-model.ts";
 
-const evaluationRoot = resolve("artifacts/evaluation/recorded-core");
+const evaluationRoot = resolve("artifacts/evaluation/recorded-all");
 const flagshipRun = resolve(
   evaluationRoot,
   "runs/update-official-commitment/trial-1/advanced",
@@ -15,11 +15,13 @@ const flagshipRun = resolve(
 test("overview exposes a sorted, truth-labeled baseline comparison", async () => {
   const overview = await loadOverviewModel(evaluationRoot);
   assert.equal(overview.modeLabel, "Recorded evidence");
-  assert.equal(overview.baseline.sdr, 1 / 6);
+  assert.equal(overview.baseline.sdr, 2 / 15);
   assert.equal(overview.advanced.sdr, 1);
-  assert.equal(overview.baseline.unsafeMutations, 2);
+  assert.equal(overview.baseline.unsafeMutations, 5);
   assert.equal(overview.advanced.unsafeMutations, 0);
-  assert.equal(overview.cases.length, 12);
+  assert.equal(overview.baseline.correctAbstentions, 1);
+  assert.equal(overview.advanced.correctAbstentions, 9);
+  assert.equal(overview.cases.length, 15);
   assert.deepEqual(
     overview.cases.map((item) => item.caseId),
     [...overview.cases.map((item) => item.caseId)].sort(),

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "verdict": "ESCALATE",
+  "evidenceIds": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

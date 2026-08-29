@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-scoutmetric-rating.",
+  "failureOwner": "canonical-data",
+  "evidenceUsed": [
+    "obs-scoutmetric-rating"
+  ],
+  "evidenceRejected": [
+    "obs-other-provider"
+  ],
+  "affectedEntities": [
+    "athlete-31"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-31",
+      "fields": {
+        "rating": 93,
+        "ratingAsOf": "2026-08-25T17:30:00.000Z",
+        "otherProviderRating": 93
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "Provider-specific ratings do not overwrite one another",
+    "Stable athlete identity is preserved"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The newest rating is copied into both visible rating fields.",
+  "arm": "baseline",
+  "executedCommands": []
+}

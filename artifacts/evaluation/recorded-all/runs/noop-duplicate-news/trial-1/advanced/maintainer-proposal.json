@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-duplicate-news",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The first material divergence is established by obs-1, obs-2.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-1",
+    "obs-2"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-7"
+  ],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "Canonical event IDs remain unique",
+    "Syndicated coverage cannot create a second occurrence"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Evidence supports NO_ACTION while preserving declared invariants."
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The first material divergence is established by obs-athletics-active, obs-registrar-withdrawn.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-71"
+  ],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "Conflicting co-authoritative records cannot be resolved by source order",
+    "Canonical state remains unchanged without a supersession edge"
+  ],
+  "unresolvedUncertainty": [
+    "The available evidence cannot establish a unique authoritative identity or state transition."
+  ],
+  "minimumInformationRequest": [
+    "signed cross-system resolution",
+    "effective timestamp"
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+}

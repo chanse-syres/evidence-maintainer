@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "verdict": "ESCALATE",
+  "evidenceIds": [
+    "obs-name-only-award"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

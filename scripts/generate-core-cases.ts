@@ -233,6 +233,79 @@ const definitions: CaseDefinition[] = [
     },
     oracle: { expectedAction: "NO_ACTION", requiredEvidenceIds: ["obs-filtered-quarterbacks"], allowedChangedFiles: [], expectedRecords: [], requiredChallengerVerdict: "CONFIRM" },
   },
+  {
+    id: "review-conflicting-authorities",
+    title: "Escalate two authoritative records that disagree at the same effective time",
+    description: "Two independently authoritative systems publish incompatible status values for the same entity and neither record contains a supersession edge.",
+    createdFrom: "Cross-system authority conflict in public-data maintenance",
+    allowedWritePaths: [],
+    requiredCommands: [],
+    files: {
+      "input/canonical.json": json([{ id: "athlete-71", name: "Ari Monroe", status: "active", effectiveAt: "2026-08-20T18:00:00.000Z" }]),
+      "input/observations.json": json([
+        observation({ id: "obs-athletics-active", sourceId: "official-athletics-roster", observedAt: "2026-08-27T15:00:00.000Z", effectiveAt: "2026-08-27T14:00:00.000Z", authorityScope: ["participation-status"], subjectId: "athlete-71", kind: "official-roster", status: 200, contentType: "application/json", schemaFingerprint: "athletics-roster-v6", facts: { status: "active", supersedes: null } }),
+        observation({ id: "obs-registrar-withdrawn", sourceId: "official-registrar", observedAt: "2026-08-27T15:04:00.000Z", effectiveAt: "2026-08-27T14:00:00.000Z", authorityScope: ["enrollment-status", "participation-status"], subjectId: "athlete-71", kind: "official-enrollment", status: 200, contentType: "application/json", schemaFingerprint: "registrar-status-v3", facts: { status: "withdrawn", supersedes: null } }),
+      ]),
+      "input/policy.json": json(policy({ authorityByField: { status: "official-athletics-roster|official-registrar" }, invariants: ["Conflicting co-authoritative records cannot be resolved by source order", "Canonical state remains unchanged without a supersession edge"], rules: ["Escalate when co-authoritative values disagree at the same effective time", "Require a signed cross-system resolution and its effective timestamp"] })),
+    },
+    oracle: {
+      expectedAction: "HUMAN_REVIEW",
+      requiredEvidenceIds: ["obs-athletics-active", "obs-registrar-withdrawn"],
+      allowedChangedFiles: [],
+      expectedRecords: [],
+      requiredChallengerVerdict: "ESCALATE",
+      requiredMinimumInformation: ["signed cross-system resolution", "effective timestamp"],
+    },
+  },
+  {
+    id: "review-name-collision",
+    title: "Refuse to merge a name-only observation into either matching identity",
+    description: "A source reports a common name without a stable identifier while two canonical people share that name and overlap in time.",
+    createdFrom: "Ambiguous entity resolution in public records",
+    allowedWritePaths: [],
+    requiredCommands: [],
+    files: {
+      "input/canonical.json": json([
+        { id: "person-81", name: "Jordan Lee", program: "North", graduationYear: 2027, status: "active" },
+        { id: "person-82", name: "Jordan Lee", program: "South", graduationYear: 2028, status: "active" },
+      ]),
+      "input/observations.json": json([
+        observation({ id: "obs-name-only-award", sourceId: "official-awards-feed", observedAt: "2026-08-27T16:00:00.000Z", effectiveAt: "2026-08-27T15:30:00.000Z", authorityScope: ["award-status"], subjectId: null, kind: "award-announcement", status: 200, contentType: "application/json", schemaFingerprint: "award-feed-v2", facts: { name: "Jordan Lee", award: "Regional Scholar", stableId: null, program: null, graduationYear: null } }),
+      ]),
+      "input/policy.json": json(policy({ authorityByField: { award: "official-awards-feed" }, invariants: ["Names are not identity keys", "No award may be attached to an ambiguous person"], rules: ["Entity resolution requires a stable source identifier or two independent disambiguators", "Escalate a name collision rather than choosing the first record"] })),
+    },
+    oracle: {
+      expectedAction: "HUMAN_REVIEW",
+      requiredEvidenceIds: ["obs-name-only-award"],
+      allowedChangedFiles: [],
+      expectedRecords: [],
+      requiredChallengerVerdict: "ESCALATE",
+      requiredMinimumInformation: ["stable source identifier", "program or graduation year"],
+    },
+  },
+  {
+    id: "review-reintroduced-identity",
+    title: "Treat a reintroduced name and slot as a potentially new occurrence",
+    description: "A previously closed roster slot is reused by the same display name after a gap, but the new publication omits the occurrence-stable identifier needed to prove continuity.",
+    createdFrom: "Occurrence identity under removal and reintroduction",
+    allowedWritePaths: [],
+    requiredCommands: [],
+    files: {
+      "input/canonical.json": json([{ id: "occurrence-91", displayName: "Casey Quinn", slot: 14, status: "departed", openedAt: "2025-09-01T00:00:00.000Z", closedAt: "2026-05-20T00:00:00.000Z", sourceOccurrenceId: "roster-2025-14" }]),
+      "input/observations.json": json([
+        observation({ id: "obs-reintroduced-slot", sourceId: "official-roster", observedAt: "2026-08-27T17:00:00.000Z", effectiveAt: "2026-08-27T16:00:00.000Z", authorityScope: ["roster-membership"], subjectId: null, kind: "roster-entry", status: 200, contentType: "application/json", schemaFingerprint: "roster-v7-no-occurrence-id", facts: { displayName: "Casey Quinn", slot: 14, status: "active", sourceOccurrenceId: null, priorEntryPresent: false } }),
+      ]),
+      "input/policy.json": json(policy({ authorityByField: { status: "official-roster" }, invariants: ["A closed occurrence is immutable", "Display name and physical slot do not establish identity continuity"], rules: ["A reintroduced entry requires an occurrence-stable identifier", "Escalate before linking a post-gap entry to a closed occurrence"] })),
+    },
+    oracle: {
+      expectedAction: "HUMAN_REVIEW",
+      requiredEvidenceIds: ["obs-reintroduced-slot"],
+      allowedChangedFiles: [],
+      expectedRecords: [],
+      requiredChallengerVerdict: "ESCALATE",
+      requiredMinimumInformation: ["occurrence-stable identifier", "continuity or new-occurrence confirmation"],
+    },
+  },
 ];
 
 async function writeCase(root: string, definition: CaseDefinition): Promise<void> {

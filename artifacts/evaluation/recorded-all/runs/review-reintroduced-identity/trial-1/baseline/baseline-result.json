@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-reintroduced-slot.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-reintroduced-slot"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "occurrence-91",
+      "fields": {
+        "status": "active",
+        "closedAt": null
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "A closed occurrence is immutable",
+    "Display name and physical slot do not establish identity continuity"
+  ],
+  "unresolvedUncertainty": [
+    "The available evidence cannot establish a unique authoritative identity or state transition."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "A same-name, same-slot observation is treated as continuity with the closed occurrence.",
+  "arm": "baseline",
+  "executedCommands": []
+}

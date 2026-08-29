@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-reintroduced-identity",
+  "verdict": "ESCALATE",
+  "evidenceIds": [
+    "obs-reintroduced-slot"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

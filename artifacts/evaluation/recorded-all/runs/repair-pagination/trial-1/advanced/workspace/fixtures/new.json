@@ -1,0 +1,20 @@
+{
+  "start": {
+    "records": [
+      "d"
+    ],
+    "nextPage": "token-b"
+  },
+  "token-b": {
+    "records": [
+      "e"
+    ],
+    "nextPage": "token-c"
+  },
+  "token-c": {
+    "records": [
+      "f"
+    ],
+    "nextPage": null
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "case.json",
+      "sha256": "8aebf098a4e1fa267e62953e87f3f2e66264acc0893cdbea5c643d1dacd27919",
+      "bytes": 1889
+    },
+    {
+      "path": "input/canonical.json",
+      "sha256": "b2f93c2f112d810d3a1acfa28de675f7dc074b474907d58f7644c3921f2461e1",
+      "bytes": 302
+    },
+    {
+      "path": "input/observations.json",
+      "sha256": "c4d62cc753363eda08a5b3125da9572cd00cc6983504065e0db1fc5b7d5d55af",
+      "bytes": 547
+    },
+    {
+      "path": "input/policy.json",
+      "sha256": "e3b88d881759eeb7eac9b58e4d893b53ba43e3a6d00eaac1cb37527c28425002",
+      "bytes": 476
+    }
+  ],
+  "sha256": "4bdedf7781413639bb7d3be963b410123375c188db3a301c53a3fb8c5d455208"
+}

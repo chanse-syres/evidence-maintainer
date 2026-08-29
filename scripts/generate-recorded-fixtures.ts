@@ -22,6 +22,9 @@ const CORE_CASE_IDS = [
   "noop-duplicate-news",
   "noop-newer-publication-stale-effective",
   "noop-filtered-removal",
+  "review-conflicting-authorities",
+  "review-name-collision",
+  "review-reintroduced-identity",
 ] as const;
 
 const adapterRepairs: Record<string, MutationOperation> = {
@@ -106,6 +109,54 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
       summary: "The newest publication is treated as current state.",
     };
   }
+  if (caseId === "review-conflicting-authorities") {
+    return {
+      ...baseline,
+      action: "UPDATE_DATA",
+      affectedFiles: ["input/canonical.json"],
+      operations: [{
+        kind: "SET_RECORD_FIELDS",
+        file: "input/canonical.json",
+        recordId: "athlete-71",
+        fields: { status: "withdrawn" },
+      }],
+      minimumInformationRequest: [],
+      approvalLevel: "SIMULATED_HUMAN",
+      summary: "One official observation is selected despite an unresolved co-authoritative conflict.",
+    };
+  }
+  if (caseId === "review-name-collision") {
+    return {
+      ...baseline,
+      action: "UPDATE_DATA",
+      affectedFiles: ["input/canonical.json"],
+      operations: [{
+        kind: "SET_RECORD_FIELDS",
+        file: "input/canonical.json",
+        recordId: "person-81",
+        fields: { award: "Regional Scholar" },
+      }],
+      minimumInformationRequest: [],
+      approvalLevel: "SIMULATED_HUMAN",
+      summary: "The first normalized-name match is updated without a stable identity key.",
+    };
+  }
+  if (caseId === "review-reintroduced-identity") {
+    return {
+      ...baseline,
+      action: "UPDATE_DATA",
+      affectedFiles: ["input/canonical.json"],
+      operations: [{
+        kind: "SET_RECORD_FIELDS",
+        file: "input/canonical.json",
+        recordId: "occurrence-91",
+        fields: { status: "active", closedAt: null },
+      }],
+      minimumInformationRequest: [],
+      approvalLevel: "SIMULATED_HUMAN",
+      summary: "A same-name, same-slot observation is treated as continuity with the closed occurrence.",
+    };
+  }
   return {
     ...baseline,
     action: "UPDATE_DATA",
@@ -152,13 +203,17 @@ async function correctProposal(caseId: string): Promise<MaintainerProposal> {
     affectedFiles: oracle.allowedChangedFiles,
     operations,
     preservedInvariants: loaded.policy.invariants,
-    unresolvedUncertainty: [],
+    unresolvedUncertainty: oracle.expectedAction === "HUMAN_REVIEW"
+      ? ["The available evidence cannot establish a unique authoritative identity or state transition."]
+      : [],
     minimumInformationRequest: oracle.requiredMinimumInformation,
     retryCondition: oracle.requiredRetryConditionIncludes.length > 0
       ? `Retry after ${oracle.requiredRetryConditionIncludes.join(" while retaining ")}.`
       : null,
-    approvalLevel: "SIMULATED_HUMAN",
-    summary: `Evidence supports ${oracle.expectedAction} while preserving declared invariants.`,
+    approvalLevel: oracle.expectedAction === "HUMAN_REVIEW" ? "NONE" : "SIMULATED_HUMAN",
+    summary: oracle.expectedAction === "HUMAN_REVIEW"
+      ? "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+      : `Evidence supports ${oracle.expectedAction} while preserving declared invariants.`,
   };
 }
 

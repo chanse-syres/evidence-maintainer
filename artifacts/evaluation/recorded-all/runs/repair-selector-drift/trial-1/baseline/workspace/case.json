@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "repair-selector-drift",
+  "title": "Repair semantic selector drift without overfitting presentation classes",
+  "description": "A stable data attribute survives a redesign while a presentation-only class changes.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Observed public roster selector drift pattern",
+  "agentVisibleFiles": [
+    "workspace/adapter.test.ts",
+    "workspace/adapter.ts",
+    "workspace/fixtures/new.html",
+    "workspace/fixtures/old.html",
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "adapter.ts"
+  ],
+  "requiredCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "provenance": [
+    {
+      "sourceId": "fixture-adapter.test.ts",
+      "path": "workspace/adapter.test.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "8ee25502946f3ee5d03d04ce77f7d3d436290fa048838f37cdf60ce0a60e759e"
+    },
+    {
+      "sourceId": "fixture-adapter.ts",
+      "path": "workspace/adapter.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "6f0e10a40476e15d12a6acb90e6c96590a131dc829917eecd80dd25933c80c52"
+    },
+    {
+      "sourceId": "fixture-fixtures-new.html",
+      "path": "workspace/fixtures/new.html",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ff7ac71e361f0890b3582a111758ec302caf6cd987e6fa2a173cc3db8670f5ea"
+    },
+    {
+      "sourceId": "fixture-fixtures-old.html",
+      "path": "workspace/fixtures/old.html",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ccb0f33c279333bff64444ee713f0f8e0d9de8124acc0663a71ca26ff7242129"
+    },
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "4daf6007f84f23b6ef06f200f2206cb58dc6bc0dc64fb41e6f2a0a9b39eb843d"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "9a89f5aa55ecc435778588087be02a3ae024b905cd569667a0daa154257dffcd"
+    }
+  ]
+}

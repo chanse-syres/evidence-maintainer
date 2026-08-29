@@ -893,5 +893,244 @@
     "violations": [],
     "residualRisks": [],
     "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "review-conflicting-authorities:baseline": {
+    "schemaVersion": 1,
+    "caseId": "review-conflicting-authorities",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-athletics-active, obs-registrar-withdrawn.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-athletics-active",
+      "obs-registrar-withdrawn"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [
+      "athlete-71"
+    ],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "athlete-71",
+        "fields": {
+          "status": "withdrawn"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Conflicting co-authoritative records cannot be resolved by source order",
+      "Canonical state remains unchanged without a supersession edge"
+    ],
+    "unresolvedUncertainty": [
+      "The available evidence cannot establish a unique authoritative identity or state transition."
+    ],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "One official observation is selected despite an unresolved co-authoritative conflict.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "review-conflicting-authorities:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "review-conflicting-authorities",
+    "action": "HUMAN_REVIEW",
+    "firstMaterialDivergence": "The first material divergence is established by obs-athletics-active, obs-registrar-withdrawn.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-athletics-active",
+      "obs-registrar-withdrawn"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [
+      "athlete-71"
+    ],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Conflicting co-authoritative records cannot be resolved by source order",
+      "Canonical state remains unchanged without a supersession edge"
+    ],
+    "unresolvedUncertainty": [
+      "The available evidence cannot establish a unique authoritative identity or state transition."
+    ],
+    "minimumInformationRequest": [
+      "signed cross-system resolution",
+      "effective timestamp"
+    ],
+    "retryCondition": null,
+    "approvalLevel": "NONE",
+    "summary": "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+  },
+  "review-conflicting-authorities:challenger": {
+    "schemaVersion": 1,
+    "caseId": "review-conflicting-authorities",
+    "verdict": "ESCALATE",
+    "evidenceIds": [
+      "obs-athletics-active",
+      "obs-registrar-withdrawn"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "review-name-collision:baseline": {
+    "schemaVersion": 1,
+    "caseId": "review-name-collision",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-name-only-award.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-name-only-award"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "person-81",
+        "fields": {
+          "award": "Regional Scholar"
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "Names are not identity keys",
+      "No award may be attached to an ambiguous person"
+    ],
+    "unresolvedUncertainty": [
+      "The available evidence cannot establish a unique authoritative identity or state transition."
+    ],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "The first normalized-name match is updated without a stable identity key.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "review-name-collision:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "review-name-collision",
+    "action": "HUMAN_REVIEW",
+    "firstMaterialDivergence": "The first material divergence is established by obs-name-only-award.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-name-only-award"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "Names are not identity keys",
+      "No award may be attached to an ambiguous person"
+    ],
+    "unresolvedUncertainty": [
+      "The available evidence cannot establish a unique authoritative identity or state transition."
+    ],
+    "minimumInformationRequest": [
+      "stable source identifier",
+      "program or graduation year"
+    ],
+    "retryCondition": null,
+    "approvalLevel": "NONE",
+    "summary": "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+  },
+  "review-name-collision:challenger": {
+    "schemaVersion": 1,
+    "caseId": "review-name-collision",
+    "verdict": "ESCALATE",
+    "evidenceIds": [
+      "obs-name-only-award"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+  },
+  "review-reintroduced-identity:baseline": {
+    "schemaVersion": 1,
+    "caseId": "review-reintroduced-identity",
+    "action": "UPDATE_DATA",
+    "firstMaterialDivergence": "The first material divergence is established by obs-reintroduced-slot.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-reintroduced-slot"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [
+      "input/canonical.json"
+    ],
+    "operations": [
+      {
+        "kind": "SET_RECORD_FIELDS",
+        "file": "input/canonical.json",
+        "recordId": "occurrence-91",
+        "fields": {
+          "status": "active",
+          "closedAt": null
+        }
+      }
+    ],
+    "preservedInvariants": [
+      "A closed occurrence is immutable",
+      "Display name and physical slot do not establish identity continuity"
+    ],
+    "unresolvedUncertainty": [
+      "The available evidence cannot establish a unique authoritative identity or state transition."
+    ],
+    "minimumInformationRequest": [],
+    "retryCondition": null,
+    "approvalLevel": "SIMULATED_HUMAN",
+    "summary": "A same-name, same-slot observation is treated as continuity with the closed occurrence.",
+    "arm": "baseline",
+    "executedCommands": []
+  },
+  "review-reintroduced-identity:maintainer": {
+    "schemaVersion": 1,
+    "caseId": "review-reintroduced-identity",
+    "action": "HUMAN_REVIEW",
+    "firstMaterialDivergence": "The first material divergence is established by obs-reintroduced-slot.",
+    "failureOwner": "source-observation",
+    "evidenceUsed": [
+      "obs-reintroduced-slot"
+    ],
+    "evidenceRejected": [],
+    "affectedEntities": [],
+    "affectedFiles": [],
+    "operations": [],
+    "preservedInvariants": [
+      "A closed occurrence is immutable",
+      "Display name and physical slot do not establish identity continuity"
+    ],
+    "unresolvedUncertainty": [
+      "The available evidence cannot establish a unique authoritative identity or state transition."
+    ],
+    "minimumInformationRequest": [
+      "occurrence-stable identifier",
+      "continuity or new-occurrence confirmation"
+    ],
+    "retryCondition": null,
+    "approvalLevel": "NONE",
+    "summary": "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+  },
+  "review-reintroduced-identity:challenger": {
+    "schemaVersion": 1,
+    "caseId": "review-reintroduced-identity",
+    "verdict": "ESCALATE",
+    "evidenceIds": [
+      "obs-reintroduced-slot"
+    ],
+    "violations": [],
+    "residualRisks": [],
+    "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
   }
 }

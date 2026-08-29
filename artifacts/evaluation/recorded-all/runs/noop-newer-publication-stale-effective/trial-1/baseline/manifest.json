@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-newer-publication-stale-effective-baseline-1787962260293",
+  "caseId": "noop-newer-publication-stale-effective",
+  "arm": "baseline",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-29T00:11:00.293Z",
+  "finishedAt": "2026-08-29T00:11:00.337Z",
+  "durationMs": 44,
+  "timeoutMs": 300000,
+  "promptSha256": "08d7e7c39a73a9bd7c91ff8bcdbc386a53e42fbe224af29b51495c3c0599e5ab",
+  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "caseSetSha256": "88a8292397a3a6f70f717c9bd4219ca3f74ea98f3f54080bdb8b79e9ccd62bdd",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "artifactSha256": {
+    "baseline-result.json": "92ba618ff6a194b0419e04a758d639272e8cea857162bad1da15b823a4252a65",
+    "before-tree.json": "5363494d73b02d36890fa24c51cc2f5cbf86a9ef705b7135d2fd83917020c9d9",
+    "after-tree.json": "309fb11812a13fe81b520a70fbd172aa3998422db12fe384380d1135648048b6",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "3f08451c3e009fad11f1031ba464e0a2cb9233ef770ef77c3712cb40e90a47dd",
+    "approval.json": "6ef85483a93c05520d12373e9f6fdbed358a1e735d1c3346fef1049f15668d80",
+    "trajectories/baseline.jsonl": "1fbfe6e041b4d91057cfe75bcde3efb010dc4bcd26ed6ece380da58ef6ac3165"
+  },
+  "tokenUsage": null,
+  "outcome": "FAIL"
+}

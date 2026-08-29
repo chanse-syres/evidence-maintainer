@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "The first material divergence is established by obs-name-only-award.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-name-only-award"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "person-81",
+      "fields": {
+        "award": "Regional Scholar"
+      }
+    }
+  ],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "The available evidence cannot establish a unique authoritative identity or state transition."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The first normalized-name match is updated without a stable identity key.",
+  "arm": "baseline",
+  "executedCommands": []
+}

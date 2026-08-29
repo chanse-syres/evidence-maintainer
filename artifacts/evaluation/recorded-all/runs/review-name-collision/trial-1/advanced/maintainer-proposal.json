@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The first material divergence is established by obs-name-only-award.",
+  "failureOwner": "source-observation",
+  "evidenceUsed": [
+    "obs-name-only-award"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "operations": [],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "The available evidence cannot establish a unique authoritative identity or state transition."
+  ],
+  "minimumInformationRequest": [
+    "stable source identifier",
+    "program or graduation year"
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "The evidence is insufficient for a safe mutation; escalate with the exact missing information."
+}

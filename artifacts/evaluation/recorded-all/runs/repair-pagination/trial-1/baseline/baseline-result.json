@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The first material divergence is established by obs-pagination-token.",
+  "failureOwner": "source-adapter",
+  "evidenceUsed": [
+    "obs-pagination-token"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "page <= 3",
+      "replace": "page <= 10",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "The numeric page bound is expanded.",
+  "arm": "baseline",
+  "executedCommands": []
+}

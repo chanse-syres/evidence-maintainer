@@ -4,7 +4,7 @@ import test from "node:test";
 import { renderDecisionReport } from "../src/reports/render-decision-report.ts";
 
 const recordedRun = resolve(
-  "artifacts/evaluation/recorded-core/runs/update-official-commitment/trial-1/advanced",
+  "artifacts/evaluation/recorded-all/runs/update-official-commitment/trial-1/advanced",
 );
 
 test("decision report renders every evidence and approval section", async () => {

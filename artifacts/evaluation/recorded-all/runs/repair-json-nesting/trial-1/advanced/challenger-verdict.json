@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-json-nesting"
+  ],
+  "violations": [],
+  "residualRisks": [],
+  "summary": "The evidence, candidate artifact, and preserved invariants support the adjudicated result."
+}

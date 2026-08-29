@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-newer-publication-stale-effective-advanced-1787962260417",
+  "caseId": "noop-newer-publication-stale-effective",
+  "arm": "advanced",
+  "mode": "recorded",
+  "model": "recorded-fixture",
+  "startedAt": "2026-08-29T00:11:00.417Z",
+  "finishedAt": "2026-08-29T00:11:00.429Z",
+  "durationMs": 12,
+  "timeoutMs": 300000,
+  "promptSha256": "d646b56c21c82edd82a664995b1ccff3d1ed0feea445f097c32f5e7933c09ff8",
+  "outputSchemaSha256": "ee727e92e93501de527302b5368480bc85a17818cc6a5800c05d52db43604bb7",
+  "caseSetSha256": "88a8292397a3a6f70f717c9bd4219ca3f74ea98f3f54080bdb8b79e9ccd62bdd",
+  "trajectoryPaths": [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl"
+  ],
+  "artifactSha256": {
+    "evidence.jsonl": "252e23607d9df55acd812b83a08b709398d8f989bab5cf453be490b5af9105d5",
+    "maintainer-proposal.json": "819692e1df9a1fe00a5b0e03699c324df3e605892eb300c30028db4ca0a21e84",
+    "candidate-diff.json": "c96a7ee8eec703234528e96c2ad7da7f102c41f2f0955bef7c454dba6af917e6",
+    "challenger-verdict.json": "55edf41f25c2be76e5d60af0d053a6d1716a37e61afa4125bf26391856baebf5",
+    "before-tree.json": "5363494d73b02d36890fa24c51cc2f5cbf86a9ef705b7135d2fd83917020c9d9",
+    "after-tree.json": "5363494d73b02d36890fa24c51cc2f5cbf86a9ef705b7135d2fd83917020c9d9",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
+    "approval.json": "0a4e6516ab54308cf60a07948591a4bd147c1c60e5aec7d290be374fd2b33f36",
+    "trajectories/maintainer.jsonl": "8a4f668d2a6e32fd4fe49d765a12ab0c141ae085b4b9261e3b8e3abd5bd353be",
+    "trajectories/challenger.jsonl": "2702289cf269601fe3045929b24fcc1fb28e34b0ea219ef9ae20e3aca6829844"
+  },
+  "tokenUsage": null,
+  "outcome": "PASS"
+}
