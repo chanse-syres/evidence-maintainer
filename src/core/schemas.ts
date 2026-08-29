@@ -643,7 +643,7 @@ export const RunManifestSchema = z.object({
   const accounting = manifest.tokenUsageAccounting;
   const expectedRoles = manifest.arm === "baseline"
     ? ["baseline"]
-    : ["maintainer", "challenger"];
+    : ["maintainer", "challenger", "reviser"];
   const actualRoles = accounting.sessions.map((session) => session.role).sort();
   if (JSON.stringify(actualRoles) !== JSON.stringify([...expectedRoles].sort())) {
     ctx.addIssue({ code: "custom", message: "Token usage session roles do not match the run arm" });

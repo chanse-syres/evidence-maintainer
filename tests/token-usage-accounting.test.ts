@@ -47,12 +47,21 @@ test("mixed advanced accounting sums sessions while retaining incomplete request
       trajectoryAggregateCaptured: true,
       proxyRequestCoverage: incompleteProxy,
     },
+    {
+      role: "reviser",
+      usage: { input: 70, cachedInput: 5, output: 15 },
+      source: "TRAJECTORY_TURN_COMPLETED",
+      trajectoryPath: "trajectories/reviser.jsonl",
+      proxyLedgerPath: "trajectories/reviser.proxy.jsonl",
+      trajectoryAggregateCaptured: true,
+      proxyRequestCoverage: incompleteProxy,
+    },
   ]);
 
-  assert.deepEqual(result.tokenUsage, { input: 180, cachedInput: 30, output: 50 });
+  assert.deepEqual(result.tokenUsage, { input: 250, cachedInput: 35, output: 65 });
   assert.equal(result.tokenUsageAccounting.aggregateSource, "MIXED");
   assert.deepEqual(result.tokenUsageAccounting.proxyRequestCoverage, {
-    requestCount: 2,
+    requestCount: 3,
     accountedRequestCount: 1,
     complete: false,
   });
@@ -76,12 +85,21 @@ test("one unavailable session makes the run aggregate unavailable", () => {
       trajectoryAggregateCaptured: false,
       proxyRequestCoverage: incompleteProxy,
     },
+    {
+      role: "reviser",
+      usage: { input: 60, cachedInput: 5, output: 10 },
+      source: "TRAJECTORY_TURN_COMPLETED",
+      trajectoryPath: "trajectories/reviser.jsonl",
+      proxyLedgerPath: "trajectories/reviser.proxy.jsonl",
+      trajectoryAggregateCaptured: true,
+      proxyRequestCoverage: incompleteProxy,
+    },
   ]);
 
   assert.equal(result.tokenUsage, null);
   assert.deepEqual(result.tokenUsageAccounting.sessionCoverage, {
-    sessionCount: 2,
-    accountedSessionCount: 1,
+    sessionCount: 3,
+    accountedSessionCount: 2,
     complete: false,
   });
   assert.equal(result.tokenUsageAccounting.aggregateSource, "UNAVAILABLE");

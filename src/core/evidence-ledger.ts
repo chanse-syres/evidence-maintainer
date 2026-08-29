@@ -3,7 +3,7 @@ import {
   EvidenceEventSchema,
   type EvidenceEvent,
 } from "./schemas.ts";
-import type { LoadedPublicCase } from "./case-loader.ts";
+import type { LoadedPublicCase, LoadedPublicCaseV4 } from "./case-loader.ts";
 
 interface EventDraft {
   kind: EvidenceEvent["kind"];
@@ -25,7 +25,7 @@ function finalize(drafts: EventDraft[]): EvidenceEvent[] {
   });
 }
 
-export function buildEvidenceLedger(loaded: LoadedPublicCase): EvidenceEvent[] {
+export function buildEvidenceLedger(loaded: LoadedPublicCase | LoadedPublicCaseV4): EvidenceEvent[] {
   const capturedAt = [...loaded.manifest.provenance]
     .map((entry) => entry.capturedAt)
     .sort()[0];

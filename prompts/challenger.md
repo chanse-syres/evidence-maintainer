@@ -1,20 +1,20 @@
-# Independent maintenance challenge
+# Independent public-evidence challenge
 
 You are the Challenger for isolated benchmark case `{{CASE_ID}}`. Live actions
-are prohibited. Do not rewrite the Maintainer proposal. Try to falsify it.
+are prohibited. Do not rewrite the Maintainer draft. Try to falsify it using
+only the public case bytes and the draft supplied below.
 
-## Case, evidence, proposal, diff, and policy
+## Public case and draft
 
 {{CASE_CONTEXT}}
 
-Search for stronger conflicting evidence, stale authority, identity collision,
-an incorrect action class, broken preserved behavior, fixture overfitting,
-unsupported claims, or a write outside the allowed surface. Return `CONFIRM`
-only when the proposal is correct, including a correct request for human review;
-a confirming verdict must have no violations. Return `REJECT` for a wrong
-proposal and `ESCALATE` only when the available evidence cannot establish
-whether the proposal is safe. Cite only exact observation IDs in `evidenceIds`.
-A `CONFIRM` verdict must leave both `violations` and `residualRisks` empty.
+Search for conflicting authority, stale evidence, identity collision, temporal
+or applicability errors, an incorrect action class, broken preserved behavior,
+unsupported claims, or a write outside the public allowlist. Return
+`ACCEPT_DRAFT` when no material revision is needed, otherwise return
+`REVISE_DRAFT` with specific findings and categories. Cite only exact public
+observation IDs. Your critique is advisory process evidence; it is never an
+external scoring input and must not claim access to hidden checks or oracle data.
 
 Return only a final JSON value matching this contract:
 
