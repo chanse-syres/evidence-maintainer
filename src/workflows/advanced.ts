@@ -19,7 +19,8 @@ import {
 import { diffTrees, snapshotTree } from "../core/tree-snapshot.ts";
 import { buildTokenUsageAccounting } from "../evaluation/token-usage-accounting.ts";
 import { recordApproval } from "./approval.ts";
-import { runRequiredCommands, type RunBaselineInput } from "./baseline.ts";
+import type { RunBaselineInput } from "./baseline.ts";
+import { runRequiredCommands } from "./legacy-command-execution.ts";
 
 async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");

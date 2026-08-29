@@ -1,26 +1,19 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import type { AgentRunner } from "../agents/runner.ts";
-import { ModelExecutionError } from "../agents/runner.ts";
 import { loadPrompt } from "../agents/prompt-loader.ts";
 import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
-import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
+import { copyCaseWorkspaceV4, loadPublicCaseV4 } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
-import { validateCandidateOperations } from "../core/candidate-validation.ts";
-import { runHiddenProbeIsolated, runRequiredCommandIsolated } from "../core/isolated-command-runner.ts";
-import { runDeterministicGate, type CommandResult } from "../core/deterministic-gate.ts";
-import { applyOperations, MutationApplicationError } from "../core/mutation-engine.ts";
 import {
-  BaselineResultSchema,
-  MaintainerProposalSchema,
+  DecisionPackageSchema,
   RunManifestSchema,
-  type ChallengerVerdict,
   type RunManifest,
 } from "../core/schemas.ts";
-import { snapshotTree } from "../core/tree-snapshot.ts";
 import { PROJECT_ID } from "../core/project.ts";
 import { buildTokenUsageAccounting } from "../evaluation/token-usage-accounting.ts";
 import { recordApproval } from "./approval.ts";
+import { finalizeDecision } from "./finalize-decision.ts";
 
 export interface RunBaselineInput {
   caseDir: string;
@@ -35,26 +28,6 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
-export async function runRequiredCommands(
-  workspace: string,
-  commands: readonly string[],
-  hiddenProbePath?: string | null,
-  caseDir?: string,
-): Promise<Record<string, CommandResult>> {
-  const results: Record<string, CommandResult> = {};
-  for (const command of commands) {
-    results[command] = await runRequiredCommandIsolated(command, workspace);
-  }
-  if (hiddenProbePath) {
-    if (!caseDir) throw new Error("Hidden verifier execution requires the case directory");
-    results[`hidden:${hiddenProbePath}`] = await runHiddenProbeIsolated(
-      workspace,
-      resolve(caseDir, ...hiddenProbePath.split("/")),
-    );
-  }
-  return results;
-}
-
 async function hashArtifacts(root: string, paths: readonly string[]): Promise<Record<string, string>> {
   const output: Record<string, string> = {};
   for (const path of paths) {
@@ -66,16 +39,16 @@ async function hashArtifacts(root: string, paths: readonly string[]): Promise<Re
 export async function runBaseline(input: RunBaselineInput): Promise<RunManifest> {
   const runRoot = resolve(input.runRoot);
   await mkdir(join(runRoot, "trajectories"), { recursive: true });
-  const loadedCase = await loadPublicCase(input.caseDir);
-  const oracle = await loadOracle(input.caseDir);
-  const workspace = await copyCaseWorkspace(input.caseDir, join(runRoot, "workspace"));
-  const before = await snapshotTree(workspace);
-  await writeJson(join(runRoot, "before-tree.json"), before);
+  const loadedCase = await loadPublicCaseV4(input.caseDir);
+  const agentWorkspace = await copyCaseWorkspaceV4(
+    input.caseDir,
+    join(runRoot, "agent-workspace"),
+  );
 
-  const outputSchemaPath = resolve("schemas", "baseline-result.schema.json");
+  const outputSchemaPath = resolve("schemas", "decision-package.schema.json");
   const outputContract = await readFile(outputSchemaPath, "utf8");
   const agentVisibleWorkspace = await readAgentVisibleSnapshot(
-    workspace,
+    agentWorkspace,
     loadedCase.manifest.agentVisibleFiles,
   );
   const prompt = await loadPrompt("baseline", {
@@ -101,67 +74,21 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     runId,
     role: "baseline",
     caseId: loadedCase.manifest.id,
-    workspace,
+    workspace: agentWorkspace,
     prompt,
     outputSchemaPath,
     model: input.model,
     timeoutMs: input.timeoutMs,
     trajectoryPath,
-    parse: (value) => BaselineResultSchema.parse(value),
+    parse: (value) => DecisionPackageSchema.parse(value),
   });
-  await writeJson(join(runRoot, "baseline-result.json"), agent.output);
-  const { arm: _arm, executedCommands: _executedCommands, ...proposalFields } = agent.output;
-  void _arm;
-  void _executedCommands;
-  const proposal = MaintainerProposalSchema.parse(proposalFields);
-  const operationErrors = validateCandidateOperations(
-    proposal,
-    loadedCase.manifest.allowedWritePaths,
-    oracle,
-  );
-  if (operationErrors.length > 0) {
-    throw new ModelExecutionError("INVALID_OPERATION", operationErrors.join(" "));
-  }
-  try {
-    await applyOperations(workspace, proposal.operations);
-  } catch (error) {
-    if (error instanceof MutationApplicationError) {
-      throw new ModelExecutionError("INVALID_OPERATION", error.message);
-    }
-    throw error;
-  }
-  const commandResults = await runRequiredCommands(
-    workspace,
-    loadedCase.manifest.requiredCommands,
-    oracle.hiddenProbePath,
-    input.caseDir,
-  );
-  await writeJson(join(runRoot, "command-results.json"), commandResults);
-  const after = await snapshotTree(workspace);
-  await writeJson(join(runRoot, "after-tree.json"), after);
-
-  const evaluatorVerdict: ChallengerVerdict = {
-    schemaVersion: 1,
-    caseId: loadedCase.manifest.id,
-    verdict: oracle.requiredChallengerVerdict,
-    evidenceIds: oracle.requiredChallengerEvidenceIds,
-    violations: [],
-    residualRisks: [],
-    summary: "Evaluator-only adjudication used after the direct-agent session completed.",
-  };
-  const gate = await runDeterministicGate({
-    loadedCase,
-    oracle,
-    workspace,
-    before,
-    after,
-    proposal,
-    challenger: evaluatorVerdict,
-    commandResults,
+  const { gate } = await finalizeDecision({
+    caseDir: input.caseDir,
+    runRoot,
+    package: agent.output,
     submissionMode: true,
     liveWriteAttempted: false,
   });
-  await writeJson(join(runRoot, "gate.json"), gate);
   const approval = recordApproval({
     caseId: loadedCase.manifest.id,
     requested: input.approve,
@@ -171,7 +98,7 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
 
   const finishedAt = new Date().toISOString();
   const artifactPaths = [
-    "baseline-result.json",
+    "final-decision.json",
     "before-tree.json",
     "after-tree.json",
     "command-results.json",
