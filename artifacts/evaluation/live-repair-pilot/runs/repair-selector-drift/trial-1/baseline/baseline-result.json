@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "adapter.ts hard-codes the presentation class player-card, so extraction fails after the class redesign.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.html",
+    "fixtures/new.html",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [
+    "input/canonical.json"
+  ],
+  "affectedEntities": [
+    "athlete extraction selector",
+    "p-1",
+    "p-2"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "const pattern = /<article class=\"player-card\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+      "replace": "const pattern = /<article\\b[^>]*\\bdata-athlete-id=\"([^\"]+)\"[^>]*><span data-name>([^<]+)<\\/span><\\/article>/g;",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority",
+    "Anchor extraction to stable semantic attributes",
+    "Preserve old fixture behavior"
+  ],
+  "unresolvedUncertainty": [
+    "The required deterministic test command could not be executed because local command execution was blocked by policy."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": "Apply the bounded adapter replacement, pass `node --experimental-strip-types --test adapter.test.ts`, and obtain simulated human approval before applying the consequential candidate change.",
+  "approvalLevel": "NONE",
+  "summary": "Repair the adapter selector to anchor on data-athlete-id while retaining both fixture behaviors; the proposed change has not been applied or verified in this read-only workspace.",
+  "arm": "baseline",
+  "executedCommands": []
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-003",
+    "adapter.ts",
+    "adapter.test.ts",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "Tests cover only the two documented fixture shapes; malformed or non-array values at supported paths remain outside the demonstrated contract."
+  ],
+  "summary": "The proposed change is confined to the allowed adapter surface, implements the authoritative documented players-to-data.roster transition, preserves legacy precedence and ID mapping, and passes the required deterministic test command."
+}

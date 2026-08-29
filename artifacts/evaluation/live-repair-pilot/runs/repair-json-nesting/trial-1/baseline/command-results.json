@@ -1,0 +1,7 @@
+{
+  "node --experimental-strip-types --test adapter.test.ts": {
+    "exitCode": 0,
+    "stdout": "✔ old top-level payload remains supported (1.0963ms)\n✔ new semantic envelope is supported (0.2198ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 105.0948\n",
+    "stderr": ""
+  }
+}

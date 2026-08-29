@@ -1,0 +1,45 @@
+{
+  "files": [
+    {
+      "path": "adapter.test.ts",
+      "sha256": "8ee25502946f3ee5d03d04ce77f7d3d436290fa048838f37cdf60ce0a60e759e",
+      "bytes": 496
+    },
+    {
+      "path": "adapter.ts",
+      "sha256": "5665d05c32a940a4ad62ddc5d99ce4a93a37f34be248519fd2a18588e413b6e0",
+      "bytes": 318
+    },
+    {
+      "path": "case.json",
+      "sha256": "26b3e74b801f8d2e05d87f189bfa8ac7cc4b209449727bb1c6bb6ea974c0f3fc",
+      "bytes": 3746
+    },
+    {
+      "path": "fixtures/new.html",
+      "sha256": "ff7ac71e361f0890b3582a111758ec302caf6cd987e6fa2a173cc3db8670f5ea",
+      "bytes": 95
+    },
+    {
+      "path": "fixtures/old.html",
+      "sha256": "ccb0f33c279333bff64444ee713f0f8e0d9de8124acc0663a71ca26ff7242129",
+      "bytes": 95
+    },
+    {
+      "path": "input/canonical.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "input/observations.json",
+      "sha256": "4daf6007f84f23b6ef06f200f2206cb58dc6bc0dc64fb41e6f2a0a9b39eb843d",
+      "bytes": 487
+    },
+    {
+      "path": "input/policy.json",
+      "sha256": "ea4dbc448799be4ed477fd60afb75168c479204a7019b73b3d4a2b7c9b42ac7c",
+      "bytes": 386
+    }
+  ],
+  "sha256": "7709159c5d30a3e9887cfde84f49d3150b3eaf5667c1d5092bc589911e63aafe"
+}

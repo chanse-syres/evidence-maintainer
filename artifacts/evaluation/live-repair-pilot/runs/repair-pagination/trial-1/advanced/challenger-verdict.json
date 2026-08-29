@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "obs-pagination-token",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The adapter assumes a valid, acyclic continuation chain; malformed or cyclic upstream tokens would not terminate."
+  ],
+  "summary": "The proposed traversal follows each response-provided nextPage token through null termination, passes both supplied fixtures, preserves numeric chains, and modifies only the allowed adapter.ts surface."
+}

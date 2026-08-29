@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "Roster records moved from the top-level players path to data.roster.",
+  "failureOwner": "adapter.ts",
+  "evidenceUsed": [
+    "obs-json-nesting",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.json",
+    "fixtures/new.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "roster player extraction",
+    "Player"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "export function extractPlayers(payload: unknown): Player[] {\n  const players = (payload as { players?: Player[] }).players ?? [];\n  return players.map(({ id, name }) => ({ id, name }));\n}",
+      "replace": "export function extractPlayers(payload: unknown): Player[] {\n  const envelope = payload as { players?: Player[]; data?: { roster?: Player[] } };\n  const players = envelope.players ?? envelope.data?.roster ?? [];\n  return players.map(({ id, name }) => ({ id, name }));\n}",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable",
+    "Unrelated arrays remain unsupported"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Repair the adapter to accept the documented data.roster envelope while retaining top-level players support.",
+  "arm": "baseline",
+  "executedCommands": []
+}

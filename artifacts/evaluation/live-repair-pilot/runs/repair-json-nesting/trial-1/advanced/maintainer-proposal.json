@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-json-nesting",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter reads only the legacy `players` path, while the authoritative observation establishes that roster records now reside at `data.roster`.",
+  "failureOwner": "adapter extraction logic",
+  "evidenceUsed": [
+    "evt-003",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.json",
+    "fixtures/new.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "roster player payload extraction"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "  const players = (payload as { players?: Player[] }).players ?? [];\n  return players.map(({ id, name }) => ({ id, name }));",
+      "replace": "  const source = payload as { players?: Player[]; data?: { roster?: Player[] } };\n  const players = source.players ?? source.data?.roster ?? [];\n  return players.map(({ id, name }) => ({ id, name }));",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new payloads produce the same normalized records",
+    "Record IDs remain stable"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Propose a bounded adapter repair that supports the documented `players` to `data.roster` envelope transition while retaining legacy extraction and stable normalized IDs."
+}

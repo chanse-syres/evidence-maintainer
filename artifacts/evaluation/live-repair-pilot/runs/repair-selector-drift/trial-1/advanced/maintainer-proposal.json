@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-selector-drift",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "The adapter requires the presentation class \"player-card\", so it returns no athlete for the new roster fixture even though data-athlete-id remains stable.",
+  "failureOwner": "adapter selector implementation",
+  "evidenceUsed": [
+    "obs-selector-drift",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/old.html",
+    "fixtures/new.html",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete extraction",
+    "roster HTML selector"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "  const pattern = /<article class=\"player-card\" data-athlete-id=\"([^\"]+)\"><span data-name>([^<]+)<\\/span><\\/article>/g;",
+      "replace": "  const pattern = /<article\\b[^>]*\\bdata-athlete-id=\"([^\"]+)\"[^>]*>\\s*<span\\b[^>]*\\bdata-name\\b[^>]*>([^<]+)<\\/span>\\s*<\\/article>/g;",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Old and new fixtures return identical athlete identities",
+    "Presentation classes are not authority",
+    "Preserve old fixture behavior"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Repair the selector in adapter.ts to anchor extraction on the stable data-athlete-id semantic attribute rather than the redesign-sensitive presentation class."
+}

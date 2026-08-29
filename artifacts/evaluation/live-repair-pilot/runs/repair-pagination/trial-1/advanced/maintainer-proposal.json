@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "adapter.ts converts the supplied start address to a number and therefore does not load the first opaque-token page.",
+  "failureOwner": "adapter pagination traversal logic",
+  "evidenceUsed": [
+    "obs-pagination-token",
+    "input/policy.json",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "pagination collection adapter"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "export function collectPages(loadPage: (address: string) => Page, start: string): string[] {\n  const records: string[] = [];\n  let page = Number(start);\n  while (Number.isInteger(page) && page <= 3) {\n    records.push(...loadPage(String(page)).records);\n    page += 1;\n  }\n  return records;\n}\n",
+      "replace": "export function collectPages(loadPage: (address: string) => Page, start: string): string[] {\n  const records: string[] = [];\n  let address: string | null = start;\n  while (address !== null) {\n    const page = loadPage(address);\n    records.push(...page.records);\n    address = page.nextPage;\n  }\n  return records;\n}\n",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Replace numeric page synthesis with traversal of each response-provided nextPage address until the continuation is null, preserving both opaque cursor and historical numeric chains."
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-pagination",
+  "action": "REPAIR_ADAPTER",
+  "firstMaterialDivergence": "adapter.ts derives sequential numeric addresses instead of following each response's nextPage continuation address.",
+  "failureOwner": "adapter",
+  "evidenceUsed": [
+    "obs-pagination-token",
+    "adapter.ts",
+    "adapter.test.ts",
+    "fixtures/new.json",
+    "fixtures/old.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "pagination collection"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "  const records: string[] = [];\n  let page = Number(start);\n  while (Number.isInteger(page) && page <= 3) {\n    records.push(...loadPage(String(page)).records);\n    page += 1;\n  }\n  return records;",
+      "replace": "  const records: string[] = [];\n  let address: string | null = start;\n  while (address !== null) {\n    const page = loadPage(address);\n    records.push(...page.records);\n    address = page.nextPage;\n  }\n  return records;",
+      "expectedCount": 1
+    }
+  ],
+  "preservedInvariants": [
+    "Every fixture record appears exactly once",
+    "Historical numeric pagination remains supported"
+  ],
+  "unresolvedUncertainty": [
+    "The required deterministic test command could not be executed because local command execution was blocked by policy."
+  ],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "A bounded adapter repair is justified: follow the opaque or numeric continuation supplied by each page and stop only when it is null. The required test command was attempted but blocked, so no test-success claim is made.",
+  "arm": "baseline",
+  "executedCommands": []
+}
