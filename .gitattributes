@@ -1,0 +1,2 @@
+# Benchmark case bytes are provenance-bound; never rewrite their line endings.
+cases/** -text
