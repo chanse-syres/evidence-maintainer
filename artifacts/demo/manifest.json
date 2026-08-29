@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-28T23:54:26.461Z",
+  "sourceMode": "recorded",
+  "sourceModel": "recorded-fixture",
+  "caseSetHash": "8302147a31f328ee0c92d1ec6205d3b0f7f98c7b6e3f0f50668dcef57628364d",
+  "summary": {
+    "baselineSdr": 0.16666666666666666,
+    "advancedSdr": 1,
+    "absoluteSdrChange": 0.8333333333333334
+  },
+  "reports": [
+    {
+      "caseId": "noop-duplicate-news",
+      "path": "reports/noop-duplicate-news.html",
+      "sha256": "358a409393693060e11774620f3832dc581aa52a4528835c83751e71fcfef558"
+    },
+    {
+      "caseId": "noop-filtered-removal",
+      "path": "reports/noop-filtered-removal.html",
+      "sha256": "9b5244d425ae2b3caf5a3c7d94644c251dfdc2f16aacb4ad58a2c2db46d9366a"
+    },
+    {
+      "caseId": "noop-newer-publication-stale-effective",
+      "path": "reports/noop-newer-publication-stale-effective.html",
+      "sha256": "1d9a70cb13d3d0331241c0456e07e150c0484639590bdff352d33a045b781b03"
+    },
+    {
+      "caseId": "repair-json-nesting",
+      "path": "reports/repair-json-nesting.html",
+      "sha256": "658466d5f01a1fd6100d60c6058f5a323b10d47b163c5d3c6efd3067986d3432"
+    },
+    {
+      "caseId": "repair-pagination",
+      "path": "reports/repair-pagination.html",
+      "sha256": "a7c142b443fe49a68596a098e5252b264947258e1f1ac9451e07bad7347a3aec"
+    },
+    {
+      "caseId": "repair-selector-drift",
+      "path": "reports/repair-selector-drift.html",
+      "sha256": "4eb8648aad7d18cbeaf424fd5f158a2ff7579a9a41f8b653a6502092d9aa487c"
+    },
+    {
+      "caseId": "retry-deferred-406",
+      "path": "reports/retry-deferred-406.html",
+      "sha256": "c8110a9377a5154d4e98daed3fa81b9dee0224fa76372c87dfcd82a2193f8b66"
+    },
+    {
+      "caseId": "retry-partial-document",
+      "path": "reports/retry-partial-document.html",
+      "sha256": "cdbcb5b7981e45851b04c6b3522f928038e3795fd3b94da1c1c18718eed7ac55"
+    },
+    {
+      "caseId": "retry-timeout-cache",
+      "path": "reports/retry-timeout-cache.html",
+      "sha256": "0fcc5bbedccbceeda1c0b61324ae9703468bfc9d16330b5eceaa8f127ec16558"
+    },
+    {
+      "caseId": "update-authoritative-rating",
+      "path": "reports/update-authoritative-rating.html",
+      "sha256": "e04680742cf30602a43988b1cec6f75f22bb7fec0e531ef722295007c7e07a75"
+    },
+    {
+      "caseId": "update-official-commitment",
+      "path": "reports/update-official-commitment.html",
+      "sha256": "f3f862b74dbe08135961304f096f5e4d1bebd356dc4f1889e818717d62793e58"
+    },
+    {
+      "caseId": "update-transfer-destination",
+      "path": "reports/update-transfer-destination.html",
+      "sha256": "3de94ba132f0dfd91b87d0e76318693127929f5685c1249792a44d54fe40e723"
+    }
+  ]
+}
