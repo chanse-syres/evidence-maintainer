@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04af5-e545-7010-8886-b7997e2524fd"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-name-collision\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"evt-003\",\"evt-004\"],\"violations\":[],\"residualRisks\":[\"The recipient remains unresolved and could be either canonical Jordan Lee or a third person until stable identification evidence is supplied.\"],\"summary\":\"The authoritative, fresh award observation contains only a shared name and no disambiguators; abstaining makes no write and preserves both identity-safety invariants.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17410,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":247,"reasoning_output_tokens":132}}

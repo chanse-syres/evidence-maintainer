@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "NO_ACTION",
+  "firstMaterialDivergence": "The award observation identifies only the name \"Jordan Lee\" while two active canonical records share that name, with no stable identifier or two independent disambiguators.",
+  "failureOwner": "official-awards-feed",
+  "evidenceUsed": [
+    "obs-name-only-award",
+    "input/canonical.json",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "person-81",
+    "person-82",
+    "obs-name-only-award"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "No canonical identity can be resolved safely from the supplied name-only observation."
+    }
+  ],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the announced Jordan Lee is person-81, person-82, or neither canonical record."
+  ],
+  "minimumInformationRequest": [
+    "A stable source identifier for the award recipient, or two independent disambiguators that uniquely resolve the recipient."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Safely abstain: the evidence does not justify attaching the Regional Scholar award to either matching canonical identity."
+}

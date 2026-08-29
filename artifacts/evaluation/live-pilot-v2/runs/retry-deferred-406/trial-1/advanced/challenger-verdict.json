@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-deferred-406",
+    "input/policy.json"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The supplied evidence does not identify the adapter implementation or retry-state representation, so the later sandbox repair must verify the retry counter is persisted and capped at two attempts."
+  ],
+  "summary": "The 406 observation explicitly identifies an expected deferral with a valid cache and a 30-minute retry interval; the cached 42-record value is within the 60-minute policy window. The proposal makes no write outside the allowed surface and preserves both required invariants."
+}

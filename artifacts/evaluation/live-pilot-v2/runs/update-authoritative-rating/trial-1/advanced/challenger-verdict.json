@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "verdict": "REJECT",
+  "evidenceIds": [
+    "input/policy.json",
+    "input/canonical.json",
+    "obs-scoutmetric-rating"
+  ],
+  "violations": [
+    "The proposed assignment to ratingAsOf is outside the policy's explicit authority map: ScoutMetric is authorized for rating only, and no authority is established for ratingAsOf."
+  ],
+  "residualRisks": [
+    "The rating change to 93 is supported by a fresh ScoutMetric-authoritative observation and preserves the record identity and RankGrid-owned value, but the proposal must remove or separately justify the ratingAsOf write."
+  ],
+  "summary": "Reject the proposal as written because it performs an unsupported companion-field update beyond the provider's named authority."
+}

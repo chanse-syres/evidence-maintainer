@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-deferred-406",
+  "action": "RETRY_LATER",
+  "firstMaterialDivergence": "The provider returned the contract-defined deferred 406 response; it does not establish a divergence in cached data.",
+  "failureOwner": "public-provider",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json",
+    "obs-deferred-406"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "source-41",
+    "public-provider"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The valid 42-record cache remains authoritative during the expected 406 deferral."
+    }
+  ],
+  "preservedInvariants": [
+    "A deferred response cannot delete cached records",
+    "Retries are bounded"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": "Retry public-provider at or after 2026-08-28T17:20:00.000Z, with no more than two retries total, while retaining the valid cache.",
+  "approvalLevel": "NONE",
+  "summary": "Retain source-41 unchanged and defer retrieval: the 406 explicitly signals a 30-minute temporary deferral with a valid, fresh cache.",
+  "arm": "baseline",
+  "executedCommands": []
+}

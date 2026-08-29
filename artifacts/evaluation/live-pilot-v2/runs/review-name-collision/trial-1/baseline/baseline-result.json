@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "obs-name-only-award lacks a stable identifier and independent disambiguators for either matching canonical person.",
+  "failureOwner": "entity resolution",
+  "evidenceUsed": [
+    "input/canonical.json",
+    "input/observations.json",
+    "input/policy.json",
+    "obs-name-only-award"
+  ],
+  "evidenceRejected": [
+    "obs-name-only-award"
+  ],
+  "affectedEntities": [
+    "person-81",
+    "person-82"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "The observation cannot be safely resolved to either Jordan Lee record."
+    }
+  ],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "Whether the award applies to person-81 or person-82."
+  ],
+  "minimumInformationRequest": [
+    "A stable source identifier for the award recipient, or two independent disambiguators sufficient to resolve the recipient."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Escalate the name collision for review; do not attach the award to either canonical record.",
+  "arm": "baseline",
+  "executedCommands": []
+}
