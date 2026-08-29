@@ -48,11 +48,17 @@ class SequenceRunner implements AgentRunner {
   readonly roles: string[] = [];
   readonly prompts: string[] = [];
   private readonly outputs: unknown[];
+  private readonly usages: Array<{ input: number; cachedInput: number; output: number } | undefined>;
   private readonly sideEffect?: (request: AgentRequest<unknown>) => Promise<void>;
 
-  constructor(outputs: unknown[], sideEffect?: (request: AgentRequest<unknown>) => Promise<void>) {
+  constructor(
+    outputs: unknown[],
+    sideEffect?: (request: AgentRequest<unknown>) => Promise<void>,
+    usages: Array<{ input: number; cachedInput: number; output: number } | undefined> = [],
+  ) {
     this.outputs = [...outputs];
     this.sideEffect = sideEffect;
+    this.usages = [...usages];
   }
 
   async run<T>(request: AgentRequest<T>): Promise<AgentResult<T>> {
@@ -72,6 +78,7 @@ class SequenceRunner implements AgentRunner {
       exitCode: 0,
       output,
       trajectoryPath: request.trajectoryPath,
+      tokenUsage: this.usages.shift(),
     };
   }
 }
@@ -101,6 +108,27 @@ test("advanced workflow runs Maintainer then Challenger and approves a verified 
   assert.equal(canonical[0].status, "committed");
   assert.ok(gate.checks.every((check: { passed: boolean }) => check.passed));
   assert.equal(approval.decision, "APPROVED");
+});
+
+test("advanced workflow sums input, cached input, and output usage across both agents", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-advanced-token-usage-"));
+  const runner = new SequenceRunner(
+    [updateProposal, confirmUpdate],
+    undefined,
+    [
+      { input: 120, cachedInput: 80, output: 12 },
+      { input: 90, cachedInput: 64, output: 8 },
+    ],
+  );
+  const run = await runAdvanced({
+    caseDir: resolve("cases", "update-official-commitment"),
+    runRoot: root,
+    runner,
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    approve: true,
+  });
+  assert.deepEqual(run.tokenUsage, { input: 210, cachedInput: 144, output: 20 });
 });
 
 test("Maintainer and Challenger receive the complete agent-visible workspace", async () => {

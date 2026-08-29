@@ -23,7 +23,7 @@ export interface AgentResult<T> {
   exitCode: number;
   output: T;
   trajectoryPath: string;
-  tokenUsage?: { input: number; output: number };
+  tokenUsage?: { input: number; cachedInput: number; output: number };
 }
 
 export interface AgentRunner {

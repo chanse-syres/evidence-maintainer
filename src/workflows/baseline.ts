@@ -202,7 +202,11 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
     trajectoryPaths: [relative(runRoot, trajectoryPath).replaceAll("\\", "/")],
     artifactSha256: await hashArtifacts(runRoot, artifactPaths),
     tokenUsage: agent.tokenUsage
-      ? { input: agent.tokenUsage.input, cachedInput: 0, output: agent.tokenUsage.output }
+      ? {
+          input: agent.tokenUsage.input,
+          cachedInput: agent.tokenUsage.cachedInput,
+          output: agent.tokenUsage.output,
+        }
       : null,
     outcome: gate.status,
   });

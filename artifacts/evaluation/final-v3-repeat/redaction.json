@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "scope": "runs/repair-selector-drift/trial-1/advanced/error.json",
+  "removedField": "stack",
+  "reason": "Remove local filesystem paths from the public evidence copy without changing the failure message or classification.",
+  "originalArtifactSha256": "1d04c9c8ed3b09783a386f992513ff8ac9cc064e08e224dd63063e7177b737bf"
+}

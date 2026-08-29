@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-gauge-unit-normalization",
+  "expectedAction": "UPDATE_DATA",
+  "requiredEvidenceIds": [
+    "obs-approved-stage-feet"
+  ],
+  "allowedChangedFiles": [
+    "input/canonical.json"
+  ],
+  "expectedRecords": [
+    {
+      "file": "input/canonical.json",
+      "recordId": "gauge-1042",
+      "fields": {
+        "stageMeters": 3.81,
+        "stageMeasuredAt": "2026-08-28T15:00:00.000Z",
+        "dischargeCubicMetersPerSecond": 24.7,
+        "stationStatus": "active"
+      }
+    }
+  ],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

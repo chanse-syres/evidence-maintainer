@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "pricingSnapshot": {
+    "schemaVersion": 1,
+    "model": "gpt-5.6-terra",
+    "asOf": "2026-08-28",
+    "currency": "USD",
+    "unit": "one-million-tokens",
+    "inputPerMillionUsd": 2,
+    "cachedInputPerMillionUsd": 0.2,
+    "outputPerMillionUsd": 12,
+    "source": "https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/",
+    "note": "API list-price estimate. Actual Codex subscription or credit billing may differ.",
+    "sha256": "07792422929e755a0f454aba6b2c808d0745b63a132e86ec0272b38a467658c7"
+  },
+  "completedWorkflowRuns": {
+    "baseline": {
+      "workflowRuns": 45,
+      "workflowRunsWithUsage": 45,
+      "tokenUsage": {
+        "input": 991506,
+        "cachedInput": 668416,
+        "output": 19976,
+        "uncachedInput": 323090,
+        "total": 1011482
+      },
+      "estimatedCostUsd": 1.0195752
+    },
+    "advanced": {
+      "workflowRuns": 45,
+      "workflowRunsWithUsage": 44,
+      "tokenUsage": {
+        "input": 1780453,
+        "cachedInput": 1058304,
+        "output": 28656,
+        "uncachedInput": 722149,
+        "total": 1809109
+      },
+      "estimatedCostUsd": 1.9998308
+    }
+  },
+  "campaignActual": {
+    "modelSessions": 134,
+    "sessionsWithUsage": 134,
+    "includesPartialFailedSession": true,
+    "tokenUsage": {
+      "input": 2793690,
+      "cachedInput": 1741824,
+      "output": 48978,
+      "total": 2842668,
+      "uncachedInput": 1051866
+    },
+    "estimatedCostUsd": 3.0398327999999997
+  },
+  "comparisons": {
+    "meanCompletedRunTokenOverhead": 0.8292219867841084,
+    "meanCompletedRunLatencyOverhead": 0.6015053961290437
+  },
+  "caveat": "Cost is an API list-price estimate. The incomplete advanced workflow is included in campaignActual but omitted from completed-run resource averages."
+}

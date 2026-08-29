@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "review-unknown-coordinate-reference",
+  "title": "Escalate a near-boundary permit with an unknown coordinate reference",
+  "description": "An official permit location cannot be compared safely with an official boundary because its reference system and accuracy are absent.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic geospatial authority and uncertainty pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ca1c8caf95c80180207f07a1e596e85ca6e823d768fe35b8de894b4f2266401e"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "11a158a9d965ab5ecc5ff6368affb5bd30aea3082b37e765be5a841757dbca17"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "c1daec680f8d5ec8fdf3c24b4f4a50cb6a623758c62de7201fc83ca95a1e7ef9"
+    }
+  ]
+}

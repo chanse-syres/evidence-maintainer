@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-superseded-amendment",
+  "title": "Materialize the terminal amendment rather than an intermediate change",
+  "description": "An official deadline extension is explicitly rescinded by the next authoritative revision before cutoff.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic ordered-amendment materialization pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "332f3d93e3e5d9549c66c76b288761e8df12451f6b8b7ed8e61187bee351e628"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a491693a622085757c1f9e197d2a99eb8f8bc4db24beb48cf2ad61ef65056b77"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "f02e79e60b59f56b1442668203ce0bc0ff4a5eed11ae254497bff17d798ac3c8"
+    }
+  ]
+}

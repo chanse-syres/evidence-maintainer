@@ -69,16 +69,27 @@ function extractOutput(events: unknown[]): unknown {
   throw new Error("No structured agent output was present in the Codex trajectory");
 }
 
-function extractUsage(events: unknown[]): { input: number; output: number } | undefined {
+export function extractCodexUsage(
+  events: unknown[],
+): { input: number; cachedInput: number; output: number } | undefined {
   for (const event of [...events].reverse()) {
     if (typeof event !== "object" || event === null) continue;
     const usage = (event as Record<string, unknown>).usage;
     if (typeof usage !== "object" || usage === null) continue;
     const record = usage as Record<string, unknown>;
     const input = record.input_tokens ?? record.input;
+    const cachedInput = record.cached_input_tokens ?? record.cachedInput ?? 0;
     const output = record.output_tokens ?? record.output;
-    if (typeof input === "number" && typeof output === "number") {
-      return { input, output };
+    if (
+      typeof input === "number" &&
+      typeof cachedInput === "number" &&
+      typeof output === "number" &&
+      input >= 0 &&
+      cachedInput >= 0 &&
+      cachedInput <= input &&
+      output >= 0
+    ) {
+      return { input, cachedInput, output };
     }
   }
   return undefined;
@@ -140,7 +151,7 @@ export class CodexRunner implements AgentRunner {
       );
     }
     const finished = new Date();
-    const tokenUsage = extractUsage(events);
+    const tokenUsage = extractCodexUsage(events);
     return {
       mode: "live",
       role: request.role,

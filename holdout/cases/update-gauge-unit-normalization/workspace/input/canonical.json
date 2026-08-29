@@ -1,0 +1,9 @@
+[
+  {
+    "id": "gauge-1042",
+    "stageMeters": 3.6576,
+    "stageMeasuredAt": "2026-08-27T12:00:00.000Z",
+    "dischargeCubicMetersPerSecond": 24.7,
+    "stationStatus": "active"
+  }
+]

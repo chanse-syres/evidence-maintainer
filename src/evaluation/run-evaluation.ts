@@ -1,10 +1,11 @@
-import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { CodexRunner } from "../agents/codex-runner.ts";
 import { RecordedRunner } from "../agents/recorded-runner.ts";
 import type { AgentRunner } from "../agents/runner.ts";
 import { loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json } from "../core/canonical-json.ts";
+import { CaseOracleSchema } from "../core/schemas.ts";
 import { runAdvanced } from "../workflows/advanced.ts";
 import { runBaseline } from "../workflows/baseline.ts";
 import { aggregateRows, type AggregateSummary } from "./aggregate.ts";
@@ -17,6 +18,7 @@ export interface RunEvaluationConfig {
   model: string;
   timeoutMs: number;
   outDir: string;
+  caseRoot?: string;
   runner?: AgentRunner;
 }
 
@@ -34,20 +36,24 @@ async function writeJson(path: string, value: unknown): Promise<void> {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
-function errorRow(input: {
+export function createExecutionErrorRow(input: {
   caseId: string;
   arm: "baseline" | "advanced";
   mode: "live" | "recorded";
   model: string;
   runPath: string;
+  expectedAction: string;
+  trial: number;
 }): EvaluationRow {
+  const requiredReview = input.expectedAction === "HUMAN_REVIEW";
   return {
-    runId: `${input.caseId}-${input.arm}-error`,
+    runId: `${input.caseId}-${input.arm}-trial-${input.trial}-error`,
     caseId: input.caseId,
     arm: input.arm,
     mode: input.mode,
     model: input.model,
     action: "ERROR",
+    expectedAction: input.expectedAction,
     actionCorrect: false,
     artifactCorrect: false,
     noForbiddenMutation: false,
@@ -56,8 +62,17 @@ function errorRow(input: {
     safeDecision: false,
     unsafeMutation: false,
     correctAbstention: false,
-    durationMs: 0,
-    totalTokens: 0,
+    reviewReady: false,
+    evidenceDefect: false,
+    unnecessaryEscalation: false,
+    missedRequiredEscalation: requiredReview,
+    avoidableHumanIntervention: !requiredReview,
+    estimatedHumanTouch: true,
+    durationMs: null,
+    inputTokens: null,
+    cachedInputTokens: null,
+    outputTokens: null,
+    totalTokens: null,
     changedFiles: [],
     runPath: input.runPath,
   };
@@ -67,6 +82,7 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
   if (config.caseIds.length === 0) throw new Error("Evaluation requires at least one case");
   if (!Number.isInteger(config.trials) || config.trials <= 0) throw new Error("Trials must be a positive integer");
   const outDir = resolve(config.outDir);
+  const caseRoot = resolve(config.caseRoot ?? "cases");
   await mkdir(join(outDir, "runs"), { recursive: true });
   const runner = config.runner ?? (
     config.mode === "recorded"
@@ -74,9 +90,13 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
       : new CodexRunner()
   );
   const caseHashes = [];
+  const expectedActions = new Map<string, string>();
   for (const caseId of config.caseIds) {
-    const loaded = await loadPublicCase(resolve("cases", caseId));
+    const caseDir = join(caseRoot, caseId);
+    const loaded = await loadPublicCase(caseDir);
+    const oracle = CaseOracleSchema.parse(JSON.parse(await readFile(join(caseDir, "oracle.json"), "utf8")));
     caseHashes.push({ caseId, workspaceHash: loaded.workspaceHash });
+    expectedActions.set(caseId, oracle.expectedAction);
   }
   const rows: EvaluationRow[] = [];
   for (const caseId of config.caseIds) {
@@ -88,14 +108,14 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
         try {
           const run = arm === "baseline" ? runBaseline : runAdvanced;
           await run({
-            caseDir: resolve("cases", caseId),
+            caseDir: join(caseRoot, caseId),
             runRoot: runPath,
             runner,
             model: config.model,
             timeoutMs: config.timeoutMs,
             approve: true,
           });
-          const row = await scoreRun(runPath);
+          const row = await scoreRun(runPath, { expectedAction: expectedActions.get(caseId)! });
           row.runPath = relative(outDir, runPath).replaceAll("\\", "/");
           rows.push(row);
         } catch (error) {
@@ -105,12 +125,14 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
             message: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : undefined,
           });
-          rows.push(errorRow({
+          rows.push(createExecutionErrorRow({
             caseId,
             arm,
             mode: config.mode,
             model: config.model,
             runPath: relative(outDir, runPath).replaceAll("\\", "/"),
+            expectedAction: expectedActions.get(caseId)!,
+            trial,
           }));
         }
       }
@@ -132,7 +154,7 @@ export async function runEvaluation(config: RunEvaluationConfig): Promise<Evalua
   return summary;
 }
 
-export async function resolveCaseSelection(selection: string): Promise<string[]> {
+export async function resolveCaseSelection(selection: string, caseRoot = "cases"): Promise<string[]> {
   const core = [
     "update-official-commitment",
     "update-transfer-destination",
@@ -149,7 +171,7 @@ export async function resolveCaseSelection(selection: string): Promise<string[]>
   ];
   if (selection === "core") return core;
   if (selection === "all") {
-    return (await readdir(resolve("cases"), { withFileTypes: true }))
+    return (await readdir(resolve(caseRoot), { withFileTypes: true }))
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
       .sort();

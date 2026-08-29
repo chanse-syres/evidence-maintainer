@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {},
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Legacy UTC input remains unchanged",
+    "Closure identity and input order remain stable",
+    "Normalized instants are independent of the host timezone and end after start"
+  ],
+  "rules": [
+    "Apply each endpoint's own offset rather than a record-wide offset",
+    "A local wall-clock end may precede its start during a daylight-saving fallback"
+  ]
+}

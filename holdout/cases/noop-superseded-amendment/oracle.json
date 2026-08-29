@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "noop-superseded-amendment",
+  "expectedAction": "NO_ACTION",
+  "requiredEvidenceIds": [
+    "obs-amendment-42",
+    "obs-rescission-43"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

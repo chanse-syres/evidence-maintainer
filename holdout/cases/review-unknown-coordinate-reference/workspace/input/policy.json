@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {
+    "jurisdiction": "official-city-boundary+official-permit-register",
+    "feeClass": "official-city-boundary+official-permit-register"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Jurisdiction changes only when location and boundary use an explicit common reference",
+    "Uncertainty that crosses a boundary cannot be collapsed into a fee classification"
+  ],
+  "rules": [
+    "Numeric coordinate shape is not evidence of a coordinate reference system",
+    "Request reference and accuracy evidence when the possible location overlaps the boundary"
+  ]
+}

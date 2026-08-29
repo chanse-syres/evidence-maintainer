@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import { MaintainerProposalSchema } from "../src/core/schemas.ts";
-import { createCodexArgs } from "../src/agents/codex-runner.ts";
+import { createCodexArgs, extractCodexUsage } from "../src/agents/codex-runner.ts";
 import { loadPrompt } from "../src/agents/prompt-loader.ts";
 import { RecordedRunner } from "../src/agents/recorded-runner.ts";
 
@@ -80,6 +80,14 @@ test("Codex runner builds a shell-free argument vector", () => {
     "C:/sandbox/case-1",
     "-",
   ]);
+});
+
+test("Codex usage preserves cached input without double-counting it", () => {
+  const usage = extractCodexUsage([
+    { type: "turn.completed", usage: { input_tokens: 7, cached_input_tokens: 1, output_tokens: 3 } },
+    { type: "turn.completed", usage: { input_tokens: 10, cached_input_tokens: 2, output_tokens: 4 } },
+  ]);
+  assert.deepEqual(usage, { input: 10, cachedInput: 2, output: 4 });
 });
 
 test("prompt loader performs explicit substitutions and rejects unresolved variables", async () => {

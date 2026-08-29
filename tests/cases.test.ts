@@ -7,6 +7,7 @@ import { join, resolve } from "node:path";
 import test from "node:test";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../src/core/case-loader.ts";
 import { BaselineResultSchema, ChallengerVerdictSchema, MaintainerProposalSchema } from "../src/core/schemas.ts";
+import { generateHoldoutCases, HOLDOUT_CASE_IDS } from "../scripts/generate-holdout-cases.ts";
 
 export const CORE_CASE_IDS = [
   "update-official-commitment",
@@ -93,6 +94,23 @@ test("the full suite contains fifteen hash-verified cases with a balanced action
     RETRY_LATER: 3,
     UPDATE_DATA: 3,
   });
+});
+
+test("the untouched holdout generator creates one hash-verified case per action", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-holdout-cases-"));
+  assert.deepEqual(await generateHoldoutCases(root), [...HOLDOUT_CASE_IDS]);
+  const actions = new Set<string>();
+  for (const caseId of HOLDOUT_CASE_IDS) {
+    const loaded = await loadPublicCase(join(root, caseId));
+    const oracle = await loadOracle(join(root, caseId));
+    assert.equal(loaded.manifest.id, caseId);
+    assert.match(loaded.workspaceHash, /^[a-f0-9]{64}$/);
+    actions.add(oracle.expectedAction);
+  }
+  assert.deepEqual(
+    [...actions].sort(),
+    ["HUMAN_REVIEW", "NO_ACTION", "REPAIR_ADAPTER", "RETRY_LATER", "UPDATE_DATA"],
+  );
 });
 
 test("human-review cases require escalation, exact missing information, and zero mutation", async () => {

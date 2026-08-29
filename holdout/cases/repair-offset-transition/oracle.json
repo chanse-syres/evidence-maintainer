@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "repair-offset-transition",
+  "expectedAction": "REPAIR_ADAPTER",
+  "requiredEvidenceIds": [
+    "obs-local-offset-contract"
+  ],
+  "allowedChangedFiles": [
+    "adapter.ts"
+  ],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {
+    "node --experimental-strip-types --test adapter.test.ts": 0
+  }
+}

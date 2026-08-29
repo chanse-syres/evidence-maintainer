@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-release-generation-skew",
+  "title": "Defer a complete payload that belongs to the wrong release generation",
+  "description": "A signed manifest and a schema-valid payload are individually healthy but belong to adjacent release generations.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic multi-artifact publication-skew pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "fc77ab602f47c1e7768e4d7977dc4a91da979564006a4052e3ffd7b0af883246"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "32ef6eaa695c562cbc32d10ee4940db238e787fef17cca41c36a8010846b21fa"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "e165d5f6153aa4062d44836decbf9886dde410bf6a9c084ab90cb1841863cca9"
+    }
+  ]
+}

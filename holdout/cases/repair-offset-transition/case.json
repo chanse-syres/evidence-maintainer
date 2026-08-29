@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "repair-offset-transition",
+  "title": "Repair per-endpoint offsets across a civil-time fallback",
+  "description": "A transit feed moves from UTC timestamps to local wall-clock values with an offset on each endpoint.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic public-transit timestamp-contract transition",
+  "agentVisibleFiles": [
+    "workspace/adapter.test.ts",
+    "workspace/adapter.ts",
+    "workspace/fixtures/current.json",
+    "workspace/fixtures/legacy.json",
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "adapter.ts"
+  ],
+  "requiredCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "provenance": [
+    {
+      "sourceId": "holdout-adapter.test.ts",
+      "path": "workspace/adapter.test.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "64675cbd7507c1540063f191b31da83fa15c97cd3356c03f1d9ce7d64ecfce8f"
+    },
+    {
+      "sourceId": "holdout-adapter.ts",
+      "path": "workspace/adapter.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "89801e83bed35d3666289eea444e9be8a6fd08c6c3fdc92e00e62527da38e4c8"
+    },
+    {
+      "sourceId": "holdout-fixtures-current.json",
+      "path": "workspace/fixtures/current.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "29b467b5195defb9285d59c2b418ac3013a0c8cea73d1132fffcd042f8ee9a93"
+    },
+    {
+      "sourceId": "holdout-fixtures-legacy.json",
+      "path": "workspace/fixtures/legacy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ba84e91839e79a372ba0eae6054c4e3cc1917624231ef2c1382234ecaa19c32c"
+    },
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a99844231967a8e3c10db773f494ec04465918a9b8a08626e111b8e7eb5aa330"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ea8c9284832dec72a6849fd1a57e3f653bc03a13eb3cd4c9e11720d8a2550a21"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "caseId": "retry-release-generation-skew",
+  "expectedAction": "RETRY_LATER",
+  "requiredEvidenceIds": [
+    "obs-manifest-generation-88",
+    "obs-payload-generation-87"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "requiredMinimumInformation": [],
+  "requiredRetryConditionIncludes": [
+    "10 minutes",
+    "generation 88",
+    "third"
+  ],
+  "expectedCommandExitCodes": {}
+}

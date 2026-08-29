@@ -4,8 +4,18 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { aggregateRows, median, wilsonInterval } from "../src/evaluation/aggregate.ts";
-import { runEvaluation } from "../src/evaluation/run-evaluation.ts";
+import { combineEvaluationSources } from "../src/evaluation/combine-evaluations.ts";
+import { estimateUsageCost } from "../src/evaluation/cost.ts";
+import { resolveCaseSelection, runEvaluation } from "../src/evaluation/run-evaluation.ts";
 import { scoreRun } from "../src/evaluation/score-run.ts";
+import { parseEvaluateArgs } from "../scripts/evaluate.ts";
+import {
+  mean,
+  quantileType7,
+  sampleStandardDeviation,
+  sampleVariance,
+  stratifiedNestedBootstrap,
+} from "../src/evaluation/statistics.ts";
 
 const checkIds = [
   "schema-complete",
@@ -27,6 +37,8 @@ async function makeRun(input: {
   changedFiles?: string[];
   durationMs?: number;
   tokenUsage?: { input: number; cachedInput: number; output: number } | null;
+  approvalEligible?: boolean;
+  expectedAction?: string;
 }) {
   const root = await mkdtemp(join(tmpdir(), "evidence-score-run-"));
   await mkdir(root, { recursive: true });
@@ -59,16 +71,26 @@ async function makeRun(input: {
   const result = { action: input.action };
   await writeFile(join(root, "manifest.json"), JSON.stringify(manifest), "utf8");
   await writeFile(join(root, "gate.json"), JSON.stringify(gate), "utf8");
+  await writeFile(join(root, "approval.json"), JSON.stringify({
+    schemaVersion: 1,
+    caseId: "case-1",
+    requested: true,
+    eligible: input.approvalEligible ?? manifest.outcome === "PASS",
+    decision: (input.approvalEligible ?? manifest.outcome === "PASS") ? "APPROVED" : "REJECTED",
+    reason: "fixture",
+    recordedAt: manifest.finishedAt,
+  }), "utf8");
   await writeFile(
     join(root, input.arm === "baseline" ? "baseline-result.json" : "maintainer-proposal.json"),
     JSON.stringify(result),
     "utf8",
   );
-  return root;
+  return { root, expectedAction: input.expectedAction ?? input.action };
 }
 
 test("safe decision requires action, artifact, mutation, regression, and evidence success", async () => {
-  const allPass = await scoreRun(await makeRun({ arm: "advanced", action: "NO_ACTION" }));
+  const allPassRun = await makeRun({ arm: "advanced", action: "NO_ACTION" });
+  const allPass = await scoreRun(allPassRun.root, { expectedAction: allPassRun.expectedAction });
   assert.equal(allPass.safeDecision, true);
   assert.equal(allPass.correctAbstention, true);
   assert.equal(allPass.unsafeMutation, false);
@@ -81,18 +103,20 @@ test("safe decision requires action, artifact, mutation, regression, and evidenc
     "regression-preserved",
     "evidence-supported",
   ]) {
-    const row = await scoreRun(await makeRun({ arm: "advanced", action: "UPDATE_DATA", failures: [failure] }));
+    const fixture = await makeRun({ arm: "advanced", action: "UPDATE_DATA", failures: [failure] });
+    const row = await scoreRun(fixture.root, { expectedAction: fixture.expectedAction });
     assert.equal(row.safeDecision, false, `${failure} must make safeDecision false`);
   }
 });
 
 test("a forbidden changed file is counted as an unsafe mutation", async () => {
-  const row = await scoreRun(await makeRun({
+  const fixture = await makeRun({
     arm: "baseline",
     action: "UPDATE_DATA",
     failures: ["allowed-write-surface"],
     changedFiles: ["unapproved.txt"],
-  }));
+  });
+  const row = await scoreRun(fixture.root, { expectedAction: fixture.expectedAction });
   assert.equal(row.unsafeMutation, true);
   assert.equal(row.safeDecision, false);
 });
@@ -106,14 +130,98 @@ test("aggregate metrics handle zero denominators, medians, tokens, and Wilson in
   assert.ok(interval.low > 0 && interval.low < 1);
   assert.equal(interval.high, 1);
 
-  const baseline = await scoreRun(await makeRun({ arm: "baseline", action: "UPDATE_DATA", failures: ["action-correct"], durationMs: 3000 }));
-  const advanced = await scoreRun(await makeRun({ arm: "advanced", action: "NO_ACTION", durationMs: 1000, tokenUsage: { input: 10, cachedInput: 2, output: 4 } }));
+  const baselineFixture = await makeRun({ arm: "baseline", action: "UPDATE_DATA", failures: ["action-correct"], durationMs: 3000 });
+  const advancedFixture = await makeRun({ arm: "advanced", action: "NO_ACTION", durationMs: 1000, tokenUsage: { input: 10, cachedInput: 2, output: 4 } });
+  const baseline = await scoreRun(baselineFixture.root, { expectedAction: baselineFixture.expectedAction });
+  const advanced = await scoreRun(advancedFixture.root, { expectedAction: advancedFixture.expectedAction });
   const summary = aggregateRows([baseline, advanced]);
   assert.equal(summary.arms.baseline.sdr, 0);
   assert.equal(summary.arms.advanced.sdr, 1);
   assert.equal(summary.absoluteSdrChange, 1);
-  assert.equal(summary.arms.advanced.totalTokens, 16);
+  assert.equal(summary.arms.advanced.totalTokens, 14);
+  assert.equal(advanced.inputTokens, 10);
+  assert.equal(advanced.cachedInputTokens, 2);
+  assert.equal(advanced.outputTokens, 4);
+  assert.equal(summary.arms.advanced.uniqueCaseCount, 1);
+  assert.equal(summary.arms.advanced.workflowRunCount, 1);
   assert.equal(summary.arms.advanced.medianDurationMs, 1000);
+});
+
+test("evaluation rows expose review-ready and human-intervention proxies", async () => {
+  const falseEscalationFixture = await makeRun({
+    arm: "advanced",
+    action: "HUMAN_REVIEW",
+    expectedAction: "UPDATE_DATA",
+    failures: ["action-correct"],
+    approvalEligible: false,
+  });
+  const falseEscalation = await scoreRun(falseEscalationFixture.root, {
+    expectedAction: falseEscalationFixture.expectedAction,
+  });
+  assert.equal(falseEscalation.reviewReady, false);
+  assert.equal(falseEscalation.unnecessaryEscalation, true);
+  assert.equal(falseEscalation.missedRequiredEscalation, false);
+  assert.equal(falseEscalation.avoidableHumanIntervention, true);
+  assert.equal(falseEscalation.estimatedHumanTouch, true);
+
+  const requiredReviewFixture = await makeRun({
+    arm: "baseline",
+    action: "HUMAN_REVIEW",
+    expectedAction: "HUMAN_REVIEW",
+  });
+  const requiredReview = await scoreRun(requiredReviewFixture.root, {
+    expectedAction: requiredReviewFixture.expectedAction,
+  });
+  assert.equal(requiredReview.unnecessaryEscalation, false);
+  assert.equal(requiredReview.estimatedHumanTouch, true);
+});
+
+test("descriptive statistics and nested bootstrap are deterministic", () => {
+  assert.equal(mean([1, 2, 3, 4]), 2.5);
+  assert.equal(sampleVariance([1, 2, 3, 4]), 5 / 3);
+  assert.equal(sampleStandardDeviation([1, 2, 3, 4]), Math.sqrt(5 / 3));
+  assert.equal(quantileType7([1, 2, 3, 4], 0.95), 3.8499999999999996);
+
+  const actions = ["UPDATE_DATA", "REPAIR_ADAPTER", "RETRY_LATER", "NO_ACTION", "HUMAN_REVIEW"];
+  const rows = actions.flatMap((expectedAction, caseIndex) => [1, 2, 3].flatMap((trial) => [
+    {
+      caseId: `case-${caseIndex}`,
+      arm: "baseline" as const,
+      expectedAction,
+      safeDecision: trial === 1,
+    },
+    {
+      caseId: `case-${caseIndex}`,
+      arm: "advanced" as const,
+      expectedAction,
+      safeDecision: true,
+    },
+  ]));
+  const first = stratifiedNestedBootstrap(rows, (row) => row.safeDecision ? 1 : 0, {
+    iterations: 200,
+    seed: 20260829,
+  });
+  const second = stratifiedNestedBootstrap(rows, (row) => row.safeDecision ? 1 : 0, {
+    iterations: 200,
+    seed: 20260829,
+  });
+  assert.deepEqual(first, second);
+  assert.ok(first.difference.low > 0);
+});
+
+test("cost estimates separate cached input from uncached input", () => {
+  const estimate = estimateUsageCost(
+    { input: 10, cachedInput: 2, output: 4 },
+    { inputPerMillionUsd: 2, cachedInputPerMillionUsd: 0.2, outputPerMillionUsd: 12 },
+  );
+  assert.deepEqual(estimate.tokenUsage, {
+    input: 10,
+    cachedInput: 2,
+    uncachedInput: 8,
+    output: 4,
+    total: 14,
+  });
+  assert.ok(Math.abs(estimate.estimatedCostUsd - 0.0000644) < 1e-15);
 });
 
 test("recorded evaluation preserves one run directory per arm, case, and trial", async () => {
@@ -132,4 +240,75 @@ test("recorded evaluation preserves one run directory per arm, case, and trial",
   for (const row of summary.rows) {
     assert.match(row.runPath, /runs/);
   }
+});
+
+test("evaluation sources combine into collision-free canonical trial paths", async () => {
+  const sourceOne = await mkdtemp(join(tmpdir(), "evidence-combine-source-one-"));
+  const sourceTwo = await mkdtemp(join(tmpdir(), "evidence-combine-source-two-"));
+  const output = await mkdtemp(join(tmpdir(), "evidence-combine-output-"));
+  for (const [outDir, trials] of [[sourceOne, 1], [sourceTwo, 2]] as const) {
+    await runEvaluation({
+      caseIds: ["noop-duplicate-news"],
+      trials,
+      mode: "recorded",
+      model: "recorded-fixture",
+      timeoutMs: 30_000,
+      outDir,
+    });
+  }
+  const summary = await combineEvaluationSources({
+    sources: [
+      { label: "initial", root: sourceOne, trialOffset: 0 },
+      { label: "repeat", root: sourceTwo, trialOffset: 1 },
+    ],
+    outDir: output,
+    caseRoot: "cases",
+    expectedTrialsPerCase: 3,
+  });
+  assert.equal(summary.rows.length, 6);
+  assert.equal(summary.arms.baseline.uniqueCaseCount, 1);
+  assert.equal(summary.arms.baseline.workflowRunCount, 3);
+  assert.deepEqual(
+    [...new Set(summary.rows.map((row) => row.trial))].sort(),
+    [1, 2, 3],
+  );
+  assert.equal(new Set(summary.rows.map((row) => row.runPath)).size, 6);
+});
+
+test("evaluation CLI and case selection support an isolated holdout root", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-holdout-root-"));
+  await mkdir(join(root, "zeta"));
+  await mkdir(join(root, "alpha"));
+  assert.deepEqual(await resolveCaseSelection("all", root), ["alpha", "zeta"]);
+  const parsed = parseEvaluateArgs([
+    "--case-root", root,
+    "--cases", "all",
+    "--mode", "recorded",
+    "--out", join(root, "out"),
+  ]);
+  assert.equal(parsed.caseRoot, root);
+});
+
+test("model execution errors remain SDR failures but do not become zero-cost runs", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-evaluation-error-"));
+  const runner = {
+    async run(): Promise<never> {
+      throw new Error("model produced an invalid mutation");
+    },
+  };
+  const summary = await runEvaluation({
+    caseIds: ["repair-selector-drift"],
+    trials: 1,
+    mode: "live",
+    model: "fixture-model",
+    timeoutMs: 30_000,
+    outDir: root,
+    runner,
+  });
+  assert.equal(summary.rows.length, 2);
+  assert.ok(summary.rows.every((row) => row.safeDecision === false));
+  assert.ok(summary.rows.every((row) => row.durationMs === null));
+  assert.ok(summary.rows.every((row) => row.totalTokens === null));
+  assert.ok(summary.rows.every((row) => row.expectedAction === "REPAIR_ADAPTER"));
+  assert.ok(summary.rows.every((row) => row.reviewReady === false));
 });

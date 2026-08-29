@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-unknown-coordinate-reference",
+  "expectedAction": "HUMAN_REVIEW",
+  "requiredEvidenceIds": [
+    "obs-official-boundary-2026",
+    "obs-permit-location"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "ESCALATE",
+  "requiredMinimumInformation": [
+    "permit coordinate CRS or datum",
+    "positional accuracy or signed jurisdiction determination"
+  ],
+  "requiredRetryConditionIncludes": [],
+  "expectedCommandExitCodes": {}
+}

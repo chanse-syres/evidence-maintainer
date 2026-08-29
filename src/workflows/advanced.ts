@@ -155,7 +155,7 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     "trajectories/challenger.jsonl",
   ];
   const usages = [maintainer.tokenUsage, challenger.tokenUsage].filter(
-    (usage): usage is { input: number; output: number } => Boolean(usage),
+    (usage): usage is { input: number; cachedInput: number; output: number } => Boolean(usage),
   );
   const manifest = RunManifestSchema.parse({
     schemaVersion: 1,
@@ -179,7 +179,7 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
     tokenUsage: usages.length > 0
       ? {
           input: usages.reduce((sum, usage) => sum + usage.input, 0),
-          cachedInput: 0,
+          cachedInput: usages.reduce((sum, usage) => sum + usage.cachedInput, 0),
           output: usages.reduce((sum, usage) => sum + usage.output, 0),
         }
       : null,

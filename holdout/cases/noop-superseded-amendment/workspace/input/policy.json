@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {
+    "deadline": "official-procurement-register",
+    "materializedRevision": "official-procurement-register"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Only the terminal reachable revision controls current contract state",
+    "Superseded intermediate values do not survive materialization"
+  ],
+  "rules": [
+    "Follow the explicit supersession chain through the cutoff",
+    "Do not write canonical state when the terminal revision already matches it"
+  ]
+}
