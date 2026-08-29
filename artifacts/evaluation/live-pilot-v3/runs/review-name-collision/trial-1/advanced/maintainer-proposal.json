@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "The award observation identifies only \"Jordan Lee\" and provides neither a stable identifier nor two independent disambiguators, while canonical records person-81 and person-82 share that name.",
+  "failureOwner": "official-awards-feed",
+  "evidenceUsed": [
+    "evt-002",
+    "obs-name-only-award",
+    "input/policy.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "person-81",
+    "person-82"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Policy requires escalation for this name collision; assigning the award to either canonical record would be unsupported."
+    }
+  ],
+  "preservedInvariants": [
+    "Names are not identity keys",
+    "No award may be attached to an ambiguous person"
+  ],
+  "unresolvedUncertainty": [
+    "Which canonical Jordan Lee, if either, received the Regional Scholar award."
+  ],
+  "minimumInformationRequest": [
+    "A stable source identifier for the award recipient, or two independent disambiguators that uniquely identify one canonical record."
+  ],
+  "retryCondition": null,
+  "approvalLevel": "NONE",
+  "summary": "Escalate for identity resolution and preserve canonical state unchanged."
+}

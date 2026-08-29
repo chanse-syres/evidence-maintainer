@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-name-collision",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The authoritative award observation remains unresolved until a stable identifier or two independent disambiguators uniquely identify a canonical person."
+  ],
+  "summary": "The proposal correctly preserves canonical state and escalates the duplicate-name observation; no allowed-surface write or unsupported identity assignment is present."
+}

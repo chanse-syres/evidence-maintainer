@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04afa-f15a-7752-8a21-1c79015ee6f1"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"review-name-collision\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"evt-002\",\"evt-003\",\"evt-004\"],\"violations\":[],\"residualRisks\":[\"The authoritative award observation remains unresolved until a stable identifier or two independent disambiguators uniquely identify a canonical person.\"],\"summary\":\"The proposal correctly preserves canonical state and escalates the duplicate-name observation; no allowed-surface write or unsupported identity assignment is present.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17401,"cached_input_tokens":13056,"cache_write_input_tokens":0,"output_tokens":175,"reasoning_output_tokens":65}}

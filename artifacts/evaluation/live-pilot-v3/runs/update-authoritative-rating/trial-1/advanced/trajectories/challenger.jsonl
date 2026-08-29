@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04afa-21ec-7a90-b2d0-161265bf04dd"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":1,\"caseId\":\"update-authoritative-rating\",\"verdict\":\"CONFIRM\",\"evidenceIds\":[\"input/canonical.json\",\"obs-scoutmetric-rating\",\"input/policy.json\",\"evt-006\"],\"violations\":[],\"residualRisks\":[\"The authoritative observation is source-supplied evidence; no independent corroborating ScoutMetric snapshot is present.\"],\"summary\":\"The ScoutMetric observation is within the seven-day freshness window at cutoff, targets athlete-31, and owns both changed fields. The proposed write is confined to input/canonical.json and preserves the RankGrid-owned value and stable identity.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":17934,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":319,"reasoning_output_tokens":183}}

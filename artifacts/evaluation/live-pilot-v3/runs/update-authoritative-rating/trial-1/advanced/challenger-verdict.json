@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-authoritative-rating",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "input/canonical.json",
+    "obs-scoutmetric-rating",
+    "input/policy.json",
+    "evt-006"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The authoritative observation is source-supplied evidence; no independent corroborating ScoutMetric snapshot is present."
+  ],
+  "summary": "The ScoutMetric observation is within the seven-day freshness window at cutoff, targets athlete-31, and owns both changed fields. The proposed write is confined to input/canonical.json and preserves the RankGrid-owned value and stable identity."
+}

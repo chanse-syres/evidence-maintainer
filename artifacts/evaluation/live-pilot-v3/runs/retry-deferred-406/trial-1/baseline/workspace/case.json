@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-deferred-406",
+  "title": "Treat an expected 406 as bounded deferral, not data removal",
+  "description": "The source contract marks 406 as a temporary deferral and a recent cache remains authoritative.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Public-source deferred response pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "fixture-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "5a6e5facdedbd4214c82b210a20c79f6e5f3edb363aa3b0a56f47425b6524f16"
+    },
+    {
+      "sourceId": "fixture-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "aee8ee47de80b8715a542ecb83551a85e7e1a860e12d1b8c9aec918e7e90cf8e"
+    },
+    {
+      "sourceId": "fixture-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T18:00:00.000Z",
+      "transformation": "Synthetic frozen fixture derived from a public-data maintenance pattern",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "7b973b01f23f5bbfba778054b9c6a4f747d4f8da8e6c9e00447d72b6b3ec1f7d"
+    }
+  ]
+}
