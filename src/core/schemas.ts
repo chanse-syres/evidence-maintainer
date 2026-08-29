@@ -419,6 +419,103 @@ export const CaseOracleSchema = z.object({
   hiddenProbePath: RelativePathSchema.nullable(),
 }).strict();
 
+export const RequiredRecordPropertySchema = z.object({
+  file: RelativePathSchema,
+  recordId: z.string().min(1),
+  properties: z.record(z.string(), z.json()).refine((value) => Object.keys(value).length > 0, {
+    message: "At least one required property is needed",
+  }),
+}).strict();
+
+export const PreservedRecordPropertySchema = z.object({
+  file: RelativePathSchema,
+  recordId: z.string().min(1),
+  propertyPaths: z.array(
+    z.string().regex(/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/),
+  ).min(1),
+}).strict();
+
+export const RetryWindowSchema = z.object({
+  earliestNotBefore: TimestampSchema,
+  latestNotBefore: TimestampSchema,
+  minimumAttempts: z.number().int().positive(),
+  maximumAttempts: z.number().int().positive(),
+  latestEscalationAttempt: z.number().int().positive(),
+}).strict().superRefine((window, ctx) => {
+  if (new Date(window.earliestNotBefore).getTime() > new Date(window.latestNotBefore).getTime()) {
+    ctx.addIssue({ code: "custom", message: "Retry window cannot end before it begins" });
+  }
+  if (window.minimumAttempts > window.maximumAttempts) {
+    ctx.addIssue({ code: "custom", message: "Minimum attempts cannot exceed maximum attempts" });
+  }
+  if (window.latestEscalationAttempt > window.maximumAttempts) {
+    ctx.addIssue({ code: "custom", message: "Latest escalation cannot exceed maximum attempts" });
+  }
+});
+
+export const ReviewRequirementsSchema = z.object({
+  subjectId: z.string().min(1),
+  acceptableTargetEvidenceIds: z.array(z.string().min(1)).min(1),
+  requiredFactPaths: z.array(z.string().regex(/^facts(?:\.[A-Za-z0-9_-]+)+$/)).min(1),
+}).strict();
+
+const OracleV4Common = {
+  schemaVersion: z.literal(3),
+  caseId: z.string().min(1),
+  requiredEvidenceSourceBundles: z.array(z.array(z.string().min(1)).min(1)).min(1),
+  forbiddenEvidenceClaims: z.array(EvidenceAssessmentSchema),
+  allowedChangedFiles: z.array(RelativePathSchema),
+  expectedCommandExitCodes: z.record(z.string(), z.number().int()),
+  hiddenProbePath: RelativePathSchema.nullable(),
+} as const;
+
+const UpdateDataOracleV4Schema = z.object({
+  ...OracleV4Common,
+  expectedAction: z.literal("UPDATE_DATA"),
+  requiredRecordProperties: z.array(RequiredRecordPropertySchema).min(1),
+  preservedRecordProperties: z.array(PreservedRecordPropertySchema).min(1),
+}).strict();
+
+const RepairAdapterOracleV4Schema = z.object({
+  ...OracleV4Common,
+  expectedAction: z.literal("REPAIR_ADAPTER"),
+  requiredPublicCommands: z.array(z.string().min(1)),
+  requiresHiddenProbe: z.boolean(),
+}).strict();
+
+const RetryLaterOracleV4Schema = z.object({
+  ...OracleV4Common,
+  expectedAction: z.literal("RETRY_LATER"),
+  retryWindow: RetryWindowSchema,
+  requiredPreserveRecordIds: z.array(z.string().min(1)),
+  requiredFutureConditions: z.array(FutureConditionSchema).min(1),
+  satisfyingObservations: z.array(SourceObservationSchema).min(1),
+  nearMissObservationFixtures: z.array(z.object({
+    id: z.string().min(1),
+    observations: z.array(SourceObservationSchema).min(1),
+  }).strict()).min(1),
+}).strict();
+
+const NoActionOracleV4Schema = z.object({
+  ...OracleV4Common,
+  expectedAction: z.literal("NO_ACTION"),
+  requiredAuthoritySources: z.array(z.string().min(1)).min(1),
+}).strict();
+
+const HumanReviewOracleV4Schema = z.object({
+  ...OracleV4Common,
+  expectedAction: z.literal("HUMAN_REVIEW"),
+  reviewRequirements: ReviewRequirementsSchema,
+}).strict();
+
+export const CaseOracleV4Schema = z.discriminatedUnion("expectedAction", [
+  UpdateDataOracleV4Schema,
+  RepairAdapterOracleV4Schema,
+  RetryLaterOracleV4Schema,
+  NoActionOracleV4Schema,
+  HumanReviewOracleV4Schema,
+]);
+
 const TokenUsageSchema = z.object({
   input: z.number().int().nonnegative(),
   cachedInput: z.number().int().nonnegative(),
@@ -602,6 +699,7 @@ export type ChallengerCritique = z.infer<typeof ChallengerCritiqueSchema>;
 export type CheckResult = z.infer<typeof CheckResultSchema>;
 export type BaselineResult = z.infer<typeof BaselineResultSchema>;
 export type CaseOracle = z.infer<typeof CaseOracleSchema>;
+export type CaseOracleV4 = z.infer<typeof CaseOracleV4Schema>;
 export type RunManifest = z.infer<typeof RunManifestSchema>;
 
 export { RelativePathSchema, Sha256Schema, TimestampSchema };

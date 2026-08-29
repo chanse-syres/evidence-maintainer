@@ -14,6 +14,10 @@ import {
 } from "./schemas.ts";
 import type { LoadedPublicCase } from "./case-loader.ts";
 import { canonicalJson } from "./canonical-json.ts";
+import {
+  evaluateDecisionPackage,
+  type SemanticEvaluatorInput,
+} from "./semantic-evaluator.ts";
 import { diffTrees, type TreeSnapshot } from "./tree-snapshot.ts";
 
 export interface CommandResult {
@@ -40,6 +44,17 @@ export interface GateResult {
   checks: CheckResult[];
   changedFiles: string[];
   diff: ReturnType<typeof diffTrees>;
+}
+
+export async function runSemanticGate(input: SemanticEvaluatorInput): Promise<GateResult> {
+  const evaluation = await evaluateDecisionPackage(input);
+  const diff = diffTrees(input.before, input.after);
+  return {
+    status: evaluation.operationalDecisionIntegrity ? "PASS" : "FAIL",
+    checks: evaluation.checks,
+    changedFiles: [...diff.added, ...diff.removed, ...diff.modified].sort(),
+    diff,
+  };
 }
 
 function check(
