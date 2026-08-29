@@ -103,6 +103,31 @@ test("advanced workflow runs Maintainer then Challenger and approves a verified 
   assert.equal(approval.decision, "APPROVED");
 });
 
+test("Maintainer and Challenger receive the complete agent-visible workspace", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-advanced-workspace-snapshot-"));
+  const fixtures = JSON.parse(
+    await readFile(resolve("artifacts", "recorded", "runner-fixtures.json"), "utf8"),
+  ) as Record<string, unknown>;
+  const runner = new SequenceRunner([
+    fixtures["repair-json-nesting:maintainer"],
+    fixtures["repair-json-nesting:challenger"],
+  ]);
+  const run = await runAdvanced({
+    caseDir: resolve("cases", "repair-json-nesting"),
+    runRoot: root,
+    runner,
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    approve: true,
+  });
+  assert.equal(run.outcome, "PASS");
+  for (const prompt of runner.prompts) {
+    assert.match(prompt, /export function extractPlayers/);
+    assert.match(prompt, /\\"roster\\"/);
+    assert.match(prompt, /adapter\.test\.ts/);
+  }
+});
+
 test("a Challenger rejection prevents approval", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-advanced-reject-"));
   const runner = new SequenceRunner([

@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { loadPrompt } from "../agents/prompt-loader.ts";
+import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
 import { runDeterministicGate } from "../core/deterministic-gate.ts";
@@ -46,12 +47,17 @@ export async function runAdvanced(input: RunBaselineInput): Promise<RunManifest>
   const runId = `${loadedCase.manifest.id}-advanced-${Date.now()}`;
   const proposalSchemaPath = resolve("schemas", "maintainer-proposal.schema.json");
   const proposalContract = await readFile(proposalSchemaPath, "utf8");
+  const agentVisibleWorkspace = await readAgentVisibleSnapshot(
+    workspace,
+    loadedCase.manifest.agentVisibleFiles,
+  );
   const commonContext = {
     title: loadedCase.manifest.title,
     description: loadedCase.manifest.description,
     allowedWritePaths: loadedCase.manifest.allowedWritePaths,
     requiredCommands: loadedCase.manifest.requiredCommands,
     invariants: loadedCase.policy.invariants,
+    agentVisibleWorkspace,
   };
   const maintainerPrompt = await loadPrompt("maintainer", {
     CASE_ID: loadedCase.manifest.id,

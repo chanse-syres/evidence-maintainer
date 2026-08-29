@@ -70,3 +70,26 @@ test("baseline approval remains withheld when the operator did not approve", asy
   const approval = JSON.parse(await readFile(join(root, "approval.json"), "utf8"));
   assert.equal(approval.decision, "NOT_REQUESTED");
 });
+
+test("baseline receives the complete agent-visible workspace without terminal access", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-baseline-workspace-snapshot-"));
+  class WorkspaceSnapshotRunner implements AgentRunner {
+    private readonly inner = new RecordedRunner(resolve("artifacts", "recorded", "runner-fixtures.json"));
+
+    async run<T>(request: AgentRequest<T>): Promise<AgentResult<T>> {
+      assert.match(request.prompt, /export function extractPlayers/);
+      assert.match(request.prompt, /\\"roster\\"/);
+      assert.match(request.prompt, /adapter\.test\.ts/);
+      return this.inner.run(request);
+    }
+  }
+
+  await runBaseline({
+    caseDir: resolve("cases", "repair-json-nesting"),
+    runRoot: root,
+    runner: new WorkspaceSnapshotRunner(),
+    model: "recorded-fixture",
+    timeoutMs: 30_000,
+    approve: true,
+  });
+});

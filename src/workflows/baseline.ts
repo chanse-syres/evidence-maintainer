@@ -4,6 +4,7 @@ import { join, relative, resolve } from "node:path";
 import { once } from "node:events";
 import type { AgentRunner } from "../agents/runner.ts";
 import { loadPrompt } from "../agents/prompt-loader.ts";
+import { readAgentVisibleSnapshot } from "../core/agent-visible-snapshot.ts";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../core/case-loader.ts";
 import { sha256Json, sha256Text } from "../core/canonical-json.ts";
 import { runDeterministicGate, type CommandResult } from "../core/deterministic-gate.ts";
@@ -83,12 +84,17 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
 
   const outputSchemaPath = resolve("schemas", "baseline-result.schema.json");
   const outputContract = await readFile(outputSchemaPath, "utf8");
+  const agentVisibleWorkspace = await readAgentVisibleSnapshot(
+    workspace,
+    loadedCase.manifest.agentVisibleFiles,
+  );
   const prompt = await loadPrompt("baseline", {
     CASE_ID: loadedCase.manifest.id,
     CASE_CONTEXT: JSON.stringify({
       title: loadedCase.manifest.title,
       description: loadedCase.manifest.description,
       agentVisibleFiles: loadedCase.manifest.agentVisibleFiles.map((path) => path.replace(/^workspace\//, "")),
+      agentVisibleWorkspace,
       allowedWritePaths: loadedCase.manifest.allowedWritePaths,
       requiredCommands: loadedCase.manifest.requiredCommands,
       rawEvidence: {
