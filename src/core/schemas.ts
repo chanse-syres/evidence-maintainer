@@ -229,6 +229,7 @@ export const ChallengerVerdictSchema = z.object({
 export const CheckResultSchema = z.object({
   id: z.string().min(1),
   passed: z.boolean(),
+  blocking: z.boolean().default(true),
   summary: z.string().min(1),
   details: z.array(z.string()),
 }).strict();

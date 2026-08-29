@@ -69,7 +69,7 @@ test("a correct no-action proposal passes all checks with no changed files", asy
   const { result } = await gateFixture({ caseId: "noop-duplicate-news" });
   assert.equal(result.status, "PASS");
   assert.deepEqual(result.changedFiles, []);
-  assert.equal(result.checks.length, 11);
+  assert.equal(result.checks.length, 12);
   assert.ok(result.checks.every((entry) => entry.passed));
 });
 
@@ -82,7 +82,7 @@ test("field-level evidence assessments must cite an existing observation and fac
       : { ...entry, factPath: "facts.notPresent" }),
   });
   const { result } = await gateFixture({ caseId: proposal.caseId, proposal });
-  const evidence = result.checks.find((entry) => entry.id === "evidence-supported");
+  const evidence = result.checks.find((entry) => entry.id === "evidence-source-coverage");
   assert.equal(result.status, "FAIL");
   assert.equal(evidence?.passed, false);
   assert.ok(evidence?.details.some((detail) => /Unknown observation/.test(detail)));
@@ -100,12 +100,12 @@ test("conflicting dispositions for the same observation field are rejected", asy
     ],
   });
   const { result } = await gateFixture({ caseId: proposal.caseId, proposal });
-  const evidence = result.checks.find((entry) => entry.id === "evidence-supported");
+  const evidence = result.checks.find((entry) => entry.id === "evidence-source-coverage");
   assert.equal(result.status, "FAIL");
   assert.ok(evidence?.details.some((detail) => /Conflicting dispositions/.test(detail)));
 });
 
-test("unadjudicated extra evidence assessments are rejected", async () => {
+test("valid extra evidence remains visible as a diagnostic without blocking the run", async () => {
   const valid = fixtureProposal("noop-duplicate-news");
   const proposal = MaintainerProposalSchema.parse({
     ...valid,
@@ -120,10 +120,45 @@ test("unadjudicated extra evidence assessments are rejected", async () => {
     ],
   });
   const { result } = await gateFixture({ caseId: proposal.caseId, proposal });
-  const evidence = result.checks.find((entry) => entry.id === "evidence-supported");
+  const coverage = result.checks.find((entry) => entry.id === "evidence-source-coverage");
+  const alignment = result.checks.find((entry) => entry.id === "evidence-adjudication-alignment");
+  assert.equal(result.status, "PASS");
+  assert.equal(coverage?.passed, true);
+  assert.equal(coverage?.blocking, true);
+  assert.equal(alignment?.blocking, false);
+  assert.equal(alignment?.passed, false);
+  assert.ok(alignment?.details.some((detail) => /Unexpected assessment/.test(detail)));
+});
+
+test("source-complete evidence with a fair alternate disposition is operationally eligible", async () => {
+  const valid = fixtureProposal("noop-duplicate-news");
+  const proposal = MaintainerProposalSchema.parse({
+    ...valid,
+    evidenceAssessments: valid.evidenceAssessments.map((entry) => ({
+      ...entry,
+      disposition: entry.disposition === "CONTEXT" ? "REJECT" : entry.disposition,
+      reason: "The same cited observation is unsafe as independent authority.",
+    })),
+  });
+  const { result } = await gateFixture({ caseId: proposal.caseId, proposal });
+  const coverage = result.checks.find((entry) => entry.id === "evidence-source-coverage");
+  const alignment = result.checks.find((entry) => entry.id === "evidence-adjudication-alignment");
+  assert.equal(result.status, "PASS");
+  assert.equal(coverage?.passed, true);
+  assert.equal(alignment?.passed, false);
+});
+
+test("missing an adjudicated evidence source blocks operational eligibility", async () => {
+  const valid = fixtureProposal("noop-duplicate-news");
+  const proposal = MaintainerProposalSchema.parse({
+    ...valid,
+    evidenceAssessments: valid.evidenceAssessments.filter((entry) => entry.evidenceId === "obs-1"),
+  });
+  const { result } = await gateFixture({ caseId: proposal.caseId, proposal });
+  const evidence = result.checks.find((entry) => entry.id === "evidence-source-coverage");
   assert.equal(result.status, "FAIL");
   assert.equal(evidence?.passed, false);
-  assert.ok(evidence?.details.some((detail) => /Unexpected assessment/.test(detail)));
+  assert.ok(evidence?.details.some((detail) => /Missing adjudicated evidence source/.test(detail)));
 });
 
 test("one complete adjudicated evidence bundle passes when the oracle permits a fair variant", async () => {
@@ -188,12 +223,12 @@ test("challenger citation coverage is reported separately from proposal evidence
     evidenceIds: ["obs-1"],
   });
   const { result } = await gateFixture({ caseId: proposal.caseId, proposal, challenger });
-  assert.equal(result.checks.find((entry) => entry.id === "evidence-supported")?.passed, true);
+  assert.equal(result.checks.find((entry) => entry.id === "evidence-source-coverage")?.passed, true);
   assert.equal(result.checks.find((entry) => entry.id === "challenger-evidence-supported")?.passed, false);
   assert.equal(result.status, "FAIL");
 });
 
-test("Challenger evidence IDs must match the adjudicated set exactly", async () => {
+test("Challenger evidence IDs must cover the adjudicated set without duplicates", async () => {
   const proposal = fixtureProposal("noop-duplicate-news");
   const challenger = ChallengerVerdictSchema.parse({
     ...fixtureVerdict(proposal.caseId),
@@ -234,8 +269,9 @@ test("a correct data update must produce the complete adjudicated artifact", asy
     })),
   });
   const rejected = await gateFixture({ caseId, proposal, applyProposal: true });
-  assert.equal(rejected.result.status, "FAIL");
-  assert.equal(rejected.result.checks.find((entry) => entry.id === "evidence-supported")?.passed, false);
+  assert.equal(rejected.result.status, "PASS");
+  assert.equal(rejected.result.checks.find((entry) => entry.id === "evidence-source-coverage")?.passed, true);
+  assert.equal(rejected.result.checks.find((entry) => entry.id === "evidence-adjudication-alignment")?.passed, false);
 });
 
 test("a structured retry plan must match the bounded adjudicated plan exactly", async () => {

@@ -183,7 +183,7 @@ test("a Challenger rejection prevents approval", async () => {
   assert.equal(approval.decision, "REJECTED");
 });
 
-test("unknown evidence IDs fail the evidence-supported gate", async () => {
+test("unknown evidence IDs fail the evidence-source-coverage gate", async () => {
   const root = await mkdtemp(join(tmpdir(), "evidence-advanced-unknown-"));
   const proposal = {
     ...updateProposal,
@@ -202,7 +202,7 @@ test("unknown evidence IDs fail the evidence-supported gate", async () => {
     approve: true,
   });
   const gate = JSON.parse(await readFile(join(root, "gate.json"), "utf8"));
-  assert.ok(gate.checks.some((check: { id: string; passed: boolean }) => check.id === "evidence-supported" && !check.passed));
+  assert.ok(gate.checks.some((check: { id: string; passed: boolean }) => check.id === "evidence-source-coverage" && !check.passed));
 });
 
 test("an unrelated direct workspace modification is caught", async () => {

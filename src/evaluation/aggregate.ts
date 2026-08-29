@@ -18,6 +18,14 @@ export interface ArmSummary {
   caseCount: number;
   uniqueCaseCount: number;
   workflowRunCount: number;
+  operationalDecisions: number;
+  odi: number;
+  odi95: Interval;
+  evidenceSourceCoverageCount: number;
+  evidenceSourceCoverageRate: number;
+  evidenceAdjudicationAlignedCount: number;
+  evidenceAdjudicationAlignedRate: number;
+  /** @deprecated Strict legacy metric retained for existing artifact readers. */
   safeDecisions: number;
   sdr: number;
   sdr95: Interval;
@@ -61,6 +69,8 @@ export interface AggregateSummary {
     baseline: ArmSummary;
     advanced: ArmSummary;
   };
+  absoluteOdiChange: number;
+  odiBootstrap95: BootstrapComparison | null;
   absoluteSdrChange: number;
   unsafeMutationChange: number;
   sdrBootstrap95: BootstrapComparison | null;
@@ -108,6 +118,9 @@ function describe(values: number[]): ResourceSummary {
 
 function summarize(rows: EvaluationRow[]): ArmSummary {
   const uniqueCaseCount = new Set(rows.map((row) => row.caseId)).size;
+  const operationalDecisions = rows.filter((row) => row.operationalDecisionIntegrity).length;
+  const evidenceSourceCoverageCount = rows.filter((row) => row.evidenceSourceCoverage).length;
+  const evidenceAdjudicationAlignedCount = rows.filter((row) => row.evidenceAdjudicationAligned).length;
   const safeDecisions = rows.filter((row) => row.safeDecision).length;
   const actionCorrect = rows.filter((row) => row.actionCorrect).length;
   const unsafeMutations = rows.filter((row) => row.unsafeMutation).length;
@@ -133,6 +146,13 @@ function summarize(rows: EvaluationRow[]): ArmSummary {
     caseCount: uniqueCaseCount,
     uniqueCaseCount,
     workflowRunCount: rows.length,
+    operationalDecisions,
+    odi: rate(operationalDecisions, rows.length),
+    odi95: wilsonInterval(operationalDecisions, rows.length),
+    evidenceSourceCoverageCount,
+    evidenceSourceCoverageRate: rate(evidenceSourceCoverageCount, rows.length),
+    evidenceAdjudicationAlignedCount,
+    evidenceAdjudicationAlignedRate: rate(evidenceAdjudicationAlignedCount, rows.length),
     safeDecisions,
     sdr: rate(safeDecisions, rows.length),
     sdr95: wilsonInterval(safeDecisions, rows.length),
@@ -179,6 +199,10 @@ export function aggregateRows(rows: EvaluationRow[]): AggregateSummary {
   const advanced = summarize(rows.filter((row) => row.arm === "advanced"));
   return {
     arms: { baseline, advanced },
+    absoluteOdiChange: advanced.odi - baseline.odi,
+    odiBootstrap95: supportsPairedBootstrap(rows)
+      ? stratifiedNestedBootstrap(rows, (row) => row.operationalDecisionIntegrity ? 1 : 0)
+      : null,
     absoluteSdrChange: advanced.sdr - baseline.sdr,
     unsafeMutationChange: advanced.unsafeMutationRate - baseline.unsafeMutationRate,
     sdrBootstrap95: supportsPairedBootstrap(rows)

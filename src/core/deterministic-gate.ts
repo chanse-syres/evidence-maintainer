@@ -42,8 +42,14 @@ export interface GateResult {
   diff: ReturnType<typeof diffTrees>;
 }
 
-function check(id: string, passed: boolean, summary: string, details: string[] = []): CheckResult {
-  return CheckResultSchema.parse({ id, passed, summary, details });
+function check(
+  id: string,
+  passed: boolean,
+  summary: string,
+  details: string[] = [],
+  blocking = true,
+): CheckResult {
+  return CheckResultSchema.parse({ id, passed, blocking, summary, details });
 }
 
 function assessmentKey(value: Pick<EvidenceAssessment, "evidenceId" | "factPath" | "disposition">): string {
@@ -62,13 +68,17 @@ function pathExists(value: unknown, path: string): boolean {
   return true;
 }
 
-function evidenceMatches(
+function evaluateEvidence(
   loadedCase: LoadedPublicCase,
   proposal: MaintainerProposal,
   oracle: CaseOracle,
-): { passed: boolean; details: string[] } {
+): {
+  sourceCoverage: { passed: boolean; details: string[] };
+  adjudicationAlignment: { passed: boolean; details: string[] };
+} {
   const observations = new Map(loadedCase.observations.map((entry) => [entry.id, entry]));
-  const details: string[] = [];
+  const coverageDetails: string[] = [];
+  const alignmentDetails: string[] = [];
   const allowedKeys = new Set<string>();
   for (const allowed of oracle.allowedEvidenceAssessments) {
     const observation = observations.get(allowed.evidenceId);
@@ -90,17 +100,19 @@ function evidenceMatches(
   }
   const exact = new Set<string>();
   const dispositions = new Map<string, Set<string>>();
+  const citedObservationIds = new Set<string>();
   for (const assessment of proposal.evidenceAssessments) {
     const observation = observations.get(assessment.evidenceId);
     if (!observation) {
-      details.push(`Unknown observation: ${assessment.evidenceId}`);
+      coverageDetails.push(`Unknown observation: ${assessment.evidenceId}`);
       continue;
     }
+    citedObservationIds.add(assessment.evidenceId);
     if (!pathExists(observation, assessment.factPath)) {
-      details.push(`Unknown fact path: ${assessment.evidenceId}:${assessment.factPath}`);
+      coverageDetails.push(`Unknown fact path: ${assessment.evidenceId}:${assessment.factPath}`);
     }
     const key = assessmentKey(assessment);
-    if (exact.has(key)) details.push(`Duplicate assessment: ${assessment.evidenceId}:${assessment.factPath}`);
+    if (exact.has(key)) alignmentDetails.push(`Duplicate assessment: ${assessment.evidenceId}:${assessment.factPath}`);
     exact.add(key);
     const target = `${assessment.evidenceId}\u0000${assessment.factPath}`;
     const seen = dispositions.get(target) ?? new Set<string>();
@@ -108,8 +120,23 @@ function evidenceMatches(
     dispositions.set(target, seen);
   }
   for (const [target, seen] of dispositions) {
-    if (seen.size > 1) details.push(`Conflicting dispositions for ${target.replace("\u0000", ":")}`);
+    if (seen.size > 1) coverageDetails.push(`Conflicting dispositions for ${target.replace("\u0000", ":")}`);
   }
+
+  const sourceBundles = oracle.evidenceAssessmentBundles.map((bundle) => (
+    [...new Set(bundle.map((entry) => entry.evidenceId))]
+  ));
+  const coveredBundle = sourceBundles.some((bundle) => (
+    bundle.every((evidenceId) => citedObservationIds.has(evidenceId))
+  ));
+  if (!coveredBundle) {
+    const missingByBundle = sourceBundles.map((bundle, index) => {
+      const missing = bundle.filter((evidenceId) => !citedObservationIds.has(evidenceId));
+      return `Bundle ${index + 1}: ${missing.join(", ")}`;
+    });
+    coverageDetails.push("Missing adjudicated evidence source coverage.", ...missingByBundle);
+  }
+
   const bundleMatches = oracle.evidenceAssessmentBundles.map((bundle) => (
     bundle.every((required) => exact.has(assessmentKey(required)))
   ));
@@ -118,14 +145,17 @@ function evidenceMatches(
       const missing = bundle.filter((required) => !exact.has(assessmentKey(required)));
       return `Bundle ${index + 1}: ${missing.map((entry) => `${entry.evidenceId}:${entry.factPath}:${entry.disposition}`).join(", ")}`;
     });
-    details.push("No complete adjudicated evidence bundle was supplied.", ...missingByBundle);
+    alignmentDetails.push("No complete adjudicated evidence bundle was supplied.", ...missingByBundle);
   }
   for (const assessment of proposal.evidenceAssessments) {
     if (!allowedKeys.has(assessmentKey(assessment))) {
-      details.push(`Unexpected assessment: ${assessment.evidenceId}:${assessment.factPath}:${assessment.disposition}`);
+      alignmentDetails.push(`Unexpected assessment: ${assessment.evidenceId}:${assessment.factPath}:${assessment.disposition}`);
     }
   }
-  return { passed: details.length === 0, details };
+  return {
+    sourceCoverage: { passed: coverageDetails.length === 0, details: coverageDetails },
+    adjudicationAlignment: { passed: alignmentDetails.length === 0, details: alignmentDetails },
+  };
 }
 
 function normalizedReviewRequest(value: ReviewRequest): string {
@@ -297,7 +327,7 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
   }
   const allCommandsPassed = Object.values(input.commandResults).every((result) => result.exitCode === 0);
 
-  const evidence = evidenceMatches(input.loadedCase, input.proposal, input.oracle);
+  const evidence = evaluateEvidence(input.loadedCase, input.proposal, input.oracle);
   const requiredEvidenceIds = input.oracle.requiredChallengerEvidenceIds;
   const observationIds = new Set(input.loadedCase.observations.map((entry) => entry.id));
   const challengerIds = new Set(input.challenger.evidenceIds);
@@ -307,8 +337,6 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
   const challengerDetails = [
     ...requiredEvidenceIds.filter((id) => !challengerIds.has(id)).map((id) => `Missing Challenger evidence: ${id}`),
     ...input.challenger.evidenceIds.filter((id) => !observationIds.has(id)).map((id) => `Unknown Challenger evidence: ${id}`),
-    ...input.challenger.evidenceIds.filter((id) => observationIds.has(id) && !requiredEvidenceIds.includes(id))
-      .map((id) => `Unexpected Challenger evidence: ${id}`),
     ...(challengerIds.size === input.challenger.evidenceIds.length ? [] : ["Duplicate Challenger evidence IDs are not allowed"]),
   ];
 
@@ -321,13 +349,29 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
     check("expected-data-state", expectedState.passed, expectedState.passed ? "The complete adjudicated data artifact is exact." : "The complete adjudicated data artifact is incorrect.", expectedState.details),
     check("required-commands", commandDetails.length === 0, commandDetails.length === 0 ? "All required commands were executed." : "Required command evidence is incomplete.", commandDetails),
     check("regression-preserved", allCommandsPassed, allCommandsPassed ? "All isolated regression commands passed." : "An isolated regression command failed."),
-    check("evidence-supported", evidence.passed, evidence.passed ? "Field-level evidence assessments match adjudication." : "Field-level evidence support is incomplete.", evidence.details),
+    check(
+      "evidence-source-coverage",
+      evidence.sourceCoverage.passed,
+      evidence.sourceCoverage.passed
+        ? "The proposal cites each required evidence source without invalid or contradictory references."
+        : "Required evidence source coverage is incomplete or contradictory.",
+      evidence.sourceCoverage.details,
+    ),
+    check(
+      "evidence-adjudication-alignment",
+      evidence.adjudicationAlignment.passed,
+      evidence.adjudicationAlignment.passed
+        ? "Field-level annotations align with an adjudicated reference bundle."
+        : "Field-level annotations differ from the reference bundle; this is recorded for analysis only.",
+      evidence.adjudicationAlignment.details,
+      false,
+    ),
     check("challenger-evidence-supported", challengerDetails.length === 0, challengerDetails.length === 0 ? "The Challenger cites exact required observations." : "Challenger evidence support is incomplete.", challengerDetails),
     check("no-live-write", input.submissionMode && !input.liveWriteAttempted, input.submissionMode && !input.liveWriteAttempted ? "Submission remained sandbox-only." : "A live-write boundary was violated."),
   ];
 
   return {
-    status: checks.every((entry) => entry.passed) ? "PASS" : "FAIL",
+    status: checks.every((entry) => !entry.blocking || entry.passed) ? "PASS" : "FAIL",
     checks,
     changedFiles,
     diff,

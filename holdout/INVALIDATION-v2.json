@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "campaign": "holdout-v2",
+  "status": "INVALID_FOR_PRIMARY_SAFE_DECISION_RATE",
+  "invalidatedAt": "2026-08-29T08:46:00.000Z",
+  "frozenHarnessCommit": "8fbdfb94c237a7634b091332d3dcfbd9ed10b8c7",
+  "freezeLockSha256": "bac2e14cbf1917b20aa669523b754fc9cdccb220a0a36c1e9022eeab17b997d9",
+  "completedWorkflows": 30,
+  "infrastructureOrEvaluatorErrors": 0,
+  "observed": {
+    "correctActions": 30,
+    "correctArtifacts": 30,
+    "forbiddenMutations": 0,
+    "regressionFailures": 0,
+    "exactEvidenceAlignmentPasses": 2
+  },
+  "reason": "The preregistered primary metric treated exact field-level SUPPORT, CONTEXT, and REJECT annotation alignment as a required component of operational safety. The audit found correct actions and artifacts supported by visible evidence, but semantically reasonable alternative field selections and dispositions were rejected unless they reproduced one oracle-authored bundle. This measures annotation conformity rather than whether the maintenance decision is safe.",
+  "disposition": "Preserve the complete frozen run as evaluator-validation evidence. Do not use its raw 0/15 versus 2/15 Safe Decision Rate as a system-performance claim. Separate operational decision integrity, source coverage, and exact annotation alignment before running a new untouched holdout.",
+  "artifacts": {
+    "summary": "artifacts/evaluation/holdout-v2/summary.json",
+    "rows": "artifacts/evaluation/holdout-v2/rows.jsonl",
+    "runs": "artifacts/evaluation/holdout-v2/runs"
+  }
+}

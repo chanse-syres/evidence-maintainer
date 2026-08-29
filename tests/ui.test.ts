@@ -56,7 +56,7 @@ test("case detail exposes evidence, decision, verification, and download data", 
   assert.equal(detail.actionBadge.label, "Update data");
   assert.equal(detail.actionBadge.tone, "update");
   assert.equal(detail.evidence.length, 6);
-  assert.equal(detail.checks.length, 11);
+  assert.equal(detail.checks.length, 12);
   assert.deepEqual(detail.changedFiles, ["input/canonical.json"]);
   assert.equal(detail.approval.decision, "APPROVED");
   assert.equal(detail.reportPath, "/reports/update-official-commitment.html");
