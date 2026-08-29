@@ -6,6 +6,7 @@ import test from "node:test";
 import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../src/core/case-loader.ts";
 import { applyOperations } from "../src/core/mutation-engine.ts";
 import { runDeterministicGate } from "../src/core/deterministic-gate.ts";
+import { buildEvidenceLedger } from "../src/core/evidence-ledger.ts";
 import { diffTrees, snapshotTree } from "../src/core/tree-snapshot.ts";
 import type { ChallengerVerdict, MaintainerProposal } from "../src/core/schemas.ts";
 
@@ -66,26 +67,33 @@ test("a correct no-action proposal passes all checks with no changed files", asy
   assert.ok(result.checks.every((check) => check.passed));
 });
 
-test("a correct data update changes only the expected record and passes", async () => {
+test("a correct data update can cite immutable ledger events and passes", async () => {
   const caseDir = resolve("cases", "update-official-commitment");
   const loadedCase = await loadPublicCase(caseDir);
   const oracle = await loadOracle(caseDir);
   const root = await mkdtemp(join(tmpdir(), "evidence-gate-update-"));
   const workspace = await copyCaseWorkspace(caseDir, join(root, "workspace"));
   const before = await snapshotTree(workspace);
+  const officialEvent = buildEvidenceLedger(loadedCase).find(
+    (event) => event.evidenceIds.includes("obs-official-commitment"),
+  );
+  assert.ok(officialEvent);
   const proposal: MaintainerProposal = {
     ...noopProposal,
     caseId: "update-official-commitment",
     action: "UPDATE_DATA",
     firstMaterialDivergence: "The official announcement supersedes discovery data.",
-    evidenceUsed: ["obs-official-commitment"],
+    evidenceUsed: [officialEvent.id],
     affectedEntities: ["athlete-11"],
     affectedFiles: ["input/canonical.json"],
     operations: [{
       kind: "SET_RECORD_FIELDS",
       file: "input/canonical.json",
       recordId: "athlete-11",
-      fields: { status: "committed", team: "Coastal State" },
+      assignments: [
+        { field: "status", value: "committed" },
+        { field: "team", value: "Coastal State" },
+      ],
     }],
     preservedInvariants: ["Stable athlete identity is preserved"],
     summary: "Apply the official commitment state.",
@@ -160,24 +168,24 @@ test("bounded record updates reject ambiguous, absent, non-array, and traversal 
     kind: "SET_RECORD_FIELDS",
     file: "duplicate.json",
     recordId: "x",
-    fields: { status: "new" },
+    assignments: [{ field: "status", value: "new" }],
   }]), /duplicate/i);
   await assert.rejects(() => applyOperations(root, [{
     kind: "SET_RECORD_FIELDS",
     file: "duplicate.json",
     recordId: "missing",
-    fields: { status: "new" },
+    assignments: [{ field: "status", value: "new" }],
   }]), /record/i);
   await assert.rejects(() => applyOperations(root, [{
     kind: "SET_RECORD_FIELDS",
     file: "object.json",
     recordId: "x",
-    fields: { status: "new" },
+    assignments: [{ field: "status", value: "new" }],
   }]), /array/i);
   await assert.rejects(() => applyOperations(root, [{
     kind: "SET_RECORD_FIELDS",
     file: "../outside.json",
     recordId: "x",
-    fields: { status: "new" },
+    assignments: [{ field: "status", value: "new" }],
   }]), /path|normalized|relative/i);
 });

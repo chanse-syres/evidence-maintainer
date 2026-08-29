@@ -70,7 +70,11 @@ export async function applyOperations(workspace: string, operations: readonly Mu
       continue;
     }
 
-    if (Object.hasOwn(operation.fields, "id")) {
+    const fields = Object.fromEntries(operation.assignments.map(({ field, value }) => [field, value]));
+    if (Object.keys(fields).length !== operation.assignments.length) {
+      throw new Error("Record field assignments must be unique");
+    }
+    if (Object.hasOwn(fields, "id")) {
       throw new Error("Stable record identity cannot be mutated");
     }
     const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
@@ -87,7 +91,7 @@ export async function applyOperations(workspace: string, operations: readonly Mu
     if (matches.length === 0) {
       throw new Error(`Record ${operation.recordId} not found in ${operation.file}`);
     }
-    Object.assign(matches[0], operation.fields);
+    Object.assign(matches[0], fields);
     await atomicWrite(path, `${JSON.stringify(parsed, null, 2)}\n`);
   }
 }

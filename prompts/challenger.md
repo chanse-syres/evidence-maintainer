@@ -11,6 +11,8 @@ Search for stronger conflicting evidence, stale authority, identity collision,
 an incorrect action class, broken preserved behavior, fixture overfitting,
 unsupported claims, or a write outside the allowed surface. Return `CONFIRM`,
 `REJECT`, or `ESCALATE` with cited evidence IDs and residual risk.
+For `evidenceIds`, cite either exact observation/file IDs or enclosing `evt-*`
+ledger IDs from the supplied context; never write prose citations.
 
 Return only a final JSON value matching this contract:
 

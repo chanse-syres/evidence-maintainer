@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "retry-deferred-406-baseline-1787962262222",
+  "runId": "retry-deferred-406-baseline-1787962955516",
   "caseId": "retry-deferred-406",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:11:02.222Z",
-  "finishedAt": "2026-08-29T00:11:02.239Z",
-  "durationMs": 17,
+  "startedAt": "2026-08-29T00:22:35.516Z",
+  "finishedAt": "2026-08-29T00:22:35.522Z",
+  "durationMs": 6,
   "timeoutMs": 300000,
-  "promptSha256": "8ad8dd9aa741fe851c877a67a2002afb6e9672aeb10a665e43f4273950b38e98",
-  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "promptSha256": "4573cfafa789f4a48fd488d5897d847a1e404e25f158dde40851df2884aaf300",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
   "caseSetSha256": "6d904bc00aad49ea80354c1a5c4417719fc418a012ab8c98e2636eba1e4db0ce",
   "trajectoryPaths": [
     "trajectories/baseline.jsonl"
@@ -22,8 +22,8 @@
     "after-tree.json": "5371334caa8bcaa2319b3660f6c01bf5ed3fb3009779b8079f84ab18cd404409",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "e0f2724652a15bedd5a35e24cb93287e018dc7113351232eeffb0499ff72510a",
-    "approval.json": "b5a1f9a840c4a93d7fb8f98e3d5979f424fe99340f599be04091367d7a4318bb",
-    "trajectories/baseline.jsonl": "f377442d30845599c4a74b8226b4f2a61dc985042beaa5cfd19110b7a4d33057"
+    "approval.json": "8f9380812e631ac0acac230a34a711c64b4596f427ddc26090174db7d5313753",
+    "trajectories/baseline.jsonl": "3013c77cfc24e978d426bcfa2b7d5e9457355d6c25b7de46fb2f1debeb23b623"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "repair-json-nesting-baseline-1787962260478",
+  "runId": "repair-json-nesting-baseline-1787962954137",
   "caseId": "repair-json-nesting",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:11:00.478Z",
-  "finishedAt": "2026-08-29T00:11:00.739Z",
-  "durationMs": 261,
+  "startedAt": "2026-08-29T00:22:34.137Z",
+  "finishedAt": "2026-08-29T00:22:34.333Z",
+  "durationMs": 196,
   "timeoutMs": 300000,
-  "promptSha256": "116ea67f832d37b9fe1031774cf68f949dd2b532be4e1f804a550218f8b9c62b",
-  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
-  "caseSetSha256": "7357adbc668da05bca5454bb1489bcc3287137822be826d43611a65da961e908",
+  "promptSha256": "f540dc2d87999c6518e195f12b956ee5ffc7af7a963f412b8ddad6d09f185549",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "52dcd1ca8c513542fc472599fa57a3ef0cc188b5fb1bad18191f3c4439007f63",
   "trajectoryPaths": [
     "trajectories/baseline.jsonl"
   ],
   "artifactSha256": {
     "baseline-result.json": "7a58b36a8ad720bca209a9561da4743c5788ef8df636aa33baee86dfbb4f9285",
-    "before-tree.json": "ad1982724d93fee3a2b2d34e373c5a1747783ec1bbab22f292bca34196a07367",
-    "after-tree.json": "2cf63099101128180db79da3ae9c878a2ef81b52bf23fefe0106cdb18afd7107",
-    "command-results.json": "ab7bc8a9f3c38950220edccdf2c96a20de8b3c9b9e1d9240914d1c58d51be0d4",
+    "before-tree.json": "53cb2ae25d558e538c13aa877fc78ab2cce6ac13265f7e3210647ead41a103af",
+    "after-tree.json": "380cb2c93fd4e6aef48a67aa7a82adcdacc8db5be58033889fd64c7029cf0a51",
+    "command-results.json": "dc588d1ed86603e52d5cdc348b06cc6b50860b158577010709302c5e70d8b14a",
     "gate.json": "2934257bfd9125e9d5d8b8dce482b9ed0bd6f44b9ae1e6c84ecf4668136ccba7",
-    "approval.json": "8da920802b6a4fe80e41b201e075807d1654e9f2db822b748881f0107b0607a0",
-    "trajectories/baseline.jsonl": "824d64844db1a6cec87534040dc77f9b6c465e1b96e73557a954070d924aec37"
+    "approval.json": "2396232c2eb5553340211b13847a011939d91901533d9b4e4cc727acff14c109",
+    "trajectories/baseline.jsonl": "b61a847355d1bb8abd9ee86af05b9e6ced9d26335e1343f19cf53af0b2c4f761"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

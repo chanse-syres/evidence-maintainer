@@ -12,7 +12,7 @@
     },
     {
       "path": "case.json",
-      "sha256": "e803e1563018aa395b3160ae79f0b28c815870e8d84eba5a9c96b67b2f391d67",
+      "sha256": "c0778c0bafd5b4197a7c57e55c1b41385d0d4b9b6c4d560f6cc4ac2f452b457c",
       "bytes": 3741
     },
     {
@@ -37,9 +37,9 @@
     },
     {
       "path": "input/policy.json",
-      "sha256": "1360793dd97d52d71464d24d7e3385278e836cffd4f184be684b594e453b9412",
-      "bytes": 358
+      "sha256": "4f02139c3c130da3926faa2e4d297bf7e874b34a942d30f72890f265f81bb44b",
+      "bytes": 361
     }
   ],
-  "sha256": "a73e2d0511cf4ee89fd51e050ad8850da85ea5b1fe513fd7d2a9230c9cd414b1"
+  "sha256": "4b1f30294568429335711b22c3846af4957ddbda2174169046515045657b2803"
 }

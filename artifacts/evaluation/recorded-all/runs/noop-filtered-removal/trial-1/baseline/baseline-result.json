@@ -17,9 +17,12 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "athlete-61",
-      "fields": {
-        "status": "removed"
-      }
+      "assignments": [
+        {
+          "field": "status",
+          "value": "removed"
+        }
+      ]
     }
   ],
   "preservedInvariants": [

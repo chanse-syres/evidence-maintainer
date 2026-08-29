@@ -19,6 +19,9 @@ class InspectingRunner implements AgentRunner {
     this.roles.push(request.role);
     assert.equal(request.role, "baseline");
     assert.doesNotMatch(request.prompt, /expectedAction|oracle\.json|allowedChangedFiles/);
+    assert.match(request.prompt, /obs-1/);
+    assert.match(request.prompt, /canonical/);
+    assert.match(request.prompt, /policy/);
     await assert.rejects(() => access(join(request.workspace, "oracle.json")));
     return this.inner.run(request);
   }

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "obs-official-commitment",
+    "evt-005"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The official observation is accepted from the supplied ledger metadata; its underlying announcement content is not independently available for review."
+  ],
+  "summary": "The authoritative official-team observation matches athlete-11, is effective before the cutoff, and authorizes both committed status and team. The proposal preserves identity and modifies only the allowed canonical file."
+}

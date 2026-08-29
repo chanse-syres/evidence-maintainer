@@ -10,6 +10,7 @@ import {
   type MaintainerProposal,
 } from "./schemas.ts";
 import type { LoadedPublicCase } from "./case-loader.ts";
+import { buildEvidenceLedger } from "./evidence-ledger.ts";
 import { diffTrees, type TreeSnapshot } from "./tree-snapshot.ts";
 
 export interface CommandResult {
@@ -134,11 +135,19 @@ export async function runDeterministicGate(input: GateInput): Promise<GateResult
     ...input.loadedCase.observations.map((observation) => observation.id),
     ...input.loadedCase.workspaceFiles.map((file) => file.path),
   ]);
+  const ledgerById = new Map(
+    buildEvidenceLedger(input.loadedCase).map((event) => [event.id, event.evidenceIds]),
+  );
+  const expandCitations = (ids: readonly string[]) => ids.flatMap(
+    (id) => ledgerById.get(id) ?? [id],
+  );
+  const proposalEvidence = new Set(expandCitations(input.proposal.evidenceUsed));
+  const challengerEvidence = new Set(expandCitations(input.challenger.evidenceIds));
   const missingRequiredEvidence = input.oracle.requiredEvidenceIds.filter(
-    (id) => !input.proposal.evidenceUsed.includes(id) || !input.challenger.evidenceIds.includes(id),
+    (id) => !proposalEvidence.has(id) || !challengerEvidence.has(id),
   );
   const unknownEvidence = [...input.proposal.evidenceUsed, ...input.challenger.evidenceIds]
-    .filter((id) => !evidenceUniverse.has(id));
+    .filter((id) => !evidenceUniverse.has(id) && !ledgerById.has(id));
   const evidenceSupported = missingRequiredEvidence.length === 0 && unknownEvidence.length === 0;
 
   const checks = [

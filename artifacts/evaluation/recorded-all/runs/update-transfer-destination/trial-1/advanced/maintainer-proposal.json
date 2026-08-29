@@ -21,10 +21,16 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "athlete-21",
-      "fields": {
-        "destination": "Summit State",
-        "status": "transferred"
-      }
+      "assignments": [
+        {
+          "field": "destination",
+          "value": "Summit State"
+        },
+        {
+          "field": "status",
+          "value": "transferred"
+        }
+      ]
     }
   ],
   "preservedInvariants": [

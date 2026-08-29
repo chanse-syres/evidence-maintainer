@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "verdict": "CONFIRM",
+  "evidenceIds": [
+    "evt-002",
+    "evt-003",
+    "evt-004",
+    "evt-005"
+  ],
+  "violations": [],
+  "residualRisks": [
+    "The authoritative status remains unresolved until a signed cross-system resolution with an effective timestamp is supplied."
+  ],
+  "summary": "The proposal correctly escalates the same-effective-time disagreement between two policy-authorized sources, preserves the canonical snapshot, and performs no unauthorized write."
+}

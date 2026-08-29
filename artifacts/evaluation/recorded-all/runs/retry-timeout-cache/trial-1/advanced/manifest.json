@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "retry-timeout-cache-advanced-1787962262507",
+  "runId": "retry-timeout-cache-advanced-1787962955652",
   "caseId": "retry-timeout-cache",
   "arm": "advanced",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:11:02.508Z",
-  "finishedAt": "2026-08-29T00:11:02.518Z",
-  "durationMs": 10,
+  "startedAt": "2026-08-29T00:22:35.652Z",
+  "finishedAt": "2026-08-29T00:22:35.660Z",
+  "durationMs": 8,
   "timeoutMs": 300000,
-  "promptSha256": "5cfc8257bec60a256398c629b540780bf05d2773182b3f15b19a834ddcf68cc6",
-  "outputSchemaSha256": "ee727e92e93501de527302b5368480bc85a17818cc6a5800c05d52db43604bb7",
+  "promptSha256": "a45cfd8c4ebf5098e74efd54a53a004ba05d0e9dba96e5105d7021029f183cc2",
+  "outputSchemaSha256": "a18a729f47eb7c4c3bf5061a759033278ab8fe3ae770f06fa79d602fcc2295b9",
   "caseSetSha256": "06e4b98043d48db854cef75375507a33d507ad47fefd5efc8caa756b16bdcaf4",
   "trajectoryPaths": [
     "trajectories/maintainer.jsonl",
@@ -26,9 +26,9 @@
     "after-tree.json": "66b6c9c358e30ab6a1fdf01353f6c9a66748852896cfedc7674fcaedbe5e9d09",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "3fe4047b4bc97729eaa94ac668211da35ad3df5fdd0cd74a65dcd1649bf4c4db",
-    "approval.json": "8ffbcde94bd493fa7fe8e1b5be46cc2d2201e63b64beed6e457442817c5c6316",
-    "trajectories/maintainer.jsonl": "a6cd5b9b61e78773860932d87ea6a9594ab3d9c52653a18c7bdde73fb47ab6e7",
-    "trajectories/challenger.jsonl": "f1a0dda9cf8aca57d2f7adbda679ae63a1b3c52f0e1f12ac6fdbf6250db7371a"
+    "approval.json": "17d83e9ac4ed575efa3b8dd2ea1587a40cc05df5c13bdb08ff416f90c1bfd18a",
+    "trajectories/maintainer.jsonl": "3eaddf1ac5f805c621a34cb390e95e835c92f5b267084c24ab24332258616882",
+    "trajectories/challenger.jsonl": "6e72c8e1f31c0b70986a5092ecd068962321ed98d97972da9a60b7046da2a3fe"
   },
   "tokenUsage": null,
   "outcome": "PASS"

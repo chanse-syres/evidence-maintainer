@@ -1,7 +1,7 @@
 {
   "node --experimental-strip-types --test adapter.test.ts": {
     "exitCode": 0,
-    "stdout": "✔ old numeric fixture remains supported (0.9378ms)\n✔ new opaque continuation tokens are followed (0.1863ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.6188\n",
+    "stdout": "✔ old numeric fixture remains supported (1.0491ms)\n✔ new opaque continuation tokens are followed (0.2167ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 107.9517\n",
     "stderr": ""
   }
 }

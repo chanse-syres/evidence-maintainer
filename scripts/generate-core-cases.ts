@@ -28,6 +28,7 @@ const json = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 const capturedAt = "2026-08-28T18:00:00.000Z";
 
 function policy(input: {
+  cutoff?: string;
   authorityByField?: Record<string, string>;
   freshnessWindowMinutes?: number;
   invariants: string[];
@@ -35,9 +36,9 @@ function policy(input: {
 }) {
   return {
     schemaVersion: 1,
-    cutoff: "2026-08-28T17:00:00.000Z",
+    cutoff: input.cutoff ?? "2026-08-28T17:00:00.000Z",
     authorityByField: input.authorityByField ?? {},
-    freshnessWindowMinutes: input.freshnessWindowMinutes ?? 60,
+    freshnessWindowMinutes: input.freshnessWindowMinutes ?? 10_080,
     retryLimit: 2,
     invariants: input.invariants,
     rules: input.rules,

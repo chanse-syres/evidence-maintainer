@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "retry-timeout-cache-baseline-1787962262451",
+  "runId": "retry-timeout-cache-baseline-1787962955626",
   "caseId": "retry-timeout-cache",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:11:02.451Z",
-  "finishedAt": "2026-08-29T00:11:02.483Z",
-  "durationMs": 32,
+  "startedAt": "2026-08-29T00:22:35.626Z",
+  "finishedAt": "2026-08-29T00:22:35.633Z",
+  "durationMs": 7,
   "timeoutMs": 300000,
-  "promptSha256": "3ae8024ea13fcde26041e0e760754bf99655f8cb8c86cc4edb98e7633011db56",
-  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
+  "promptSha256": "0a37995d6d952aeed87d52ee5fbb893b28c2b5005047bd9f0edb169fcf621e9f",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
   "caseSetSha256": "06e4b98043d48db854cef75375507a33d507ad47fefd5efc8caa756b16bdcaf4",
   "trajectoryPaths": [
     "trajectories/baseline.jsonl"
@@ -22,8 +22,8 @@
     "after-tree.json": "66b6c9c358e30ab6a1fdf01353f6c9a66748852896cfedc7674fcaedbe5e9d09",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "6ba59912a125d9d9d26e6c530fa3177e315b90e5c405b23b1bbac29efd3d1104",
-    "approval.json": "124ab4f5f1a74ab46f471050d55e10a84184c3250cd12c5dda647c9c606cc1e1",
-    "trajectories/baseline.jsonl": "8a8707d923a8d3c374e5417777761a0eaf4b8ad37ca71959f8218bcbaf8030e3"
+    "approval.json": "77b9464e3c024a6f5aeb568adbf7438281f7d4cc833734dfc58207fa1ee6f3a5",
+    "trajectories/baseline.jsonl": "e592a0bff3552075f7670c2d9d3aa4b26d632235abd1f3abd04274a9e8321525"
   },
   "tokenUsage": null,
   "outcome": "FAIL"

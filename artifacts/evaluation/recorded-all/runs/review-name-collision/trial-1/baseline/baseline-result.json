@@ -17,9 +17,12 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "person-81",
-      "fields": {
-        "award": "Regional Scholar"
-      }
+      "assignments": [
+        {
+          "field": "award",
+          "value": "Regional Scholar"
+        }
+      ]
     }
   ],
   "preservedInvariants": [

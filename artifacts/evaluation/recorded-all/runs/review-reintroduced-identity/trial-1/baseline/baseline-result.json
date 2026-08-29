@@ -17,10 +17,16 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "occurrence-91",
-      "fields": {
-        "status": "active",
-        "closedAt": null
-      }
+      "assignments": [
+        {
+          "field": "status",
+          "value": "active"
+        },
+        {
+          "field": "closedAt",
+          "value": null
+        }
+      ]
     }
   ],
   "preservedInvariants": [

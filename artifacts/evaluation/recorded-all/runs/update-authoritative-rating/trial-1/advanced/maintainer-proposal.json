@@ -21,11 +21,20 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "athlete-31",
-      "fields": {
-        "rating": 93,
-        "ratingAsOf": "2026-08-25T17:30:00.000Z",
-        "otherProviderRating": 91
-      }
+      "assignments": [
+        {
+          "field": "rating",
+          "value": 93
+        },
+        {
+          "field": "ratingAsOf",
+          "value": "2026-08-25T17:30:00.000Z"
+        },
+        {
+          "field": "otherProviderRating",
+          "value": 91
+        }
+      ]
     }
   ],
   "preservedInvariants": [

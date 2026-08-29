@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "caseId": "review-conflicting-authorities",
+  "action": "HUMAN_REVIEW",
+  "firstMaterialDivergence": "At effectiveAt 2026-08-27T14:00:00.000Z, co-authoritative observations report incompatible status values: active versus withdrawn.",
+  "failureOwner": "Cross-system authority resolution",
+  "evidenceUsed": [
+    "obs-athletics-active",
+    "obs-registrar-withdrawn",
+    "input/policy.json",
+    "input/canonical.json"
+  ],
+  "evidenceRejected": [],
+  "affectedEntities": [
+    "athlete-71"
+  ],
+  "affectedFiles": [],
+  "operations": [
+    {
+      "kind": "NO_MUTATION",
+      "reason": "Neither co-authoritative observation contains a supersession edge, so policy requires escalation and canonical state must remain unchanged."
+    }
+  ],
+  "preservedInvariants": [
+    "Conflicting co-authoritative records cannot be resolved by source order",
+    "Canonical state remains unchanged without a supersession edge"
+  ],
+  "unresolvedUncertainty": [
+    "Which status is authoritative after 2026-08-27T14:00:00.000Z.",
+    "Whether a signed cross-system resolution exists and its effective timestamp."
+  ],
+  "minimumInformationRequest": [
+    "Provide a signed cross-system resolution identifying the authoritative status for athlete-71 and its effective timestamp."
+  ],
+  "retryCondition": "Retry only after receipt of the signed cross-system resolution with an effective timestamp.",
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Escalated for human review because two co-authoritative records disagree at the same effective time without supersession evidence; no data or adapter mutation is justified.",
+  "arm": "baseline",
+  "executedCommands": []
+}

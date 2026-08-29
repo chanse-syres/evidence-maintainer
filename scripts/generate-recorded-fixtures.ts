@@ -51,6 +51,18 @@ const adapterRepairs: Record<string, MutationOperation> = {
   },
 };
 
+function assignments(fields: Record<string, unknown>): Array<{
+  field: string;
+  value: string | number | boolean | null;
+}> {
+  return Object.entries(fields).map(([field, value]) => {
+    if (value !== null && !["string", "number", "boolean"].includes(typeof value)) {
+      throw new Error(`Recorded mutation field ${field} must use a scalar value`);
+    }
+    return { field, value: value as string | number | boolean | null };
+  });
+}
+
 function directBaseline(caseId: string, correct: MaintainerProposal): BaselineResult {
   const baseline: BaselineResult = { ...correct, arm: "baseline", executedCommands: [] };
   if (caseId === "update-official-commitment" || caseId === "noop-duplicate-news") {
@@ -60,14 +72,14 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
     return {
       ...baseline,
       evidenceUsed: ["obs-transfer-rumor"],
-      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-21", fields: { destination: "Lakeside", status: "transferred" } }],
+      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-21", assignments: assignments({ destination: "Lakeside", status: "transferred" }) }],
       summary: "The latest reported destination is applied directly.",
     };
   }
   if (caseId === "update-authoritative-rating") {
     return {
       ...baseline,
-      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-31", fields: { rating: 93, ratingAsOf: "2026-08-25T17:30:00.000Z", otherProviderRating: 93 } }],
+      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-31", assignments: assignments({ rating: 93, ratingAsOf: "2026-08-25T17:30:00.000Z", otherProviderRating: 93 }) }],
       summary: "The newest rating is copied into both visible rating fields.",
     };
   }
@@ -105,7 +117,7 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
       ...baseline,
       action: "UPDATE_DATA",
       affectedFiles: ["input/canonical.json"],
-      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-51", fields: { status: "offered" } }],
+      operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-51", assignments: assignments({ status: "offered" }) }],
       summary: "The newest publication is treated as current state.",
     };
   }
@@ -118,7 +130,7 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
         kind: "SET_RECORD_FIELDS",
         file: "input/canonical.json",
         recordId: "athlete-71",
-        fields: { status: "withdrawn" },
+        assignments: assignments({ status: "withdrawn" }),
       }],
       minimumInformationRequest: [],
       approvalLevel: "SIMULATED_HUMAN",
@@ -134,7 +146,7 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
         kind: "SET_RECORD_FIELDS",
         file: "input/canonical.json",
         recordId: "person-81",
-        fields: { award: "Regional Scholar" },
+        assignments: assignments({ award: "Regional Scholar" }),
       }],
       minimumInformationRequest: [],
       approvalLevel: "SIMULATED_HUMAN",
@@ -150,7 +162,7 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
         kind: "SET_RECORD_FIELDS",
         file: "input/canonical.json",
         recordId: "occurrence-91",
-        fields: { status: "active", closedAt: null },
+        assignments: assignments({ status: "active", closedAt: null }),
       }],
       minimumInformationRequest: [],
       approvalLevel: "SIMULATED_HUMAN",
@@ -161,7 +173,7 @@ function directBaseline(caseId: string, correct: MaintainerProposal): BaselineRe
     ...baseline,
     action: "UPDATE_DATA",
     affectedFiles: ["input/canonical.json"],
-    operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-61", fields: { status: "removed" } }],
+    operations: [{ kind: "SET_RECORD_FIELDS", file: "input/canonical.json", recordId: "athlete-61", assignments: assignments({ status: "removed" }) }],
     summary: "An absent athlete is removed from canonical state.",
   };
 }
@@ -176,7 +188,7 @@ async function correctProposal(caseId: string): Promise<MaintainerProposal> {
       kind: "SET_RECORD_FIELDS",
       file: record.file,
       recordId: record.recordId,
-      fields: record.fields,
+      assignments: assignments(record.fields),
     }));
   } else if (oracle.expectedAction === "REPAIR_ADAPTER") {
     operations = [adapterRepairs[caseId]];

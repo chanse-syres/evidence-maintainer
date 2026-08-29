@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
   "projectId": "evidence-maintainer",
-  "runId": "update-official-commitment-baseline-1787962263265",
+  "runId": "update-official-commitment-baseline-1787962955900",
   "caseId": "update-official-commitment",
   "arm": "baseline",
   "mode": "recorded",
   "model": "recorded-fixture",
-  "startedAt": "2026-08-29T00:11:03.265Z",
-  "finishedAt": "2026-08-29T00:11:03.340Z",
-  "durationMs": 75,
+  "startedAt": "2026-08-29T00:22:35.900Z",
+  "finishedAt": "2026-08-29T00:22:35.909Z",
+  "durationMs": 9,
   "timeoutMs": 300000,
-  "promptSha256": "f8f4fecdc47f30790267638c7f799ecf73790841a4392fc23f640ff0c8e033b2",
-  "outputSchemaSha256": "a1b6c558865bef3964b0c3d0b7d51f70ec35a0012dc0f2a2f27d07a63c5bf5b9",
-  "caseSetSha256": "0bf790581ad465884241354a81933822ccb7ae4cfee0e89d904c70ee34bc08dc",
+  "promptSha256": "c3aa9c10a5a55bb21a25470cacd83446a8fd3526ec07c46f7c0218588c48ba4f",
+  "outputSchemaSha256": "54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f",
+  "caseSetSha256": "7de95e921c6e5fd38acbdc0c1020308569ccd543e8118b1125975574a313deaf",
   "trajectoryPaths": [
     "trajectories/baseline.jsonl"
   ],
   "artifactSha256": {
-    "baseline-result.json": "6945f0dd2f0fc720ed36d63d91018872ffa2c23f01d3c8be4a3ae0e6ecda6616",
-    "before-tree.json": "aae371eabdea48998f517b56ac80c2a9132aacad9ce8d19785abba62c95a1c95",
-    "after-tree.json": "8208cb3dfa2048943a7a8c80c40c50e5182c3b490a7fa43370440f0f3f02af82",
+    "baseline-result.json": "1975555a9de1d223c59561e4c15e20c0134088b1d2f098d5012409b2d49fb768",
+    "before-tree.json": "4111d1ccbb2880bab6d3a335218d35d960d3304351978c2b1f9b1f00f53271d9",
+    "after-tree.json": "3c4b09911d58f34ae675a5bce04fe96396f4d3ebc5bd325bb81ebaff54480269",
     "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
     "gate.json": "664bfcb059b9188f7182aad55bca3c0ddcd7a6f338b1fddc1cd75c10bfd9f661",
-    "approval.json": "62bd74661aeffc0a85f665f4c19a950230c8fb5bcc1cc2601887099a596cf16c",
-    "trajectories/baseline.jsonl": "6e181f8d55d6c620a081a0fce897abff3900a4df621579c2be16ba05e03745d1"
+    "approval.json": "075d6ff7980c6da56e2810ce11c9b74aadef540d6436e0ad6954ab20162b81bf",
+    "trajectories/baseline.jsonl": "7056b62fd8e08f2e2e16ef7f2f9e61041904ef32bc3da2f8f712ef33ce112830"
   },
   "tokenUsage": null,
   "outcome": "PASS"

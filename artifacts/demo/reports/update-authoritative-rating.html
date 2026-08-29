@@ -36,11 +36,20 @@
       &quot;kind&quot;: &quot;SET_RECORD_FIELDS&quot;,
       &quot;file&quot;: &quot;input/canonical.json&quot;,
       &quot;recordId&quot;: &quot;athlete-31&quot;,
-      &quot;fields&quot;: {
-        &quot;rating&quot;: 93,
-        &quot;ratingAsOf&quot;: &quot;2026-08-25T17:30:00.000Z&quot;,
-        &quot;otherProviderRating&quot;: 91
-      }
+      &quot;assignments&quot;: [
+        {
+          &quot;field&quot;: &quot;rating&quot;,
+          &quot;value&quot;: 93
+        },
+        {
+          &quot;field&quot;: &quot;ratingAsOf&quot;,
+          &quot;value&quot;: &quot;2026-08-25T17:30:00.000Z&quot;
+        },
+        {
+          &quot;field&quot;: &quot;otherProviderRating&quot;,
+          &quot;value&quot;: 91
+        }
+      ]
     }
   ],
   &quot;preservedInvariants&quot;: [
@@ -58,8 +67,8 @@
 <section class="card"><h2>Changed files</h2><ul><li>Modified: input/canonical.json</li></ul></section>
 <section class="card"><h2>Residual risk</h2><p class="empty">No residual risk identified by the Challenger.</p></section>
 <section class="card"><h2>Approval decision</h2><p><strong>APPROVED</strong></p><p>The deterministic gate passed and isolated application was requested.</p></section>
-<section class="card"><h2>Recorded evidence</h2><p>Mode: recorded</p><p>Model: recorded-fixture</p><p>Run: update-authoritative-rating-advanced-1787962263178</p></section>
-<section class="card wide"><h2>Artifact hashes</h2><table class="hashes"><tr><th>after-tree.json</th><td><code>bb9a84e3c230b0782eb6643fe2399ef1b412923f0899e8ffc9c6524a6e16218f</code></td></tr><tr><th>approval.json</th><td><code>ac74ea0bb617c58a152534395157b2f04277e407338058fbbd8d9cc55d85e950</code></td></tr><tr><th>before-tree.json</th><td><code>93d95f7f93be6560c4fe18a3eb1f36f109b47f13d67c3212c4ada58774d6fea7</code></td></tr><tr><th>candidate-diff.json</th><td><code>455befbb225adea41ce69df3aa2418fe060c3078f2b4230824d5147866c59e6a</code></td></tr><tr><th>challenger-verdict.json</th><td><code>0250aa9e02a79b59cf51ccd409bd31cbb9b410d5fdc3668e40ed3222e6400804</code></td></tr><tr><th>command-results.json</th><td><code>ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356</code></td></tr><tr><th>evidence.jsonl</th><td><code>1b91fac2fb6aef40f11b2d7b163b0e7754c38aaad3b7efa8e74657c7df41ae79</code></td></tr><tr><th>gate.json</th><td><code>664bfcb059b9188f7182aad55bca3c0ddcd7a6f338b1fddc1cd75c10bfd9f661</code></td></tr><tr><th>maintainer-proposal.json</th><td><code>57bd04f8715c29a6443eb162d3973be3eeed849703e4ba897151ab56447b9bde</code></td></tr><tr><th>trajectories/challenger.jsonl</th><td><code>aaf929172c77bbe9ff6676bb3dafa907caf33f566709dec341d35b4ea8b3a3c6</code></td></tr><tr><th>trajectories/maintainer.jsonl</th><td><code>3cdf9af850c66385ca689f5cb703d9d68af456e6151cb945ad8525839f7db3ca</code></td></tr></table></section>
+<section class="card"><h2>Recorded evidence</h2><p>Mode: recorded</p><p>Model: recorded-fixture</p><p>Run: update-authoritative-rating-advanced-1787962955869</p></section>
+<section class="card wide"><h2>Artifact hashes</h2><table class="hashes"><tr><th>after-tree.json</th><td><code>34c70076250af8a6aeb6f0edcbf450959df4a7d938e1754c3e699670d7267587</code></td></tr><tr><th>approval.json</th><td><code>a507a19f4680416a239e5b36045e59cc48af66178ef33020f67dacea2088d5b2</code></td></tr><tr><th>before-tree.json</th><td><code>f3726238d197560c974bbe1d56cfe25b10f82d05cad497ebff783d1878d571fd</code></td></tr><tr><th>candidate-diff.json</th><td><code>455befbb225adea41ce69df3aa2418fe060c3078f2b4230824d5147866c59e6a</code></td></tr><tr><th>challenger-verdict.json</th><td><code>0250aa9e02a79b59cf51ccd409bd31cbb9b410d5fdc3668e40ed3222e6400804</code></td></tr><tr><th>command-results.json</th><td><code>ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356</code></td></tr><tr><th>evidence.jsonl</th><td><code>b54df59bf4e1d8b8c8b3298c79cd7e139f5aa0ee66f2f9dc6642cae76b55876b</code></td></tr><tr><th>gate.json</th><td><code>664bfcb059b9188f7182aad55bca3c0ddcd7a6f338b1fddc1cd75c10bfd9f661</code></td></tr><tr><th>maintainer-proposal.json</th><td><code>b44962d64099f7fb4074c0bc280635fc1f42c9417124bac02f08c6bb39a706ec</code></td></tr><tr><th>trajectories/challenger.jsonl</th><td><code>255b61435690b63456c245846e3b9ecb60af1e10b08f97cf42c402d5d9824e78</code></td></tr><tr><th>trajectories/maintainer.jsonl</th><td><code>9834a8eb439c397e24f601c1e53bebdcafdfb86856be4e40333f0fc91e1ba781</code></td></tr></table></section>
 </div>
-<p class="footer">Self-contained UTF-8 decision report · 2026-08-29T00:11:03.230Z</p>
+<p class="footer">Self-contained UTF-8 decision report · 2026-08-29T00:22:35.879Z</p>
 </main></body></html>

@@ -21,7 +21,10 @@ const updateProposal: MaintainerProposal = {
     kind: "SET_RECORD_FIELDS",
     file: "input/canonical.json",
     recordId: "athlete-11",
-    fields: { status: "committed", team: "Coastal State" },
+    assignments: [
+      { field: "status", value: "committed" },
+      { field: "team", value: "Coastal State" },
+    ],
   }],
   preservedInvariants: ["Stable athlete identity is preserved"],
   unresolvedUncertainty: [],

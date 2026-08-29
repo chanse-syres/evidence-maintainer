@@ -4,7 +4,7 @@
   "authorityByField": {
     "status": "official-team"
   },
-  "freshnessWindowMinutes": 60,
+  "freshnessWindowMinutes": 10080,
   "retryLimit": 2,
   "invariants": [
     "Effective state never rolls backward because publication is newer"

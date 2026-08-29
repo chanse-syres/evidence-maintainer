@@ -2,7 +2,7 @@
   "files": [
     {
       "path": "case.json",
-      "sha256": "356cf2225ed920083e88129ce58bb53f5cdfb07cbb3be717a3ce745ecdbbbe09",
+      "sha256": "f5410b4be51ff7ee88bfb33ec7b8f9f1fab807bd5feb656227a1a8cc37b142d1",
       "bytes": 1881
     },
     {
@@ -17,9 +17,9 @@
     },
     {
       "path": "input/policy.json",
-      "sha256": "3994e41b43281defecbaba3647148ab1afc28857d79a67a2a43ee3d5cf27e38d",
-      "bytes": 395
+      "sha256": "f315fae08946c5582fe01564261e8d9e9b21b2f468aa89a35ad2a8f8e4becbba",
+      "bytes": 398
     }
   ],
-  "sha256": "c0baa8cc0f465ee094a655d8b970a05baeabfd1c85fa62a164c9a8a5d13b02b5"
+  "sha256": "c506b5a3c0edb3ac6774553d32d500cc0391eb7d50d72d33978eb49d329f6832"
 }

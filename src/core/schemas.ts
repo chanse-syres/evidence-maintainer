@@ -83,12 +83,19 @@ export const EvidenceEventSchema = z.object({
   sha256: Sha256Schema,
 }).strict();
 
+const MutationFieldValueSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+
+const MutationFieldAssignmentSchema = z.object({
+  field: z.string().min(1),
+  value: MutationFieldValueSchema,
+}).strict();
+
 export const MutationOperationSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("SET_RECORD_FIELDS"),
     file: RelativePathSchema,
     recordId: z.string().min(1),
-    fields: z.record(z.string(), z.json()),
+    assignments: z.array(MutationFieldAssignmentSchema).min(1),
   }).strict(),
   z.object({
     kind: z.literal("REPLACE_TEXT"),

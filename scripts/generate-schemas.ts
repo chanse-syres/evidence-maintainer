@@ -15,11 +15,23 @@ const PUBLIC_SCHEMAS = {
   "challenger-verdict.schema.json": ChallengerVerdictSchema,
 } as const;
 
+function codexCompatibleSchema(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(codexCompatibleSchema);
+  if (value === null || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>)
+      .filter(([key]) => key !== "propertyNames")
+      .map(([key, entry]) => [key === "oneOf" ? "anyOf" : key, codexCompatibleSchema(entry)]),
+  );
+}
+
 export async function writeSchemas(directory = resolve("schemas")): Promise<Record<string, string>> {
   await mkdir(directory, { recursive: true });
   const hashes: Record<string, string> = {};
   for (const [name, schema] of Object.entries(PUBLIC_SCHEMAS)) {
-    const generated = z.toJSONSchema(schema, { target: "draft-2020-12" });
+    const generated = codexCompatibleSchema(
+      z.toJSONSchema(schema, { target: "draft-2020-12" }),
+    ) as Record<string, unknown>;
     const document = {
       ...generated,
       $schema: "https://json-schema.org/draft/2020-12/schema",

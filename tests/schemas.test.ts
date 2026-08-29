@@ -70,7 +70,7 @@ test("mutation operations reject traversal and accept bounded repair operations"
       kind: "SET_RECORD_FIELDS",
       file: "input/canonical.json",
       recordId: "athlete-11",
-      fields: { status: "committed" },
+      assignments: [{ field: "status", value: "committed" }],
     }).kind,
     "SET_RECORD_FIELDS",
   );
@@ -143,6 +143,11 @@ test("schema generation writes the three public agent contracts", async () => {
   for (const [name, hash] of Object.entries(hashes)) {
     const parsed = JSON.parse(await readFile(join(directory, name), "utf8"));
     assert.equal(parsed.$schema, "https://json-schema.org/draft/2020-12/schema");
+    assert.doesNotMatch(
+      JSON.stringify(parsed),
+      /"(?:propertyNames|oneOf)"/,
+      `${name} must stay inside the Codex structured-output schema subset`,
+    );
     assert.match(hash, /^[a-f0-9]{64}$/);
   }
 });

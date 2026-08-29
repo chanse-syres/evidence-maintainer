@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-29T00:11:03.658Z",
+  "generatedAt": "2026-08-29T00:22:35.999Z",
   "sourceMode": "recorded",
   "sourceModel": "recorded-fixture",
-  "caseSetHash": "ceb142210933d9d7a19e4c8b26101d64a3d9546293073adc3640733255075649",
+  "caseSetHash": "29a03ce1c4c3127b3137911210456f30bef09fb711fbb2fa2bebac165463a5b1",
   "summary": {
     "baselineSdr": 0.13333333333333333,
     "advancedSdr": 1,
@@ -13,77 +13,77 @@
     {
       "caseId": "noop-duplicate-news",
       "path": "reports/noop-duplicate-news.html",
-      "sha256": "42d2ba1b09dab73f2ad6c803c65a34f4dac5a9a7f9046a8d05656b66529b5ac3"
+      "sha256": "29db65447f5235873f5be6147bc3f6ab23bb1450d791d2630f2d4a55abb6560b"
     },
     {
       "caseId": "noop-filtered-removal",
       "path": "reports/noop-filtered-removal.html",
-      "sha256": "70d99def985624810b848b5251928bae46f5898f5f9024a9c21e9fa43b9205d8"
+      "sha256": "148df925ec3d2df71d7cabee5250776e468e8aa87330f472ac7148a3745d5fa9"
     },
     {
       "caseId": "noop-newer-publication-stale-effective",
       "path": "reports/noop-newer-publication-stale-effective.html",
-      "sha256": "bc5337a0c1117dd9c5a9741cf6ca8b25fc3b9d7c0199e90cdcc6c6cf1251aba6"
+      "sha256": "a4cf6969ad3319861bf7d43d5305d81557d0b3259e5e0dc69bc165706b771976"
     },
     {
       "caseId": "repair-json-nesting",
       "path": "reports/repair-json-nesting.html",
-      "sha256": "d7db9ab5e4144e7e5fe59a0724bfafe6106e46006c532673d7ed263d8593365c"
+      "sha256": "a02266be9ceb6ee79436f91a183bacb22408b8bd196f41f56a5ca8a03c102ba1"
     },
     {
       "caseId": "repair-pagination",
       "path": "reports/repair-pagination.html",
-      "sha256": "d18011f578de10daa56023cab299aaac82718f84fbe89ace62b571fd2978497d"
+      "sha256": "b6581e72b6b30beeed8be5e05a921783067389c6d55d50201edbc4bee25a089d"
     },
     {
       "caseId": "repair-selector-drift",
       "path": "reports/repair-selector-drift.html",
-      "sha256": "8596846c3f3577c2fdd5789ef8feefcf1777ffa4de0b1aa73d95dbe0dc33e910"
+      "sha256": "75614162e664384b573afb70d077407b48bf6714a5c76f08167fcd8a246766c6"
     },
     {
       "caseId": "retry-deferred-406",
       "path": "reports/retry-deferred-406.html",
-      "sha256": "60682d051b00699c1ae8975caa87a92dfdcfd18c5c7225e61bb9b2b3000a7259"
+      "sha256": "139aa722b0ceee546683807b0ba91687e550a5e14f755b824801c67260d64c98"
     },
     {
       "caseId": "retry-partial-document",
       "path": "reports/retry-partial-document.html",
-      "sha256": "f44d1bafd05af2996c658ff9c7ed88190994e8215f133940136b085363fce42f"
+      "sha256": "21bac8ae5295e0bb37756f963a23d3f4307b8b719022ded8b7615245843f3944"
     },
     {
       "caseId": "retry-timeout-cache",
       "path": "reports/retry-timeout-cache.html",
-      "sha256": "55647a1ba7178b5ac74f9631dc2cde82899f1306c17c88693d8ef029000b6d98"
+      "sha256": "f9f335711989e906a67c54bff3852776e55bf5a7b2dbc34aa51232ac3496b747"
     },
     {
       "caseId": "review-conflicting-authorities",
       "path": "reports/review-conflicting-authorities.html",
-      "sha256": "1476713b3a883233ed023badd5931058c6bc004d864da60a8edd41ac247a65d5"
+      "sha256": "af70488c9a3b75cda03eff9b5f96ca8aa1ca3bcd20f5d719b04ca019361b00e8"
     },
     {
       "caseId": "review-name-collision",
       "path": "reports/review-name-collision.html",
-      "sha256": "f1f4e58d03065dda86a6db8907471e96d2228624e3a2606c58430a6f22e5a042"
+      "sha256": "154175bf31fb1a1753134f9b64b6eea3579f61bb17bf713ab34b2476907815e5"
     },
     {
       "caseId": "review-reintroduced-identity",
       "path": "reports/review-reintroduced-identity.html",
-      "sha256": "cdd3dfc0a3c008131bda078811fedf2b357b7dd56a2de3d8505a8d9079cc67b7"
+      "sha256": "4779da28191988d205897e819581eb2c43e6e0ebb9335b35b2aab008ef536e80"
     },
     {
       "caseId": "update-authoritative-rating",
       "path": "reports/update-authoritative-rating.html",
-      "sha256": "1675d6d917311f68ae864935ddc0700d761bbde8452362ffaed9f7236aa8d27f"
+      "sha256": "107c1617bce237d8d242919e7fc7c442a10f8adbc0f5880aa39146aa09e7a339"
     },
     {
       "caseId": "update-official-commitment",
       "path": "reports/update-official-commitment.html",
-      "sha256": "49c58274a5c2014455faecb10692237a207b75b83702505b72790602ead4a510"
+      "sha256": "47d9805167b9d25a8ddc2c768a6669db2d52c0dec38ecfb41a4c341adcc85517"
     },
     {
       "caseId": "update-transfer-destination",
       "path": "reports/update-transfer-destination.html",
-      "sha256": "0464173d6a6e26d08a1c21a261329baec4fe51e365ed8f5dad340d580bcc36ef"
+      "sha256": "c69668fc39253cd1277e47bab0ac8a07476becaf3753bd651054b2fb0cf57bfd"
     }
   ]
 }

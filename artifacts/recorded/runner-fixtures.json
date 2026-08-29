@@ -22,10 +22,16 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-11",
-        "fields": {
-          "status": "committed",
-          "team": "Coastal State"
-        }
+        "assignments": [
+          {
+            "field": "status",
+            "value": "committed"
+          },
+          {
+            "field": "team",
+            "value": "Coastal State"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -63,10 +69,16 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-11",
-        "fields": {
-          "status": "committed",
-          "team": "Coastal State"
-        }
+        "assignments": [
+          {
+            "field": "status",
+            "value": "committed"
+          },
+          {
+            "field": "team",
+            "value": "Coastal State"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -113,10 +125,16 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-21",
-        "fields": {
-          "destination": "Lakeside",
-          "status": "transferred"
-        }
+        "assignments": [
+          {
+            "field": "destination",
+            "value": "Lakeside"
+          },
+          {
+            "field": "status",
+            "value": "transferred"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -154,10 +172,16 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-21",
-        "fields": {
-          "destination": "Summit State",
-          "status": "transferred"
-        }
+        "assignments": [
+          {
+            "field": "destination",
+            "value": "Summit State"
+          },
+          {
+            "field": "status",
+            "value": "transferred"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -204,11 +228,20 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-31",
-        "fields": {
-          "rating": 93,
-          "ratingAsOf": "2026-08-25T17:30:00.000Z",
-          "otherProviderRating": 93
-        }
+        "assignments": [
+          {
+            "field": "rating",
+            "value": 93
+          },
+          {
+            "field": "ratingAsOf",
+            "value": "2026-08-25T17:30:00.000Z"
+          },
+          {
+            "field": "otherProviderRating",
+            "value": 93
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -246,11 +279,20 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-31",
-        "fields": {
-          "rating": 93,
-          "ratingAsOf": "2026-08-25T17:30:00.000Z",
-          "otherProviderRating": 91
-        }
+        "assignments": [
+          {
+            "field": "rating",
+            "value": 93
+          },
+          {
+            "field": "ratingAsOf",
+            "value": "2026-08-25T17:30:00.000Z"
+          },
+          {
+            "field": "otherProviderRating",
+            "value": 91
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -775,9 +817,12 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-51",
-        "fields": {
-          "status": "offered"
-        }
+        "assignments": [
+          {
+            "field": "status",
+            "value": "offered"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -845,9 +890,12 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-61",
-        "fields": {
-          "status": "removed"
-        }
+        "assignments": [
+          {
+            "field": "status",
+            "value": "removed"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -916,9 +964,12 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "athlete-71",
-        "fields": {
-          "status": "withdrawn"
-        }
+        "assignments": [
+          {
+            "field": "status",
+            "value": "withdrawn"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -997,9 +1048,12 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "person-81",
-        "fields": {
-          "award": "Regional Scholar"
-        }
+        "assignments": [
+          {
+            "field": "award",
+            "value": "Regional Scholar"
+          }
+        ]
       }
     ],
     "preservedInvariants": [
@@ -1074,10 +1128,16 @@
         "kind": "SET_RECORD_FIELDS",
         "file": "input/canonical.json",
         "recordId": "occurrence-91",
-        "fields": {
-          "status": "active",
-          "closedAt": null
-        }
+        "assignments": [
+          {
+            "field": "status",
+            "value": "active"
+          },
+          {
+            "field": "closedAt",
+            "value": null
+          }
+        ]
       }
     ],
     "preservedInvariants": [

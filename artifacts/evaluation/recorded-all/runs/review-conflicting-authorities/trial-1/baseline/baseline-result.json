@@ -20,9 +20,12 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "athlete-71",
-      "fields": {
-        "status": "withdrawn"
-      }
+      "assignments": [
+        {
+          "field": "status",
+          "value": "withdrawn"
+        }
+      ]
     }
   ],
   "preservedInvariants": [

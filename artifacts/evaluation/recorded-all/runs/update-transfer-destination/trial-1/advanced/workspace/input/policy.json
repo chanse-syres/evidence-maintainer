@@ -5,7 +5,7 @@
     "destination": "official-destination-roster",
     "status": "official-destination-roster"
   },
-  "freshnessWindowMinutes": 60,
+  "freshnessWindowMinutes": 10080,
   "retryLimit": 2,
   "invariants": [
     "Athlete identity remains stable",

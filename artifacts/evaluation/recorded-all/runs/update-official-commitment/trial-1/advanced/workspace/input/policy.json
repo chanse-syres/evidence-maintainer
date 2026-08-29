@@ -5,7 +5,7 @@
     "status": "official-team",
     "team": "official-team"
   },
-  "freshnessWindowMinutes": 1440,
+  "freshnessWindowMinutes": 10080,
   "retryLimit": 2,
   "invariants": [
     "Stable athlete identity is preserved",

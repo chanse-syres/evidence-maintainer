@@ -4,7 +4,7 @@
   "authorityByField": {
     "status": "official-athletics-roster|official-registrar"
   },
-  "freshnessWindowMinutes": 60,
+  "freshnessWindowMinutes": 10080,
   "retryLimit": 2,
   "invariants": [
     "Conflicting co-authoritative records cannot be resolved by source order",

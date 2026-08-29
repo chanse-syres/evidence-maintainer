@@ -19,9 +19,12 @@
       "kind": "SET_RECORD_FIELDS",
       "file": "input/canonical.json",
       "recordId": "athlete-51",
-      "fields": {
-        "status": "offered"
-      }
+      "assignments": [
+        {
+          "field": "status",
+          "value": "offered"
+        }
+      ]
     }
   ],
   "preservedInvariants": [

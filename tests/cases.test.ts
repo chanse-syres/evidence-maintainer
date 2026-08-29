@@ -54,6 +54,19 @@ test("the full suite contains fifteen hash-verified cases with a balanced action
     assert.equal(loaded.manifest.id, caseId);
     assert.match(loaded.workspaceHash, /^[a-f0-9]{64}$/);
     assert.equal(oracle.caseId, caseId);
+    if (oracle.expectedAction !== "RETRY_LATER") {
+      const cutoffMs = new Date(loaded.policy.cutoff).getTime();
+      const freshnessMs = loaded.policy.freshnessWindowMinutes * 60_000;
+      for (const evidenceId of oracle.requiredEvidenceIds) {
+        const observation = loaded.observations.find((entry) => entry.id === evidenceId);
+        if (observation) {
+          assert.ok(
+            cutoffMs - new Date(observation.observedAt).getTime() <= freshnessMs,
+            `${caseId} must not hide incidental staleness in required evidence ${evidenceId}`,
+          );
+        }
+      }
+    }
     distribution.set(oracle.expectedAction, (distribution.get(oracle.expectedAction) ?? 0) + 1);
   }
   assert.deepEqual(Object.fromEntries([...distribution].sort()), {

@@ -91,6 +91,11 @@ export async function runBaseline(input: RunBaselineInput): Promise<RunManifest>
       agentVisibleFiles: loadedCase.manifest.agentVisibleFiles.map((path) => path.replace(/^workspace\//, "")),
       allowedWritePaths: loadedCase.manifest.allowedWritePaths,
       requiredCommands: loadedCase.manifest.requiredCommands,
+      rawEvidence: {
+        canonical: loadedCase.canonical,
+        observations: loadedCase.observations,
+        policy: loadedCase.policy,
+      },
     }, null, 2),
     OUTPUT_CONTRACT: outputContract,
   });

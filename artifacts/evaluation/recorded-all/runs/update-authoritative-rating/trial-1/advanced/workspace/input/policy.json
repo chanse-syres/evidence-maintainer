@@ -5,7 +5,7 @@
     "rating": "ScoutMetric",
     "otherProviderRating": "RankGrid"
   },
-  "freshnessWindowMinutes": 60,
+  "freshnessWindowMinutes": 10080,
   "retryLimit": 2,
   "invariants": [
     "Provider-specific ratings do not overwrite one another",

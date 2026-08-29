@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "caseId": "update-official-commitment",
+  "action": "UPDATE_DATA",
+  "firstMaterialDivergence": "athlete-11 status and team differ from the latest authoritative official observation.",
+  "failureOwner": "canonical data record",
+  "evidenceUsed": [
+    "obs-official-commitment"
+  ],
+  "evidenceRejected": [
+    "obs-older-aggregator"
+  ],
+  "affectedEntities": [
+    "athlete-11"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "athlete-11",
+      "assignments": [
+        {
+          "field": "status",
+          "value": "committed"
+        },
+        {
+          "field": "team",
+          "value": "Coastal State"
+        },
+        {
+          "field": "effectiveAt",
+          "value": "2026-08-20T20:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "preservedInvariants": [
+    "Stable athlete identity is preserved",
+    "Only an authoritative commitment source may set committed status"
+  ],
+  "unresolvedUncertainty": [],
+  "minimumInformationRequest": [],
+  "retryCondition": null,
+  "approvalLevel": "SIMULATED_HUMAN",
+  "summary": "Update athlete-11 from offered to committed with Coastal State using the later official announcement; the discovery aggregator cannot override it.",
+  "arm": "baseline",
+  "executedCommands": []
+}
