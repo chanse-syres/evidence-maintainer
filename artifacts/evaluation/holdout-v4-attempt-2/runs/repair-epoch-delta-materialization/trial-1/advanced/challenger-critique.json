@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "caseId": "repair-epoch-delta-materialization",
+  "recommendation": "REVISE_DRAFT",
+  "evidenceIds": [
+    "obs-epoch-delta-contract"
+  ],
+  "critiqueCategories": [
+    "REGRESSION",
+    "ARTIFACT"
+  ],
+  "findings": [
+    "The proposed validity predicate accepts BEGIN or COMMIT events at interior sequence positions. For example, BEGIN(0), COMMIT(1), UPSERT(2), COMMIT(3) passes despite representing a closed epoch followed by further events, rather than one sequence beginning at BEGIN and ending at COMMIT. It can then apply the post-COMMIT mutation. Require BEGIN only at sequence zero and COMMIT only at the final sequence (and reject interior boundary markers)."
+  ],
+  "summary": "The repair scope and evidence are otherwise supported, but the proposed implementation does not fully enforce the stated complete-epoch boundary semantics."
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitemporal assay calibration reconciliation — Evidence Maintainer</title>
+<style>
+:root{color-scheme:dark;--bg:#071018;--panel:#0d1822;--panel2:#111f2b;--ink:#f4f7fb;--muted:#91a2b4;--line:#263747;--cyan:#4cd7f6;--green:#54d19a;--orange:#ff8a2a;--red:#ff6b72}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1120px,calc(100% - 32px));margin:0 auto;padding:48px 0 80px}.top{border-bottom:1px solid var(--line);padding-bottom:28px}.kicker{color:var(--cyan);font:700 12px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}.mode{display:inline-flex;margin-top:18px;padding:7px 10px;border:1px solid #28576a;border-radius:999px;color:#bcefff;background:#0d2833;font:700 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;text-transform:uppercase}h1{max-width:760px;margin:14px 0 8px;font-size:clamp(38px,7vw,72px);line-height:.98;letter-spacing:-.055em}h2{margin:0 0 18px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#b9c7d4}p{margin:0;color:var(--muted)}.context{margin:22px 0 0;padding:18px;border:1px solid #28576a;background:#0b2029;border-radius:10px}.context p+p{margin-top:7px}.context code{overflow-wrap:anywhere;color:#bcefff}.decision{margin:28px 0;padding:24px;border:1px solid #345266;border-left:4px solid var(--green);background:linear-gradient(90deg,#10242b,var(--panel));border-radius:10px}.decision strong{display:block;margin-top:6px;font-size:30px;letter-spacing:-.03em}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}.card{min-width:0;padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.wide{grid-column:1/-1}.event{display:grid;grid-template-columns:80px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line)}.event:first-of-type{border-top:0}.event code,.hashes code{overflow-wrap:anywhere;color:#bcefff}ul{margin:0;padding-left:20px;color:#d6e0e9}li+li{margin-top:6px}.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{padding:12px;border:1px solid var(--line);border-radius:7px;background:var(--panel2)}.pass{border-color:#265b4a}.fail{border-color:#73343a}.check b{color:var(--green)}.fail b{color:var(--red)}pre{margin:0;overflow:auto;padding:16px;border:1px solid var(--line);border-radius:8px;background:#071119;color:#cad5df;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.hashes{width:100%;border-collapse:collapse}.hashes th,.hashes td{text-align:left;vertical-align:top;padding:10px 0;border-top:1px solid var(--line)}.hashes th{width:36%;padding-right:18px;color:#c6d1db}.empty{color:#718397}.footer{margin-top:20px;color:#718397;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}@media(max-width:760px){.wrap{width:min(100% - 20px,1120px);padding-top:28px}.grid,.checks{grid-template-columns:1fr}.wide{grid-column:auto}.event{grid-template-columns:1fr;gap:5px}.hashes th,.hashes td{display:block;width:100%;border:0}.hashes tr{display:block;padding:10px 0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="kicker">Evidence Maintainer · Decision record</div><h1>Bitemporal assay calibration reconciliation</h1><p>A final assay must be recomputed with the signed calibration that governed its exact instrument occurrence when the measurement was taken.</p><span class="mode">Live agent evidence</span></header>
+<section class="context"><h2>Campaign context</h2><p><strong>holdout-v4-attempt-2</strong> · advanced arm · trial 1 · representative included-case run</p><p>This report is one of 24 included workflow runs. 1 evaluator-invalid case was excluded symmetrically: retry-signed-release-quorum.</p><p>Adjudicated source: <code>artifacts/evaluation/holdout-v4-attempt-2/summary.json</code> · Invalidation receipt: <code>holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json</code></p></section>
+<section class="decision"><h2>Selected action</h2><strong>UPDATE_DATA</strong><p>Update only the bounded derived assay fields to controlling signed cal-17: normalized concentration 73 mg/L and calibration revision cal-17.</p></section>
+<div class="grid">
+<section class="card wide"><h2>Evidence timeline</h2><article class="event"><code>evt-001 · CASE_OPENED</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: update-bitemporal-assay-calibration</p></div></article><article class="event"><code>evt-002 · CANONICAL_SNAPSHOT</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: input/canonical.json</p></div></article><article class="event"><code>evt-003 · SOURCE_OBSERVATION</code><div><p>2026-08-01T08:05:00.000Z</p><p>Evidence: obs-calibration-cal-16</p></div></article><article class="event"><code>evt-004 · SOURCE_OBSERVATION</code><div><p>2026-08-29T19:05:00.000Z</p><p>Evidence: obs-calibration-cal-17</p></div></article><article class="event"><code>evt-005 · SOURCE_OBSERVATION</code><div><p>2026-08-29T19:22:00.000Z</p><p>Evidence: obs-assay-440</p></div></article><article class="event"><code>evt-006 · SOURCE_OBSERVATION</code><div><p>2026-08-29T19:25:00.000Z</p><p>Evidence: obs-calibration-cal-18</p></div></article><article class="event"><code>evt-007 · POLICY_LOADED</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: input/policy.json</p></div></article><article class="event"><code>evt-008 · WORKSPACE_HASHED</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: input/canonical.json, input/observations.json, input/policy.json</p></div></article></section>
+<section class="card wide"><h2>Final decision</h2><pre>{
+  &quot;schemaVersion&quot;: 3,
+  &quot;caseId&quot;: &quot;update-bitemporal-assay-calibration&quot;,
+  &quot;firstMaterialDivergence&quot;: &quot;assay-440 stores calibrationRevision cal-16 and normalizedConcentration 70, but the latest eligible signed calibration effective at its 2026-08-29T19:20:00.000Z measurement is cal-17, yielding 73.&quot;,
+  &quot;failureOwner&quot;: &quot;canonical assay record assay-440&quot;,
+  &quot;evidenceAssessments&quot;: [
+    {
+      &quot;evidenceId&quot;: &quot;obs-assay-440&quot;,
+      &quot;factPath&quot;: &quot;facts.rawSignal&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The authoritative final-assay observation establishes rawSignal 742 for assay-440 at the stated measurement occurrence.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-calibration-cal-16&quot;,
+      &quot;factPath&quot;: &quot;effectiveAt&quot;,
+      &quot;disposition&quot;: &quot;CONTEXT&quot;,
+      &quot;reason&quot;: &quot;cal-16 was effective before the measurement but was superseded by the later eligible calibration effective at 19:00.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-calibration-cal-17&quot;,
+      &quot;factPath&quot;: &quot;facts.blankOffset&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;For the exact instrument occurrence and serum sample class, signed cal-17 has blankOffset 12 and scale 0.1; (742 - 12) × 0.1 = 73.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-calibration-cal-18&quot;,
+      &quot;factPath&quot;: &quot;effectiveAt&quot;,
+      &quot;disposition&quot;: &quot;REJECT&quot;,
+      &quot;reason&quot;: &quot;cal-18 is future-effective at 2026-08-29T20:10:00.000Z and cannot govern the earlier 19:20 measurement.&quot;
+    }
+  ],
+  &quot;affectedEntities&quot;: [
+    &quot;assay-440&quot;
+  ],
+  &quot;affectedFiles&quot;: [
+    &quot;input/canonical.json&quot;
+  ],
+  &quot;preservedInvariants&quot;: [
+    &quot;Assay, sample, instrument-occurrence, measurement-time, raw-signal, unit, and final-status identity remain unchanged&quot;,
+    &quot;A calibration belongs only to its exact instrument occurrence and declared sample class&quot;,
+    &quot;A later-published or future-effective calibration never rewrites an earlier measurement&quot;
+  ],
+  &quot;unresolvedUncertainty&quot;: [],
+  &quot;summary&quot;: &quot;Update only the bounded derived assay fields to controlling signed cal-17: normalized concentration 73 mg/L and calibration revision cal-17.&quot;,
+  &quot;action&quot;: &quot;UPDATE_DATA&quot;,
+  &quot;operations&quot;: [
+    {
+      &quot;kind&quot;: &quot;SET_RECORD_FIELDS&quot;,
+      &quot;file&quot;: &quot;input/canonical.json&quot;,
+      &quot;recordId&quot;: &quot;assay-440&quot;,
+      &quot;assignments&quot;: [
+        {
+          &quot;field&quot;: &quot;normalizedConcentration&quot;,
+          &quot;value&quot;: 73
+        },
+        {
+          &quot;field&quot;: &quot;calibrationRevision&quot;,
+          &quot;value&quot;: &quot;cal-17&quot;
+        }
+      ]
+    }
+  ],
+  &quot;reviewRequest&quot;: null,
+  &quot;retryPlan&quot;: null
+}</pre></section>
+<section class="card wide"><h2>Deterministic checks</h2><div class="checks"><div class="check pass"><b>PASS</b> · action-correct<p>The selected action is correct.</p></div><div class="check pass"><b>PASS</b> · artifact-correct<p>The action artifact is semantically correct.</p></div><div class="check pass"><b>PASS</b> · no-forbidden-mutation<p>All writes remain inside the declared sandbox surface.</p></div><div class="check pass"><b>PASS</b> · required-commands-passed<p>All required commands and probes passed.</p></div><div class="check pass"><b>PASS</b> · source-coverage<p>A required evidence-source bundle is covered.</p></div><div class="check pass"><b>PASS</b> · contradiction-free<p>The decision package is contradiction-free.</p></div><div class="check pass"><b>PASS</b> · annotation-aligned<p>Evidence annotations align with the adjudicated source set.</p></div></div></section>
+<section class="card"><h2>Changed files</h2><ul><li>Modified: input/canonical.json</li></ul></section>
+<section class="card"><h2>Residual uncertainty</h2><p class="empty">No unresolved uncertainty was recorded.</p></section>
+<section class="card"><h2>Run-local eligibility decision</h2><p><strong>APPROVED</strong></p><p>The deterministic gate passed and isolated application was requested.</p><p>This is a workflow artifact, not external benchmark acceptance.</p></section>
+<section class="card"><h2>Recorded evidence</h2><p>Mode: live</p><p>Model: gpt-5.6-terra</p><p>Run: update-bitemporal-assay-calibration-advanced-1788038621053</p></section>
+<section class="card wide"><h2>Artifact hashes</h2><table class="hashes"><tr><th>after-tree.json</th><td><code>b6b93d233e4f65f8d138f47787adbebf93fc2e4d3eaeb7f2d4305ab4342a46f2</code></td></tr><tr><th>approval.json</th><td><code>7230a37f72295bb8b937ac7b9e9b4cf8f540f510418cc10e3a6e3b4070df97d3</code></td></tr><tr><th>before-tree.json</th><td><code>2b822a2b60a99dfedd5a87d515e395032e39751c995dea30d2c7c811ade524d9</code></td></tr><tr><th>challenger-critique.json</th><td><code>8ad896f0f42626c1b19345ff9546a23694f84cf395e836dae09fe5daf6e903e8</code></td></tr><tr><th>command-results.json</th><td><code>ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356</code></td></tr><tr><th>draft-decision.json</th><td><code>5cee4b25c9c79d51728b12a354cbb28008c4011eff95eff5d27097935e0d6546</code></td></tr><tr><th>evidence.jsonl</th><td><code>9f4294bfe38eba6b3c2e13899618a288140f7bf1b9f68306d071b362624c0e70</code></td></tr><tr><th>final-decision.json</th><td><code>131ed2261ff0d78cf8635bdca551f56e6e3b80bdef570d3e110560fb20a29147</code></td></tr><tr><th>gate.json</th><td><code>ad9b3016582c7dfe1830307ac643c54c0dbe52ac541236d172cc9cf986247a6a</code></td></tr><tr><th>trajectories/challenger.jsonl</th><td><code>6fd19c6f8a4769a500e610cc3b843880e8af6c85062bc489dde9894f495bf5f8</code></td></tr><tr><th>trajectories/challenger.jsonl.proxy-ledger/proxy.jsonl</th><td><code>baa191ea9dcfd68eedbc6af2756f2c79ce5314445ad12d188256fd5a92e55091</code></td></tr><tr><th>trajectories/maintainer.jsonl</th><td><code>71639c7d4239363988cd04b5e4004d4fb5734566f11cd50debb330a0b3b07a8c</code></td></tr><tr><th>trajectories/maintainer.jsonl.proxy-ledger/proxy.jsonl</th><td><code>bc0bbe191574ccb9d1e4558f50afeba9819dd8a25989546c5ef4f949e8f78d85</code></td></tr><tr><th>trajectories/reviser.jsonl</th><td><code>1d657289e007cc334512a8882ca6ac508c3daca9c08c80da0e751c34a60ca94a</code></td></tr><tr><th>trajectories/reviser.jsonl.proxy-ledger/proxy.jsonl</th><td><code>943bac193848f3d4b40c2a8b5feeb4388490e154dee2d4c3dbb889a5414e348d</code></td></tr></table></section>
+</div>
+<p class="footer">Self-contained UTF-8 decision report · 2026-08-29T21:25:02.841Z</p>
+</main></body></html>

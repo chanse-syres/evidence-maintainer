@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "status": "PENDING_VALID_V4_CAMPAIGN",
-  "selectedCampaign": null,
-  "selectedSummary": null,
-  "selectionRule": "Select only a completed, non-invalidated V4 campaign produced by the symmetric final-decision contract and shared semantic evaluator.",
+  "status": "SELECTED_VALID_V4_CAMPAIGN",
+  "selectedCampaign": "holdout-v4-attempt-2",
+  "selectedSummary": "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+  "selectionRule": "Select only a completed frozen V4 campaign whose evaluator-invalid cases, if any, are excluded symmetrically with retained receipts and whose adjudicated summary passes release validation.",
   "excludedCampaigns": [
     {
       "campaign": "holdout-v1",

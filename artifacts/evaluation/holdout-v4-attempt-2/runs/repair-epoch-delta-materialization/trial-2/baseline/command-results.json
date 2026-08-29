@@ -1,0 +1,12 @@
+{
+  "node --experimental-strip-types --test adapter.test.ts": {
+    "exitCode": 0,
+    "stdout": "✔ materializes one complete epoch (1.783668ms)\n✔ isolates and orders the greatest complete epoch (0.401881ms)\n✔ throws when no complete valid epoch exists (0.738978ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 227.374988\n",
+    "stderr": ""
+  },
+  "hidden:verifier/hidden-probes.json": {
+    "exitCode": 0,
+    "stdout": "# pass 3\n# fail 0\n",
+    "stderr": ""
+  }
+}

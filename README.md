@@ -44,13 +44,15 @@ Exact annotation wording and order are diagnostic only. They do not affect ODI.
 
 ## Current evidence status
 
-**No valid public comparative result has been selected.**
+**A live V4 comparison is selected, with no measured correctness advantage for the advanced workflow.**
 
 V1, V2, and V3 are preserved as development evidence, but each is excluded from system-performance claims by a versioned invalidation record. V3 completed its planned workflow slots, yet its arms were asymmetric and two cases were semantically invalid. Its raw artifacts can support audit and resource accounting; they cannot support a claim that one system outperformed the other.
 
-No live V4 holdout campaign has been run. [`config/public-comparison.json`](config/public-comparison.json) therefore remains `PENDING_VALID_V4_CAMPAIGN` with no selected campaign or summary.
+V4 attempt 2 ran five frozen cases with three trials per arm on `gpt-5.6-terra`. Post-run audit found that one retry case could not be represented or scored faithfully by the declared schema, so its six rows were classified `EVALUATOR_INVALID` and excluded symmetrically. The receipt and raw evidence remain preserved.
 
-The current public headline is: **engine implemented; comparative result pending**.
+On the four included cases, the direct baseline and propose-challenge-revise workflow each earned ODI on **12/12** runs, a **0 percentage-point difference**. The advanced workflow used **1,098,554 ms** and **519,289 tokens**, versus **412,010 ms** and **170,263 tokens** for the baseline: about **2.67× the total duration** and **3.05× the tokens**, with no measured correctness gain.
+
+This is a descriptive result from a small frozen holdout. It is not evidence of workflow equivalence, population-level generalization, or production safety. [`config/public-comparison.json`](config/public-comparison.json) selects the adjudicated campaign and [`artifacts/evaluation/holdout-v4-attempt-2/summary.json`](artifacts/evaluation/holdout-v4-attempt-2/summary.json) contains the exact result.
 
 ## Verify the engine
 
@@ -69,9 +71,9 @@ For a local inspection:
 npm run dev
 ```
 
-Then open `http://localhost:3000`. Any recorded fixture or invalidated campaign shown in the interface is engineering evidence, not a selected model result.
+Then open `http://localhost:3000`. The interface reads only the campaign named by the public comparison selector; historical recorded fixtures remain engineering evidence.
 
-See [Reproduction guide](docs/reproduction.md) for the credential-free verification boundary and the requirements for a future live V4 campaign.
+See [Reproduction guide](docs/reproduction.md) for the credential-free verification boundary and selected-evidence checks.
 
 ## Evidence map
 
@@ -80,7 +82,7 @@ See [Reproduction guide](docs/reproduction.md) for the credential-free verificat
 - [Improvement and invalidation changelog](docs/improvement-changelog.md)
 - [Historical trajectory index](docs/trajectory-index.md)
 - [Reproduction guide](docs/reproduction.md)
-- [Pending-result video script](docs/video-script.md)
+- [Result-aware video script](docs/video-script.md)
 - [V1 invalidation](holdout/INVALIDATION-v1.json)
 - [V2 invalidation](holdout/INVALIDATION-v2.json)
 - [V3 invalidation](holdout/INVALIDATION-v3.json)
@@ -90,7 +92,7 @@ See [Reproduction guide](docs/reproduction.md) for the credential-free verificat
 
 The repository evaluates isolated maintenance decisions over frozen synthetic or public-data-derived cases. It does not prove production safety. Agents cannot write to a live product or external service, and hidden oracle bytes remain evaluator-owned.
 
-A valid public result still requires a new frozen V4 case pack, complete execution receipts, typed treatment of model, infrastructure, and evaluator failures, and post-run audit without in-place repair of invalid cases.
+The selected result covers four valid frozen cases and three repeated trials per arm. Its case-level ceiling result and small sample do not establish equivalence or generalization. The excluded retry case requires a new schema, evaluator, version, and freeze before it can re-enter a future comparison.
 
 The domain patterns came from public-data maintenance experience. No production repository, private task bytes, private account data, live credentials, or proprietary trajectories are included.
 

@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "path": "adapter.test.ts",
+      "sha256": "482a67b62037d201cc90d37b8adfaeb425352ae0c927e3e3f083d1af96fea3b7",
+      "bytes": 1344
+    },
+    {
+      "path": "adapter.ts",
+      "sha256": "ca99e4b82dda149f7e4557dec42473defdcf1d4f70e77d39d15d146c5e6e2ab1",
+      "bytes": 1606
+    },
+    {
+      "path": "case.json",
+      "sha256": "c65d0947df2137fe8695b612ff3cc05f6e0e9a692f0fc180232674d3e74e0c8f",
+      "bytes": 2889
+    },
+    {
+      "path": "input/canonical.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    {
+      "path": "input/observations.json",
+      "sha256": "9b5aef23743d4c964c3921e53ff167e378c5c3f7037b65fd4a7f704c06d0505e",
+      "bytes": 683
+    },
+    {
+      "path": "input/policy.json",
+      "sha256": "2f85a6d418b178cc3de50f9ceb2d7fe430dd73405e1df50c3604e39c45216725",
+      "bytes": 982
+    }
+  ],
+  "sha256": "d80c3ef3cf6e49ce8215ac1ed787f2a69ae50d8dd321fabd3fe6807528e8e63d"
+}

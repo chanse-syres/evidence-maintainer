@@ -26,6 +26,9 @@ export default async function CasePage({ params }: { params: Promise<{ caseId: s
   if (!selectedCase?.detailRunPath) notFound();
   const runDir = resolve(selection.evaluationRoot, ...selectedCase.detailRunPath.split("/"));
   const detail = await loadCaseModel(runDir);
+  const runMatch = /^runs\/[^/]+\/trial-(\d+)\/(baseline|advanced)$/.exec(selectedCase.detailRunPath);
+  if (!runMatch) throw new Error("Selected case has a noncanonical representative run path");
+  const includedWorkflowRuns = overview.baseline.workflowRunCount + overview.advanced.workflowRunCount;
   const changed = [
     ...detail.diff.added.map((path) => ({ kind: "added", path })),
     ...detail.diff.modified.map((path) => ({ kind: "modified", path })),
@@ -43,12 +46,14 @@ export default async function CasePage({ params }: { params: Promise<{ caseId: s
 
       <section className="detail-hero">
         <div><div className="eyebrow">Decision record</div><h1>{detail.title}</h1><p>{detail.description}</p></div>
-        <div className="detail-action"><span>Selected action</span><strong className={`tone-text-${detail.actionBadge.tone}`}>{detail.actionBadge.label}</strong><small>{detail.outcome} · {detail.durationMs} ms</small></div>
+        <div className="detail-action"><span>Selected action</span><strong className={`tone-text-${detail.actionBadge.tone}`}>{detail.actionBadge.label}</strong><small>Representative {runMatch[2]} trial {runMatch[1]} · {detail.outcome} · {detail.durationMs} ms</small></div>
       </section>
+
+      <p className="selection-note">This page surfaces one representative included-case run from {includedWorkflowRuns} included workflows. {overview.selection.excludedCaseCount} evaluator-invalid case was excluded symmetrically from both arms.</p>
 
       <section className="detail-grid">
         <article className="evidence-card detail-wide">
-          <div className="card-heading"><div><span className="step-number">01</span><h2>Evidence timeline</h2></div><span>{detail.evidence.length} immutable events</span></div>
+          <div className="card-heading"><div><span className="step-number">01</span><h2>Evidence timeline</h2></div><span>{detail.evidence.length} recorded events</span></div>
           <ol className="timeline">
             {detail.evidence.map((event) => <li key={event.id}><div className="timeline-marker" aria-hidden="true"/><div><code>{event.id}</code><b>{event.kind.replaceAll("_", " ")}</b><p>{new Date(event.occurredAt).toLocaleString("en-US", { timeZone: "UTC", dateStyle: "medium", timeStyle: "short" })} UTC</p><small>{event.evidenceIds.join(" · ")}</small></div></li>)}
           </ol>
@@ -77,9 +82,10 @@ export default async function CasePage({ params }: { params: Promise<{ caseId: s
         </article>
 
         <article className="evidence-card approval-card">
-          <div className="card-heading"><div><span className="step-number">06</span><h2>Recorded eligibility</h2></div><span className={`approval approval-${detail.approval.decision.toLowerCase()}`}>{detail.approval.decision}</span></div>
+          <div className="card-heading"><div><span className="step-number">06</span><h2>Run-local eligibility</h2></div><span className={`approval approval-${detail.approval.decision.toLowerCase()}`}>{detail.approval.decision}</span></div>
           <p className="lead-text">{detail.approval.reason}</p>
-          <a className="primary-action full-action" href={detail.reportPath} download>Download signed decision record <span aria-hidden="true">↓</span></a>
+          <p>This is a workflow artifact, not external benchmark acceptance.</p>
+          <a className="primary-action full-action" href={detail.reportPath} download>Download verified decision record <span aria-hidden="true">↓</span></a>
         </article>
 
         <details className="evidence-card detail-wide hash-panel"><summary>Artifact hashes <span>{detail.artifactHashes.length} bound files</span></summary><div className="hash-list">{detail.artifactHashes.map((artifact) => <div key={artifact.path}><code>{artifact.path}</code><code>{artifact.sha256}</code></div>)}</div></details>

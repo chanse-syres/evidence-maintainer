@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "caseId": "review-composite-asset-identity",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-inspection-882",
+    "obs-asset-east-8",
+    "obs-asset-west-8"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The draft correctly identifies an unresolved composite-identity collision, requests both missing binding fields from the inspection authority, and proposes no unauthorized write."
+}

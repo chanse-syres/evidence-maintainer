@@ -1,0 +1,64 @@
+[
+  {
+    "id": "obs-inspection-882",
+    "sourceId": "official-inspection-log",
+    "observedAt": "2026-08-29T19:45:00.000Z",
+    "effectiveAt": "2026-08-29T19:40:00.000Z",
+    "authorityScope": [
+      "inspection",
+      "asset-reference"
+    ],
+    "subjectId": "inspection-882",
+    "kind": "signed-inspection",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "inspection-v5",
+    "facts": {
+      "assetLabel": "Rotor Unit 8",
+      "assetSerial": null,
+      "siteCode": null,
+      "finding": "seal wear",
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-asset-east-8",
+    "sourceId": "official-asset-registry",
+    "observedAt": "2026-08-29T19:30:00.000Z",
+    "effectiveAt": "2026-08-01T00:00:00.000Z",
+    "authorityScope": [
+      "asset-identity"
+    ],
+    "subjectId": "asset-east-8",
+    "kind": "asset-record",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "asset-record-v6",
+    "facts": {
+      "assetLabel": "Rotor Unit 8",
+      "assetSerial": "E-8804",
+      "siteCode": "EAST",
+      "lifecycleStatus": "active"
+    }
+  },
+  {
+    "id": "obs-asset-west-8",
+    "sourceId": "official-asset-registry",
+    "observedAt": "2026-08-29T19:31:00.000Z",
+    "effectiveAt": "2026-08-01T00:00:00.000Z",
+    "authorityScope": [
+      "asset-identity"
+    ],
+    "subjectId": "asset-west-8",
+    "kind": "asset-record",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "asset-record-v6",
+    "facts": {
+      "assetLabel": "Rotor Unit 8",
+      "assetSerial": "W-8819",
+      "siteCode": "WEST",
+      "lifecycleStatus": "active"
+    }
+  }
+]

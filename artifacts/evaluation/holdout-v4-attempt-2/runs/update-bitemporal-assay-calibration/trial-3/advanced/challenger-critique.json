@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "caseId": "update-bitemporal-assay-calibration",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-assay-440",
+    "obs-calibration-cal-16",
+    "obs-calibration-cal-17",
+    "obs-calibration-cal-18"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The draft correctly selects eligible cal-17 as the latest signed calibration effective at the assay measurement time, recalculates the result as 73, and restricts its update to the allowed canonical record."
+}

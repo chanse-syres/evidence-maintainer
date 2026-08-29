@@ -20,7 +20,7 @@ test("decision report renders the V4 final decision and verification sections", 
     "Deterministic checks",
     "Changed files",
     "Residual uncertainty",
-    "Eligibility decision",
+    "Run-local eligibility decision",
     "Artifact hashes",
   ]) {
     assert.match(html, new RegExp(`>${heading}<`));
@@ -30,6 +30,27 @@ test("decision report renders the V4 final decision and verification sections", 
   assert.match(html, /obs-v4-report-case/);
   assert.match(html, /<style>/);
   assert.doesNotMatch(html, /<script|https?:\/\//);
+});
+
+test("selected report discloses representative-run and evaluator-invalidation context", async () => {
+  const html = await renderDecisionReport(advancedRun, {
+    campaignContext: {
+      campaign: "holdout-v4-attempt-2",
+      arm: "advanced",
+      trial: 1,
+      includedWorkflowRunCount: 24,
+      excludedEvaluatorInvalidCaseIds: ["retry-signed-release-quorum"],
+      selectedSummaryPath: "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+      invalidationReceiptPaths: [
+        "holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json",
+      ],
+    },
+  });
+  assert.match(html, /Campaign context/);
+  assert.match(html, /representative included-case run/);
+  assert.match(html, /24 included workflow runs/);
+  assert.match(html, /retry-signed-release-quorum/);
+  assert.match(html, /not external benchmark acceptance/);
 });
 
 test("baseline report renders without an advanced evidence ledger", async () => {

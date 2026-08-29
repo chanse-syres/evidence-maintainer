@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "caseId": "update-bitemporal-assay-calibration",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-assay-440",
+    "obs-calibration-cal-16",
+    "obs-calibration-cal-17",
+    "obs-calibration-cal-18"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The draft correctly selects eligible signed cal-17 for the exact occurrence at measurement time, computes 73, excludes future-effective cal-18, and limits its write to the allowed canonical record fields."
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 3,
+  "caseId": "noop-post-cutoff-reclassification",
+  "firstMaterialDivergence": "obs-classification-r8 reports classification open at facts.classification, but its effectiveAt is 2026-08-29T20:30:00.000Z, after the 2026-08-29T20:00:00.000Z cutoff.",
+  "failureOwner": "No failure: the canonical record matches the controlling signed revision at the cutoff.",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-classification-r7",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "The signed r7 classification became effective at 2026-08-29T19:00:00.000Z, at or before the cutoff."
+    },
+    {
+      "evidenceId": "obs-classification-r7",
+      "factPath": "facts.classification",
+      "disposition": "SUPPORT",
+      "reason": "Its restricted classification matches canonical policy-77."
+    },
+    {
+      "evidenceId": "obs-classification-r8",
+      "factPath": "effectiveAt",
+      "disposition": "REJECT",
+      "reason": "The signed r8 revision is future-effective at 2026-08-29T20:30:00.000Z and therefore cannot control the snapshot cutoff."
+    },
+    {
+      "evidenceId": "obs-classification-r8",
+      "factPath": "facts.classification",
+      "disposition": "CONTEXT",
+      "reason": "The open classification is a valid future revision but does not alter canonical state at the cutoff."
+    }
+  ],
+  "affectedEntities": [
+    "policy-77"
+  ],
+  "affectedFiles": [],
+  "preservedInvariants": [
+    "Canonical classification represents the signed revision effective at the cutoff",
+    "Publication or observation time never substitutes for effective time",
+    "No files change when canonical state already matches the controlling revision"
+  ],
+  "unresolvedUncertainty": [],
+  "summary": "At the cutoff, r7 is the latest signed classification effective for policy-77 and canonical state already records restricted/r7 effective from 19:00Z. The r8 open classification is signed but effective after the cutoff, so it is context only.",
+  "action": "NO_ACTION",
+  "operations": [],
+  "reviewRequest": null,
+  "retryPlan": null
+}

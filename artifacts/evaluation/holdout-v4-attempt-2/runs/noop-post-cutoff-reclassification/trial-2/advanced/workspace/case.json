@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-post-cutoff-reclassification",
+  "title": "Post-cutoff classification revision",
+  "description": "A newer signed classification is visible, but it becomes effective after the canonical snapshot cutoff.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic point-in-time policy classification pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-v4-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "20ac55f58a3d0b85c837042f79e41a32eab8a52cf7e8cdea592f99da6893cc9a"
+    },
+    {
+      "sourceId": "holdout-v4-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "b726ebe13136fb342c93f8927abb6f159d07d5c6bec5c61f1e449b5e13b8ed7b"
+    },
+    {
+      "sourceId": "holdout-v4-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "eb234ce1a14665a62dacc67f9e7cc586129e85cef93bff79a7623393331c42ac"
+    }
+  ]
+}

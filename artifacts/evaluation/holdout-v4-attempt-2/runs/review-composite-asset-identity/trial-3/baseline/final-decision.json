@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "caseId": "review-composite-asset-identity",
+  "firstMaterialDivergence": "facts.assetSerial",
+  "failureOwner": "official-inspection-log",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-inspection-882",
+      "factPath": "facts.assetSerial",
+      "disposition": "SUPPORT",
+      "reason": "The signed inspection supplies no serial, so it cannot identify an exact asset occurrence."
+    },
+    {
+      "evidenceId": "obs-inspection-882",
+      "factPath": "facts.siteCode",
+      "disposition": "SUPPORT",
+      "reason": "The signed inspection supplies no site code, leaving the occurrence binding incomplete."
+    },
+    {
+      "evidenceId": "obs-asset-east-8",
+      "factPath": "facts.assetSerial",
+      "disposition": "CONTEXT",
+      "reason": "This registry occurrence shares the inspection label but has serial E-8804."
+    },
+    {
+      "evidenceId": "obs-asset-west-8",
+      "factPath": "facts.assetSerial",
+      "disposition": "CONTEXT",
+      "reason": "This registry occurrence shares the inspection label but has distinct serial W-8819."
+    }
+  ],
+  "affectedEntities": [
+    "inspection-882"
+  ],
+  "affectedFiles": [],
+  "preservedInvariants": [
+    "A display label is not a stable asset occurrence identifier",
+    "Distinct site and serial pairs remain distinct even when labels match",
+    "No maintenance record is mutated without one exact asset occurrence"
+  ],
+  "unresolvedUncertainty": [
+    "Which registered asset occurrence is referenced by inspection-882."
+  ],
+  "summary": "Two active registry occurrences share the inspection label, while the inspection omits both required binding fields; do not mutate the maintenance record until the inspection authority resolves them.",
+  "action": "HUMAN_REVIEW",
+  "operations": [],
+  "reviewRequest": {
+    "subjectId": "inspection-882",
+    "targetEvidenceId": "obs-inspection-882",
+    "requestedFactPaths": [
+      "facts.assetSerial",
+      "facts.siteCode"
+    ]
+  },
+  "retryPlan": null
+}

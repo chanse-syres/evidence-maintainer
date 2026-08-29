@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 3,
+  "caseId": "retry-signed-release-quorum",
+  "firstMaterialDivergence": "obs-replica-west-41 reports generation 41 and a different digest, diverging from the valid signed manifest occurrence for generation 42.",
+  "failureOwner": "official-replica-west",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-manifest-42",
+      "factPath": "facts.signatureValid",
+      "disposition": "SUPPORT",
+      "reason": "The signed manifest is valid."
+    },
+    {
+      "evidenceId": "obs-manifest-42",
+      "factPath": "facts.generation",
+      "disposition": "SUPPORT",
+      "reason": "The manifest establishes generation 42."
+    },
+    {
+      "evidenceId": "obs-replica-east-42",
+      "factPath": "facts.complete",
+      "disposition": "SUPPORT",
+      "reason": "East confirms completion for the manifest generation and digest."
+    },
+    {
+      "evidenceId": "obs-replica-west-41",
+      "factPath": "facts.generation",
+      "disposition": "REJECT",
+      "reason": "West reports generation 41, not manifest generation 42."
+    },
+    {
+      "evidenceId": "obs-replica-west-41",
+      "factPath": "facts.digest",
+      "disposition": "REJECT",
+      "reason": "West reports a digest different from the manifest-established digest."
+    }
+  ],
+  "affectedEntities": [
+    "release-42"
+  ],
+  "affectedFiles": [],
+  "preservedInvariants": [
+    "The currently published release remains unchanged until the full quorum is satisfied",
+    "Manifest and replica confirmations must bind the same release occurrence",
+    "A partial or mismatched quorum is never published"
+  ],
+  "unresolvedUncertainty": [
+    "Whether official-replica-west will provide a complete confirmation matching generation 42 and digest 89f0c287c01ca7af66eeb8197089dfe1484f544d5e93f4982df8a9fd46fc3189 during the authorized retry window ending 2026-08-29T20:20:00.000Z."
+  ],
+  "summary": "Keep release-42 pending and unpublished. Retry from 2026-08-29T20:05:00.000Z only within the authorized window; publication requires a valid manifest and complete matching confirmations from both named replicas for the same release occurrence.",
+  "action": "RETRY_LATER",
+  "operations": [],
+  "reviewRequest": null,
+  "retryPlan": {
+    "notBefore": "2026-08-29T20:05:00.000Z",
+    "maxAttempts": 3,
+    "escalateAfterAttempt": 3,
+    "preserveRecordIds": [
+      "release-42"
+    ],
+    "acceptanceConditions": [
+      {
+        "selector": {
+          "sourceId": "official-release-manifest",
+          "subjectId": "release-42",
+          "kind": "signed-manifest",
+          "factPath": "facts.signatureValid"
+        },
+        "operator": "EQUALS",
+        "expectedValue": true
+      },
+      {
+        "selector": {
+          "sourceId": "official-release-manifest",
+          "subjectId": "release-42",
+          "kind": "signed-manifest",
+          "factPath": "facts.generation"
+        },
+        "operator": "EQUALS",
+        "expectedValue": 42
+      },
+      {
+        "selector": {
+          "sourceId": "official-release-manifest",
+          "subjectId": "release-42",
+          "kind": "signed-manifest",
+          "factPath": "facts.digest"
+        },
+        "operator": "EQUALS",
+        "expectedValue": "89f0c287c01ca7af66eeb8197089dfe1484f544d5e93f4982df8a9fd46fc3189"
+      },
+      {
+        "selector": {
+          "sourceId": "official-replica-east",
+          "subjectId": "release-42",
+          "kind": "replica-confirmation",
+          "factPath": "facts.generation"
+        },
+        "operator": "EQUALS",
+        "expectedValue": 42
+      },
+      {
+        "selector": {
+          "sourceId": "official-replica-east",
+          "subjectId": "release-42",
+          "kind": "replica-confirmation",
+          "factPath": "facts.digest"
+        },
+        "operator": "EQUALS",
+        "expectedValue": "89f0c287c01ca7af66eeb8197089dfe1484f544d5e93f4982df8a9fd46fc3189"
+      },
+      {
+        "selector": {
+          "sourceId": "official-replica-east",
+          "subjectId": "release-42",
+          "kind": "replica-confirmation",
+          "factPath": "facts.complete"
+        },
+        "operator": "EQUALS",
+        "expectedValue": true
+      },
+      {
+        "selector": {
+          "sourceId": "official-replica-west",
+          "subjectId": "release-42",
+          "kind": "replica-confirmation",
+          "factPath": "facts.generation"
+        },
+        "operator": "EQUALS",
+        "expectedValue": 42
+      },
+      {
+        "selector": {
+          "sourceId": "official-replica-west",
+          "subjectId": "release-42",
+          "kind": "replica-confirmation",
+          "factPath": "facts.digest"
+        },
+        "operator": "EQUALS",
+        "expectedValue": "89f0c287c01ca7af66eeb8197089dfe1484f544d5e93f4982df8a9fd46fc3189"
+      },
+      {
+        "selector": {
+          "sourceId": "official-replica-west",
+          "subjectId": "release-42",
+          "kind": "replica-confirmation",
+          "factPath": "facts.complete"
+        },
+        "operator": "EQUALS",
+        "expectedValue": true
+      }
+    ]
+  }
+}

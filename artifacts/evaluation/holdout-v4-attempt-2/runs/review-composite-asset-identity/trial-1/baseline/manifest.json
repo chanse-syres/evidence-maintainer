@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "projectId": "evidence-maintainer",
+  "runId": "review-composite-asset-identity-baseline-1788038287913",
+  "caseId": "review-composite-asset-identity",
+  "arm": "baseline",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T21:18:07.913Z",
+  "finishedAt": "2026-08-29T21:18:34.255Z",
+  "durationMs": 26342,
+  "timeoutMs": 1200000,
+  "promptSha256": "120759957820e4ed1923128f9c94d1be0856fec67b5aa7f31e33e2965409ea49",
+  "outputSchemaSha256": "0b57229a15a3d865d46d80d01ff33252eed9dd91469145fdbac239399b699f69",
+  "caseSetSha256": "9d270871fc470e3c8d4a05e66cbb5dafd6ca315f0d588067df033b75c939fcbd",
+  "trajectoryPaths": [
+    "trajectories/baseline.jsonl"
+  ],
+  "proxyLedgerPaths": [
+    "trajectories/baseline.jsonl.proxy-ledger/proxy.jsonl"
+  ],
+  "artifactSha256": {
+    "final-decision.json": "47ea0b4293fd585b301044b7465c6578f39b005f5089ac7645467769f60dd9ad",
+    "before-tree.json": "3db480bf29430d41c759cfb837014f42efc1de29d1da4006de8865b555e5c57f",
+    "after-tree.json": "3db480bf29430d41c759cfb837014f42efc1de29d1da4006de8865b555e5c57f",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "16ed803818f23b0e1433c308a703b25f1a607e66bdd56e6c356eed9ded5f74c8",
+    "approval.json": "000783892d449bc82117e73f508efa6485c0feb5e9a0e3d7a0425800961f5764",
+    "trajectories/baseline.jsonl": "898f1c2a02339a4e53bc259a56d794637b2dfc6684c3ef32f1b7992922d9be71",
+    "trajectories/baseline.jsonl.proxy-ledger/proxy.jsonl": "bdb4e636dbc22cb3b976f9248770b6658964a943436e0e6bff1a492ade254819"
+  },
+  "tokenUsage": {
+    "input": 13369,
+    "cachedInput": 6912,
+    "output": 513
+  },
+  "tokenUsageAccounting": {
+    "sessions": [
+      {
+        "role": "baseline",
+        "usage": {
+          "input": 13369,
+          "cachedInput": 6912,
+          "output": 513
+        },
+        "source": "TRAJECTORY_TURN_COMPLETED",
+        "trajectoryPath": "trajectories/baseline.jsonl",
+        "proxyLedgerPath": "trajectories/baseline.jsonl.proxy-ledger/proxy.jsonl",
+        "trajectoryAggregateCaptured": true,
+        "proxyRequestCoverage": {
+          "requestCount": 1,
+          "accountedRequestCount": 0,
+          "complete": false
+        }
+      }
+    ],
+    "sessionCoverage": {
+      "sessionCount": 1,
+      "accountedSessionCount": 1,
+      "complete": true
+    },
+    "proxyRequestCoverage": {
+      "requestCount": 1,
+      "accountedRequestCount": 0,
+      "complete": false
+    },
+    "aggregateSource": "TRAJECTORY"
+  },
+  "runtimeImages": [
+    {
+      "role": "baseline",
+      "imageId": "1aede06b3e83a7816241abcee33302a0363b09eca39b5ae3d0baf84b36b2c5f5"
+    }
+  ],
+  "outcome": "PASS"
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "campaign": "holdout-v4-attempt-2",
+  "status": "VALID_AFTER_SYMMETRIC_EVALUATOR_INVALIDATION",
+  "lockSha256": "7b635581d07eacdf9f6f72c0b31c144d6647800b419f3613b81617a21c121810",
+  "invalidationReceipt": "holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json",
+  "invalidationReceiptSha256": "c92d88826c80cc8e745d4f16705b7056ad87bcb154048bb26ba46748647915d1",
+  "rawEvidence": {
+    "summarySha256": "7f9d41fc40e18619d778749f1ca761943a81ed8bab0cfd84f3970966e207f3da",
+    "rowsSha256": "ee8d83c73e621922a72f17116542272c5228b7a41b635df60b1547acb80c9c70",
+    "evaluatorInvalidationsSha256": "b529ca0010aa231e9738dc4ad75453d2ae4e53f10f8cb6bc89bd891fd99062ed",
+    "workflowRunCount": 30
+  },
+  "selectedEvidence": {
+    "summarySha256": "3bd22be06d5e00b911daaf414dc52decbfb77968cde3d3f8a814b919b2fee99f",
+    "rowsSha256": "2577056810bf5be49a742c605f488900e76f852b2a94cc9365182e119976feca",
+    "evaluatorInvalidationsSha256": "7dcc99541a1a8481ca2aeea88cdaba7bc3732626b15ef4eaea0306116f10be91",
+    "workflowRunCount": 24
+  }
+}

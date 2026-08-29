@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "cutoff": "2026-08-29T20:00:00.000Z",
+  "authorityByField": {
+    "normalizedConcentration": "official-assay-ledger+official-calibration-registry",
+    "calibrationRevision": "official-calibration-registry"
+  },
+  "authorityValidity": [
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-assay-ledger",
+      "authorityScope": "assay-measurement",
+      "maxAgeMinutes": 60
+    },
+    {
+      "mode": "EFFECTIVE_UNTIL_SUPERSEDED",
+      "sourceId": "official-calibration-registry",
+      "authorityScope": "calibration-revision",
+      "applicabilityFactPath": "facts.revision"
+    }
+  ],
+  "retryLimit": 3,
+  "invariants": [
+    "Assay, sample, instrument-occurrence, measurement-time, raw-signal, unit, and final-status identity remain unchanged",
+    "A calibration belongs only to its exact instrument occurrence and declared sample class",
+    "A later-published or future-effective calibration never rewrites an earlier measurement"
+  ],
+  "rules": [
+    "Use the latest signed calibration for the exact instrument occurrence and sample class whose effectiveAt is at or before measuredAt",
+    "Normalized concentration equals (rawSignal minus blankOffset) times scale",
+    "Store the controlling calibration revision together with the normalized concentration"
+  ]
+}

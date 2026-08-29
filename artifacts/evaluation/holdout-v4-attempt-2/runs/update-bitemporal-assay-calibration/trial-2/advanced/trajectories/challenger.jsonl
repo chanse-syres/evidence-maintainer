@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04f6a-8e9c-76f2-9761-0c61890fd717"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":2,\"caseId\":\"update-bitemporal-assay-calibration\",\"recommendation\":\"ACCEPT_DRAFT\",\"evidenceIds\":[\"obs-assay-440\",\"obs-calibration-cal-17\",\"obs-calibration-cal-18\"],\"critiqueCategories\":[],\"findings\":[],\"summary\":\"The draft uses the signed, serum-eligible calibration for the exact instrument occurrence effective at measurement time. Its calculation and allowlisted write are supported; the later future-effective calibration is correctly excluded.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":12916,"cached_input_tokens":6912,"cache_write_input_tokens":0,"output_tokens":213,"reasoning_output_tokens":100}}

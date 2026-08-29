@@ -124,6 +124,8 @@ export async function loadOverviewModel(artifactRoot: string) {
     advanced: summary.arms.advanced,
     absoluteOdiChange: summary.absoluteOdiChange,
     odiBootstrap95: summary.odiBootstrap95,
+    selection: summary.selection,
+    resourceComparison: summary.resourceComparison,
     cases,
     flagshipCaseId,
     flagshipHref: flagshipCaseId === null ? null : `/cases/${flagshipCaseId}`,

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "caseId": "repair-epoch-delta-materialization",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-epoch-delta-contract"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The repair is confined to the allowed adapter.ts surface, selects the greatest contiguous BEGIN-to-COMMIT epoch, materializes it from empty state in sequence order, preserves key-ascending output, and throws when none is valid."
+}

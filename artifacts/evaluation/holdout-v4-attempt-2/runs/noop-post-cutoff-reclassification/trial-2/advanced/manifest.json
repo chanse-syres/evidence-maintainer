@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "projectId": "evidence-maintainer",
+  "runId": "noop-post-cutoff-reclassification-advanced-1788037182882",
+  "caseId": "noop-post-cutoff-reclassification",
+  "arm": "advanced",
+  "mode": "live",
+  "model": "gpt-5.6-terra",
+  "startedAt": "2026-08-29T20:59:42.890Z",
+  "finishedAt": "2026-08-29T21:00:57.502Z",
+  "durationMs": 74612,
+  "timeoutMs": 1200000,
+  "promptSha256": "f847b8a7120e95eb7674dd37f09e589b18e6712a243b6b453f6a3ed002f5468b",
+  "outputSchemaSha256": "6d02ae2c3e7a9c8727964e1e7f67a6ec867b23d7d176cf6b24b8d69fd129bdef",
+  "caseSetSha256": "282efba99ab75682abfa8120864bb54ec82432d2d3a1644c444d9db64e26e2e5",
+  "trajectoryPaths": [
+    "trajectories/maintainer.jsonl",
+    "trajectories/challenger.jsonl",
+    "trajectories/reviser.jsonl"
+  ],
+  "proxyLedgerPaths": [
+    "trajectories/maintainer.jsonl.proxy-ledger/proxy.jsonl",
+    "trajectories/challenger.jsonl.proxy-ledger/proxy.jsonl",
+    "trajectories/reviser.jsonl.proxy-ledger/proxy.jsonl"
+  ],
+  "artifactSha256": {
+    "evidence.jsonl": "da798572b7fbbeb305aaf343ec208f942ecd3faa18100a8fc0b6822ef79a9917",
+    "draft-decision.json": "114ba6e9905acdbee9cf71acd20c285676c53d87c1c4d77973d78b4315ff9112",
+    "challenger-critique.json": "c1cfcf9882d98a8203f20f08bac75209bb28c886e2e465df766f963071ea7f54",
+    "final-decision.json": "114ba6e9905acdbee9cf71acd20c285676c53d87c1c4d77973d78b4315ff9112",
+    "before-tree.json": "f4c94f001a32a99bd1f6ba758dbf1fd65b7ce0f7aebd2fa604244ca685c353e6",
+    "after-tree.json": "f4c94f001a32a99bd1f6ba758dbf1fd65b7ce0f7aebd2fa604244ca685c353e6",
+    "command-results.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "gate.json": "16ed803818f23b0e1433c308a703b25f1a607e66bdd56e6c356eed9ded5f74c8",
+    "approval.json": "6da6e0c33256503b4ed8b33d831de6401166cae31ea1bda3385755e5e2bd5a5b",
+    "trajectories/maintainer.jsonl": "c1903191202f0a7c3f8de9f2cf19e40fdff3df0740f47285e4f00bed7e19898a",
+    "trajectories/challenger.jsonl": "ef1301983e731720635488450d84a8b08fee8dc9500f8860ad5ead0f1cde9a02",
+    "trajectories/reviser.jsonl": "0af0409258c26ccbb258ebc489b292cb5f0615ab6e4caec0a071174c73c4e9e2",
+    "trajectories/maintainer.jsonl.proxy-ledger/proxy.jsonl": "74e278615f97f3123fed2abce1acf3a4eb6139f95c64e3533f61a03a9436fa6f",
+    "trajectories/challenger.jsonl.proxy-ledger/proxy.jsonl": "811663e03a21c4da26384c351169e3d1a2abd2be1495e6d6a96da2aa036788c8",
+    "trajectories/reviser.jsonl.proxy-ledger/proxy.jsonl": "b0c6e5c1d982f4c0d4967d47fce2d8c5f333f4904bdc3814c1f198568c544d3a"
+  },
+  "tokenUsage": {
+    "input": 38686,
+    "cachedInput": 0,
+    "output": 1059
+  },
+  "tokenUsageAccounting": {
+    "sessions": [
+      {
+        "role": "maintainer",
+        "usage": {
+          "input": 14390,
+          "cachedInput": 0,
+          "output": 433
+        },
+        "source": "TRAJECTORY_TURN_COMPLETED",
+        "trajectoryPath": "trajectories/maintainer.jsonl",
+        "proxyLedgerPath": "trajectories/maintainer.jsonl.proxy-ledger/proxy.jsonl",
+        "trajectoryAggregateCaptured": true,
+        "proxyRequestCoverage": {
+          "requestCount": 1,
+          "accountedRequestCount": 0,
+          "complete": false
+        }
+      },
+      {
+        "role": "challenger",
+        "usage": {
+          "input": 11012,
+          "cachedInput": 0,
+          "output": 193
+        },
+        "source": "TRAJECTORY_TURN_COMPLETED",
+        "trajectoryPath": "trajectories/challenger.jsonl",
+        "proxyLedgerPath": "trajectories/challenger.jsonl.proxy-ledger/proxy.jsonl",
+        "trajectoryAggregateCaptured": true,
+        "proxyRequestCoverage": {
+          "requestCount": 1,
+          "accountedRequestCount": 0,
+          "complete": false
+        }
+      },
+      {
+        "role": "reviser",
+        "usage": {
+          "input": 13284,
+          "cachedInput": 0,
+          "output": 433
+        },
+        "source": "TRAJECTORY_TURN_COMPLETED",
+        "trajectoryPath": "trajectories/reviser.jsonl",
+        "proxyLedgerPath": "trajectories/reviser.jsonl.proxy-ledger/proxy.jsonl",
+        "trajectoryAggregateCaptured": true,
+        "proxyRequestCoverage": {
+          "requestCount": 1,
+          "accountedRequestCount": 0,
+          "complete": false
+        }
+      }
+    ],
+    "sessionCoverage": {
+      "sessionCount": 3,
+      "accountedSessionCount": 3,
+      "complete": true
+    },
+    "proxyRequestCoverage": {
+      "requestCount": 3,
+      "accountedRequestCount": 0,
+      "complete": false
+    },
+    "aggregateSource": "TRAJECTORY"
+  },
+  "runtimeImages": [
+    {
+      "role": "maintainer",
+      "imageId": "1aede06b3e83a7816241abcee33302a0363b09eca39b5ae3d0baf84b36b2c5f5"
+    },
+    {
+      "role": "challenger",
+      "imageId": "1aede06b3e83a7816241abcee33302a0363b09eca39b5ae3d0baf84b36b2c5f5"
+    },
+    {
+      "role": "reviser",
+      "imageId": "1aede06b3e83a7816241abcee33302a0363b09eca39b5ae3d0baf84b36b2c5f5"
+    }
+  ],
+  "outcome": "PASS"
+}

@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04f5b-68c1-7b93-8d11-e60b616632fc"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":2,\"caseId\":\"repair-epoch-delta-materialization\",\"recommendation\":\"ACCEPT_DRAFT\",\"evidenceIds\":[\"obs-epoch-delta-contract\"],\"critiqueCategories\":[],\"findings\":[],\"summary\":\"The repair is confined to the allowed adapter.ts surface and implements epoch grouping, contiguous-sequence validation, greatest-valid-epoch selection, empty-state materialization, ordered mutation application, required failure behavior, and key-ascending output. The cited observation is timely and applicable; no conflicting public authority or material regression is evident.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":12300,"cached_input_tokens":6912,"cache_write_input_tokens":0,"output_tokens":576,"reasoning_output_tokens":452}}

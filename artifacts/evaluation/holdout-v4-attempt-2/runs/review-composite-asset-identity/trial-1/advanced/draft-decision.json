@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 3,
+  "caseId": "review-composite-asset-identity",
+  "firstMaterialDivergence": "obs-inspection-882 omits both facts.assetSerial and facts.siteCode while its facts.assetLabel matches multiple active registry occurrences.",
+  "failureOwner": "official-inspection-log",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-inspection-882",
+      "factPath": "facts.assetSerial",
+      "disposition": "SUPPORT",
+      "reason": "The signed inspection provides no serial, so it cannot identify one exact asset occurrence."
+    },
+    {
+      "evidenceId": "obs-inspection-882",
+      "factPath": "facts.siteCode",
+      "disposition": "SUPPORT",
+      "reason": "The signed inspection provides no site code, leaving the asset binding unresolved."
+    },
+    {
+      "evidenceId": "obs-asset-east-8",
+      "factPath": "facts.assetLabel",
+      "disposition": "CONTEXT",
+      "reason": "This registry occurrence shares the inspection label and has the distinct identity pair E-8804/EAST."
+    },
+    {
+      "evidenceId": "obs-asset-west-8",
+      "factPath": "facts.assetLabel",
+      "disposition": "CONTEXT",
+      "reason": "This registry occurrence shares the inspection label and has the distinct identity pair W-8819/WEST."
+    }
+  ],
+  "affectedEntities": [
+    "inspection-882",
+    "asset-east-8",
+    "asset-west-8"
+  ],
+  "affectedFiles": [],
+  "preservedInvariants": [
+    "A display label is not a stable asset occurrence identifier",
+    "Distinct site and serial pairs remain distinct even when labels match",
+    "No maintenance record is mutated without one exact asset occurrence"
+  ],
+  "unresolvedUncertainty": [
+    "Which exact asset serial and site code apply to inspection-882."
+  ],
+  "summary": "Two authoritative registry occurrences share the inspection label, while the inspection omits both required binding fields. A person must obtain the missing fields from the inspection authority before any canonical mutation.",
+  "action": "HUMAN_REVIEW",
+  "operations": [],
+  "reviewRequest": {
+    "subjectId": "inspection-882",
+    "targetEvidenceId": "obs-inspection-882",
+    "requestedFactPaths": [
+      "facts.assetSerial",
+      "facts.siteCode"
+    ]
+  },
+  "retryPlan": null
+}

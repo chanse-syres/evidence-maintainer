@@ -2,9 +2,9 @@
 
 ## Current public result
 
-Evidence Maintainer does **not** currently claim a valid comparative performance result. The V1, V2, and V3 campaigns are preserved as development evidence, but each is excluded from public system comparison by a versioned invalidation record. No live V4 holdout campaign has been run.
+Evidence Maintainer publishes one adjudicated V4 comparison. Five cases were frozen and run on `gpt-5.6-terra` with three trials per arm. One retry case was evaluator-invalid and excluded symmetrically, leaving four included cases. Both workflows earned ODI on 12/12 included runs, a 0 percentage-point difference.
 
-This distinction is deliberate: a completed campaign is not automatically a valid experiment. Raw artifacts remain useful for auditing execution, resource use, and design failures, while invalid primary comparisons remain invalid.
+The advanced workflow added 686,544 ms of total duration and 349,026 tokens. Its total resource use was about 2.67× the baseline duration and 3.05× the baseline tokens, with no measured correctness gain. This small frozen holdout is descriptive; it is not evidence of equivalence, population-level generalization, or production safety.
 
 ## V4 comparison question
 
@@ -71,9 +71,11 @@ V3 also completed 30 workflow slots, but it cannot support a baseline-versus-adv
 
 The freeze tag, exact harness commit, run directory, completion fact, raw counts, and resource observations remain auditable in [`holdout/INVALIDATION-v3.json`](../holdout/INVALIDATION-v3.json). Those raw descriptions are not presented as system performance.
 
-## What constitutes a valid V4 result
+### V4 attempt 2
 
-A future public V4 result must satisfy all of the following:
+The selected V4 campaign is [`holdout-v4-attempt-2`](../artifacts/evaluation/holdout-v4-attempt-2/summary.json), frozen under tag `holdout-freeze-v4-attempt-2`. It completed all 30 planned workflow slots without model or infrastructure failures. Post-run semantic audit invalidated `retry-signed-release-quorum` because the final schema could not express either the policy's latest retry deadline or its same-confirmation occurrence binding. The six affected rows remain in the raw evidence and are classified `EVALUATOR_INVALID`; they do not enter either arm's ODI denominator.
+
+The selected record satisfies these release conditions:
 
 - cases and execution contracts are frozen before model execution;
 - no target-model output is inspected while authoring or freezing the cases;
@@ -83,7 +85,7 @@ A future public V4 result must satisfy all of the following:
 - no V1, V2, or V3 campaign is selected as the public comparative result;
 - the complete engine verification command passes at the exact evaluation commit.
 
-Until those conditions are met and a live V4 campaign completes, the honest headline is: **engine implemented; comparative result pending**.
+The resulting headline is deliberately narrow: **12/12 ODI in both arms on four included cases; no measured correctness advantage; materially higher resource use for the advanced workflow.**
 
 ## Verification
 
@@ -94,3 +96,5 @@ npm run engine:verify
 ```
 
 The command regenerates public schemas, runs lint, executes the full engine test suite, and performs a production build. It does not run a live model campaign.
+
+Run `npm run submission:verify` from the clean release commit to validate the selected freeze, adjudication, trajectory and proxy receipts, report hashes, public selector, and repository integrity.

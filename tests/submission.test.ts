@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
-import { verifySubmission } from "../scripts/verify-submission.ts";
+import {
+  verifyPublicReports,
+  verifySelectedV4Campaign,
+  verifySubmission,
+} from "../scripts/verify-submission.ts";
 
 const publicMarkdown = [
   "README.md",
@@ -31,12 +35,16 @@ const packageFiles = [
   "src/evaluation/score-run.ts",
   "src/evaluation/aggregate.ts",
   "src/evaluation/run-evaluation.ts",
+  "src/evaluation/adjudicate.ts",
   "src/reports/load-artifacts.ts",
   "src/reports/render-decision-report.ts",
   "src/ui/public-comparison.ts",
   "src/ui/overview-model.ts",
   "src/ui/case-model.ts",
   "src/release/public-tree.ts",
+  "src/release/selected-v4.ts",
+  "scripts/adjudicate-evaluation.ts",
+  "scripts/generate-selected-reports.ts",
   "app/page.tsx",
   "app/cases/[caseId]/page.tsx",
 ];
@@ -173,22 +181,91 @@ test("release rejects internal planning files from the public tree", async () =>
   );
 });
 
-test("selected V4 comparison remains blocked until the real validator exists", async () => {
-  const root = await makePendingFixture();
-  const selection = pendingSelection();
-  selection.status = "SELECTED_VALID_V4_CAMPAIGN";
-  selection.selectedCampaign = "holdout-v4-public";
-  selection.selectedSummary = "artifacts/evaluation/holdout-v4-public/summary.json";
-  await writeJson(root, "config/public-comparison.json", selection);
+test("selected V4 validator accepts the exact frozen attempt-2 campaign", async () => {
+  const result = await verifySelectedV4Campaign(
+    resolve("."),
+    "holdout-v4-attempt-2",
+    "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+  );
+
+  assert.equal(result.workflowRunCount, 24);
+  assert.equal(result.modelSessionCount, 48);
+  assert.equal(result.selectedCaseCount, 5);
+  assert.equal(result.includedCaseCount, 4);
+  assert.equal(result.invalidatedCaseCount, 1);
+  assert.equal(result.caseSetHash, "110fa96bdc104cf612c18d904d11dbb27537d3c8b7d587f181a05f58eaad24d1");
+});
+
+test("selected V4 validator rejects aggregate tampering", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-selected-v4-tamper-"));
+  await cp(
+    resolve("artifacts", "evaluation", "holdout-v4-attempt-2"),
+    join(root, "artifacts", "evaluation", "holdout-v4-attempt-2"),
+    { recursive: true },
+  );
+  await cp(resolve("holdout", "v4"), join(root, "holdout", "v4"), { recursive: true });
+  for (const relativePath of [
+    "prompts/baseline.md",
+    "prompts/maintainer.md",
+    "prompts/challenger.md",
+    "prompts/revision.md",
+    "schemas/decision-package.schema.json",
+    "schemas/challenger-critique.schema.json",
+  ]) {
+    await write(root, relativePath, await readFile(resolve(...relativePath.split("/")), "utf8"));
+  }
+  const summaryPath = join(root, "artifacts", "evaluation", "holdout-v4-attempt-2", "summary.json");
+  const summary = JSON.parse(await readFile(summaryPath, "utf8")) as { absoluteOdiChange: number };
+  summary.absoluteOdiChange = 1;
+  await writeFile(summaryPath, `${JSON.stringify(summary, null, 2)}\n`, "utf8");
 
   await assert.rejects(
-    () => verifySubmission(root, { checkGit: false }),
-    /Selected V4 comparison is blocked until the real V4 freeze and campaign validator is implemented/,
+    () => verifySelectedV4Campaign(
+      root,
+      "holdout-v4-attempt-2",
+      "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+      { verifyGit: false },
+    ),
+    /aggregate metrics do not match re-derived row evidence|deterministic adjudication/,
+  );
+});
+
+test("public report verification binds every included case and rejects tampering", async () => {
+  const root = await mkdtemp(join(tmpdir(), "evidence-public-reports-"));
+  const campaign = "holdout-v4-attempt-2";
+  const selectedSummary = `artifacts/evaluation/${campaign}/summary.json`;
+  const caseSetHash = "110fa96bdc104cf612c18d904d11dbb27537d3c8b7d587f181a05f58eaad24d1";
+  await mkdir(join(root, "artifacts", "evaluation"), { recursive: true });
+  await mkdir(join(root, "public"), { recursive: true });
+  await mkdir(join(root, "holdout", "v4"), { recursive: true });
+  await cp(resolve("artifacts", "evaluation", campaign), join(root, "artifacts", "evaluation", campaign), {
+    recursive: true,
+  });
+  await cp(resolve("public", "reports"), join(root, "public", "reports"), { recursive: true });
+  await cp(
+    resolve("holdout", "v4", "EVALUATOR-INVALIDATION-retry-signed-release-quorum.json"),
+    join(root, "holdout", "v4", "EVALUATOR-INVALIDATION-retry-signed-release-quorum.json"),
+  );
+
+  await verifyPublicReports(root, campaign, selectedSummary, caseSetHash);
+  await write(root, "public/reports/stale.html", "stale");
+  await assert.rejects(
+    verifyPublicReports(root, campaign, selectedSummary, caseSetHash),
+    /Unexpected public report file: stale\.html/,
+  );
+  await rm(join(root, "public", "reports", "stale.html"));
+  const reportPath = join(root, "public", "reports", "noop-post-cutoff-reclassification.html");
+  await writeFile(reportPath, `${await readFile(reportPath, "utf8")}\ntampered`, "utf8");
+  await assert.rejects(
+    verifyPublicReports(root, campaign, selectedSummary, caseSetHash),
+    /Public report hash mismatch: noop-post-cutoff-reclassification/,
   );
 });
 
 test("current repository has an explicit public comparison state", async () => {
   const result = await verifySubmission(resolve("."), { checkGit: false });
-  assert.equal(result.comparisonState, "pending");
-  assert.equal(result.selectedCampaign, null);
+  assert.equal(result.comparisonState, "selected");
+  assert.equal(result.selectedCampaign, "holdout-v4-attempt-2");
+  assert.equal(result.selectedWorkflowRunCount, 24);
+  assert.equal(result.caseSetHash, "110fa96bdc104cf612c18d904d11dbb27537d3c8b7d587f181a05f58eaad24d1");
 });

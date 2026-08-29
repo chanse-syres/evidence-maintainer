@@ -1,6 +1,6 @@
 # Historical Agent Trajectory Index
 
-> **Invalidated development evidence:** The trajectories indexed here use pre-V4 contracts and are not a valid baseline-versus-advanced comparison. Their `PASS` and `FAIL` fields are historical gate outputs, not current performance labels. No public comparison is selected.
+> **Invalidated development evidence:** The trajectories indexed here use pre-V4 contracts and are not the selected baseline-versus-advanced comparison. Their `PASS` and `FAIL` fields are historical gate outputs, not current performance labels. The selected V4 evidence is under [`artifacts/evaluation/holdout-v4-attempt-2`](../artifacts/evaluation/holdout-v4-attempt-2/summary.json).
 
 The retained `final-v3` development bundle contains 45 raw JSONL trajectories: 15 direct-baseline sessions, 15 Maintainer sessions, and 15 Challenger sessions. The name `final-v3` is historical; it does not mean the campaign is a valid final result.
 

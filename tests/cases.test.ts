@@ -336,7 +336,7 @@ test("v3 invalidation preserves evidence without permitting a system comparison"
   assert.equal(record.rawDescriptiveCounts.advanced.operationalDecisionIntegrityPasses, 14);
 });
 
-test("no invalidated v1-v3 campaign is selected as the public comparison", async () => {
+test("the public selector chooses the adjudicated V4 campaign and keeps v1-v3 excluded", async () => {
   const selection = JSON.parse(
     await readFile(resolve("config", "public-comparison.json"), "utf8"),
   ) as {
@@ -348,9 +348,12 @@ test("no invalidated v1-v3 campaign is selected as the public comparison", async
   };
 
   assert.equal(selection.schemaVersion, 1);
-  assert.equal(selection.status, "PENDING_VALID_V4_CAMPAIGN");
-  assert.equal(selection.selectedCampaign, null);
-  assert.equal(selection.selectedSummary, null);
+  assert.equal(selection.status, "SELECTED_VALID_V4_CAMPAIGN");
+  assert.equal(selection.selectedCampaign, "holdout-v4-attempt-2");
+  assert.equal(
+    selection.selectedSummary,
+    "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+  );
   assert.deepEqual(selection.excludedCampaigns, [
     { campaign: "holdout-v1", invalidation: "holdout/INVALIDATION-v1.json" },
     { campaign: "holdout-v2", invalidation: "holdout/INVALIDATION-v2.json" },

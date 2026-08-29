@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "caseId": "review-composite-asset-identity",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-inspection-882",
+    "obs-asset-east-8",
+    "obs-asset-west-8"
+  ],
+  "critiqueCategories": [],
+  "findings": [
+    "No material conflict or stale evidence: the inspection omits both binding fields, while the two registry observations establish distinct active occurrences sharing the label.",
+    "The HUMAN_REVIEW action, empty operations, and request for both missing fields preserve the stated identity and no-mutation invariants."
+  ],
+  "summary": "The draft correctly treats the shared display label as insufficient to bind inspection-882 to either registered asset occurrence."
+}

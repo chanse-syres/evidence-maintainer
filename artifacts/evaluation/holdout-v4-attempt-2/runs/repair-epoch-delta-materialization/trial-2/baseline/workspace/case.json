@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "repair-epoch-delta-materialization",
+  "title": "Epoch-scoped delta materialization repair",
+  "description": "A delta adapter must choose one complete epoch and apply its ordered key operations without leaking state across resets.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic generation-scoped event materialization pattern",
+  "agentVisibleFiles": [
+    "workspace/adapter.test.ts",
+    "workspace/adapter.ts",
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "adapter.ts"
+  ],
+  "requiredCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "provenance": [
+    {
+      "sourceId": "holdout-v4-adapter.test.ts",
+      "path": "workspace/adapter.test.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "482a67b62037d201cc90d37b8adfaeb425352ae0c927e3e3f083d1af96fea3b7"
+    },
+    {
+      "sourceId": "holdout-v4-adapter.ts",
+      "path": "workspace/adapter.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "cdbf5b5b2a504a91cac0e46c5191807ee22a7107c8815fd8cf1ee67f8bd3a0b1"
+    },
+    {
+      "sourceId": "holdout-v4-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "sourceId": "holdout-v4-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "9b5aef23743d4c964c3921e53ff167e378c5c3f7037b65fd4a7f704c06d0505e"
+    },
+    {
+      "sourceId": "holdout-v4-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "2f85a6d418b178cc3de50f9ceb2d7fe430dd73405e1df50c3604e39c45216725"
+    }
+  ]
+}

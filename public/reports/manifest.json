@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "campaign": "holdout-v4-attempt-2",
+  "summaryPath": "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+  "caseSetHash": "110fa96bdc104cf612c18d904d11dbb27537d3c8b7d587f181a05f58eaad24d1",
+  "generatedAt": "2026-08-29T21:39:42.0037595Z",
+  "includedWorkflowRunCount": 24,
+  "excludedEvaluatorInvalidCaseIds": [
+    "retry-signed-release-quorum"
+  ],
+  "invalidationReceiptPaths": [
+    "holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json"
+  ],
+  "reports": [
+    {
+      "caseId": "noop-post-cutoff-reclassification",
+      "runPath": "runs/noop-post-cutoff-reclassification/trial-1/advanced",
+      "path": "reports/noop-post-cutoff-reclassification.html",
+      "sha256": "20a51417f57735dfbc3526f53dc19939a33950483d1861a567da4fffba0de920"
+    },
+    {
+      "caseId": "repair-epoch-delta-materialization",
+      "runPath": "runs/repair-epoch-delta-materialization/trial-1/advanced",
+      "path": "reports/repair-epoch-delta-materialization.html",
+      "sha256": "f5dd68900df557d2b192172662e91a42e4e430c128ee61b5848ecc829c5eed47"
+    },
+    {
+      "caseId": "review-composite-asset-identity",
+      "runPath": "runs/review-composite-asset-identity/trial-1/advanced",
+      "path": "reports/review-composite-asset-identity.html",
+      "sha256": "e5fe271cb46a85d494d6785d6412595787a35a332a8233a18b2bfdfa474dd692"
+    },
+    {
+      "caseId": "update-bitemporal-assay-calibration",
+      "runPath": "runs/update-bitemporal-assay-calibration/trial-1/advanced",
+      "path": "reports/update-bitemporal-assay-calibration.html",
+      "sha256": "525cf59c43f72d7893c42b5362504b93eddcdd805c04c9cec389cca4d6dcdb1a"
+    }
+  ]
+}

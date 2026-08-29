@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "caseId": "repair-epoch-delta-materialization",
+  "firstMaterialDivergence": "adapter.ts applies mutations from every event in the stream instead of selecting and materializing only the numerically greatest complete valid epoch.",
+  "failureOwner": "adapter implementation",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.epochField",
+      "disposition": "SUPPORT",
+      "reason": "The timely authoritative contract identifies the field that scopes epoch state."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.sequenceField",
+      "disposition": "SUPPORT",
+      "reason": "The timely authoritative contract identifies the ordering field used to validate and apply an epoch."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.beginKind",
+      "disposition": "SUPPORT",
+      "reason": "The contract identifies BEGIN as the epoch-start marker."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.commitKind",
+      "disposition": "SUPPORT",
+      "reason": "The contract identifies COMMIT as the epoch-completion marker."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.mutationKinds",
+      "disposition": "SUPPORT",
+      "reason": "The contract identifies UPSERT and DELETE as the mutation kinds permitted between epoch boundaries."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.outputOrder",
+      "disposition": "SUPPORT",
+      "reason": "The contract requires key-ascending output order."
+    }
+  ],
+  "affectedEntities": [
+    "inventory-projection"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "preservedInvariants": [
+    "State from different epochs is never combined",
+    "Only one complete valid epoch is materialized",
+    "Deletes and later key reuse are interpreted inside the selected epoch",
+    "Output is sorted by key"
+  ],
+  "unresolvedUncertainty": [],
+  "summary": "The authoritative, timely contract and policy establish an adapter defect: materialization leaks state across epochs and does not reject streams without a complete valid epoch. The repair validates a unique contiguous sequence with boundary markers only at its ends, selects the greatest valid epoch, and applies it from empty state.",
+  "action": "REPAIR_ADAPTER",
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "export function materializeEpoch(events: DeltaEvent[]): Array<{ key: string; value: number }> {\n  const state = new Map<string, number>();\n  for (const event of events) {\n    if (event.kind === \"UPSERT\" && event.key !== undefined && event.value !== undefined) {\n      state.set(event.key, event.value);\n    } else if (event.kind === \"DELETE\" && event.key !== undefined) {\n      state.delete(event.key);\n    }\n  }\n  return [...state].sort(([left], [right]) => left.localeCompare(right)).map(([key, value]) => ({ key, value }));\n}",
+      "replace": "export function materializeEpoch(events: DeltaEvent[]): Array<{ key: string; value: number }> {\n  const byEpoch = new Map<number, DeltaEvent[]>();\n  for (const event of events) {\n    const epochEvents = byEpoch.get(event.epoch) ?? [];\n    epochEvents.push(event);\n    byEpoch.set(event.epoch, epochEvents);\n  }\n\n  const completeEpochs = [...byEpoch.entries()].filter(([, epochEvents]) => {\n    const ordered = [...epochEvents].sort((left, right) => left.sequence - right.sequence);\n    return ordered.length > 0\n      && ordered[0].sequence === 0\n      && ordered[0].kind === \"BEGIN\"\n      && ordered.at(-1)?.kind === \"COMMIT\"\n      && ordered.every((event, index) => event.sequence === index)\n      && ordered.slice(1, -1).every((event) =>\n        event.kind === \"UPSERT\" || event.kind === \"DELETE\",\n      );\n  });\n\n  if (completeEpochs.length === 0) {\n    throw new Error(\"No complete valid epoch\");\n  }\n\n  const [, selectedEvents] = completeEpochs.reduce((greatest, candidate) =>\n    candidate[0] > greatest[0] ? candidate : greatest,\n  );\n  const state = new Map<string, number>();\n  for (const event of [...selectedEvents].sort((left, right) => left.sequence - right.sequence)) {\n    if (event.kind === \"UPSERT\" && event.key !== undefined && event.value !== undefined) {\n      state.set(event.key, event.value);\n    } else if (event.kind === \"DELETE\" && event.key !== undefined) {\n      state.delete(event.key);\n    }\n  }\n\n  return [...state]\n    .sort(([left], [right]) => left.localeCompare(right))\n    .map(([key, value]) => ({ key, value }));\n}",
+      "expectedCount": 1
+    }
+  ],
+  "reviewRequest": null,
+  "retryPlan": null
+}

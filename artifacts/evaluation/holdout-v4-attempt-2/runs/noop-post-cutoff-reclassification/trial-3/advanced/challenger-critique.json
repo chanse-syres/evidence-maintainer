@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "caseId": "noop-post-cutoff-reclassification",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-classification-r7",
+    "obs-classification-r8"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "r7 is the latest signed classification effective at or before the cutoff and matches canonical state. r8 is signed but effective after the cutoff, so NO_ACTION is supported."
+}

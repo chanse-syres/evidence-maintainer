@@ -3,6 +3,7 @@ import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import test, { before } from "node:test";
+import { sha256Text } from "../src/core/canonical-json.ts";
 import { loadCaseModel } from "../src/ui/case-model.ts";
 import { loadOverviewModel } from "../src/ui/overview-model.ts";
 import { loadPublicComparisonSelection } from "../src/ui/public-comparison.ts";
@@ -38,19 +39,63 @@ test("case detail renders the V4 final decision rather than legacy challenge art
   assert.doesNotMatch(model, /artifacts\.(?:challenger|proposal)/);
 });
 
-test("public pages withhold invalidated campaigns while V4 selection is pending", async () => {
+test("public pages load the adjudicated V4 campaign while preserving the pending fallback", async () => {
   const selection = await loadPublicComparisonSelection();
-  assert.equal(selection.state, "pending");
+  assert.equal(selection.state, "selected");
+  assert.equal(selection.campaign, "holdout-v4-attempt-2");
+  assert.match(selection.summaryPath, /artifacts[\\/]evaluation[\\/]holdout-v4-attempt-2[\\/]summary\.json$/);
+  const overview = await loadOverviewModel(selection.evaluationRoot);
+  assert.equal(overview.selection.selectedCaseCount, 5);
+  assert.equal(overview.selection.includedCaseCount, 4);
+  assert.equal(overview.selection.excludedCaseCount, 1);
+  assert.equal(overview.baseline.operationalDecisions, 12);
+  assert.equal(overview.advanced.operationalDecisions, 12);
+  assert.equal(overview.absoluteOdiChange, 0);
+  assert.equal(overview.resourceComparison.advancedMinusBaselineTotalDurationMs, 686_544);
+  assert.equal(overview.resourceComparison.advancedMinusBaselineTotalTokens, 349_026);
   const [home, casePage] = await Promise.all([
     readFile("app/page.tsx", "utf8"),
     readFile("app/cases/[caseId]/page.tsx", "utf8"),
   ]);
   assert.match(home, /No public system comparison is selected/);
+  assert.match(home, /Valid frozen cases/);
+  assert.match(home, /Resource delta/);
+  assert.match(home, /evaluator-invalid case excluded symmetrically/);
+  assert.match(home, /advancedMinusBaselineTotalDurationMs/);
+  assert.match(home, /advancedMinusBaselineTotalTokens/);
   assert.match(home, /loadPublicComparisonSelection/);
   assert.match(casePage, /loadPublicComparisonSelection/);
   assert.match(casePage, /selection\.state === "pending"/);
   assert.doesNotMatch(home, /artifacts\/evaluation\/recorded-all/);
   assert.doesNotMatch(casePage, /artifacts\/evaluation\/recorded-all/);
+});
+
+test("every selected V4 case has a public decision report", async () => {
+  const selection = await loadPublicComparisonSelection();
+  assert.equal(selection.state, "selected");
+  const overview = await loadOverviewModel(selection.evaluationRoot);
+  assert.equal(overview.cases.length, 4);
+  const manifest = JSON.parse(
+    await readFile(resolve("public", "reports", "manifest.json"), "utf8"),
+  ) as {
+    campaign: string;
+    summaryPath: string;
+    reports: Array<{ caseId: string; sha256: string }>;
+  };
+  assert.equal(manifest.campaign, "holdout-v4-attempt-2");
+  assert.equal(
+    manifest.summaryPath,
+    "artifacts/evaluation/holdout-v4-attempt-2/summary.json",
+  );
+  for (const item of overview.cases) {
+    const report = await readFile(resolve("public", "reports", `${item.caseId}.html`), "utf8");
+    assert.match(report, new RegExp(item.caseId));
+    assert.match(report, /Evidence Maintainer · Decision record/);
+    assert.equal(
+      manifest.reports.find((entry) => entry.caseId === item.caseId)?.sha256,
+      sha256Text(report),
+    );
+  }
 });
 
 test("public comparison loader rejects an invalidated campaign selection", async () => {

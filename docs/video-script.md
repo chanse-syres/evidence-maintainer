@@ -2,7 +2,7 @@
 
 Target runtime: **4:30-4:50**. Record at 1080p. Keep credentials, account pages, private repositories, and unrelated terminal history off screen.
 
-This script reflects the current evidence state: the V4 engine is implemented, but no valid comparative result has been selected.
+This script reflects the selected, adjudicated V4 result.
 
 ## 0:00-0:30 — The maintenance decision
 
@@ -36,13 +36,13 @@ This script reflects the current evidence state: the V4 engine is implemented, b
 
 “Consider a source response in which an entity is absent because the request was filtered. Absence alone does not prove a real-world removal. A sound no-action decision must identify the relevant source and subject, apply the visible authority and time rules, avoid mutation, and state a consistent reason. The evaluator checks the semantics of that outcome rather than requiring one reference sentence.”
 
-## 2:35-3:25 — Why the old result was withdrawn
+## 2:35-3:25 — The audit changed the denominator
 
-**Screen:** [`holdout/INVALIDATION-v3.json`](../holdout/INVALIDATION-v3.json), then [`config/public-comparison.json`](../config/public-comparison.json).
+**Screen:** [`holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json`](../holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json), then [`config/public-comparison.json`](../config/public-comparison.json).
 
 **Narration:**
 
-“The repository also records when its own evaluation was wrong. V3 completed all 30 planned workflow slots, but audit found that the baseline received a Challenger result synthesized from hidden oracle data while the advanced arm used a real Challenger that could reject its proposal. Two cases were also semantically invalid. I preserved the freeze, receipts, raw counts, latency, and token use, but withdrew the comparison. The public selector is deliberately empty. There is no valid performance headline yet.”
+“The frozen V4 campaign completed all 30 planned workflow slots. Audit then found that one retry case required a latest deadline and same-confirmation binding that the final schema could not express or score. I preserved its six raw rows, classified them evaluator-invalid, and excluded that case from both arms. The other four cases remained valid. This is why auditability matters: a green run is not automatically trustworthy evidence.”
 
 ## 3:25-4:05 — Reproducibility and failure handling
 
@@ -52,19 +52,19 @@ This script reflects the current evidence state: the V4 engine is implemented, b
 
 “The engine gate regenerates schemas, runs lint and the complete test suite, and builds the application without model credentials. Future runs use an exhaustive failure taxonomy. Model execution failures count against the workflow. Infrastructure failures abort aggregation. Evaluator-invalid cases are removed from both arms with a retained receipt. A broken evaluator cannot be silently repaired and rescored under the same version.”
 
-## 4:05-4:40 — What comes next
+## 4:05-4:40 — Result and limit
 
-**Screen:** Return to the README current-status section and V4 requirements.
+**Screen:** Return to the README result, then the selected overview.
 
 **Narration:**
 
-“The next experiment is a newly frozen V4 case pack with repeated trials and complete three-session accounting for the advanced arm. The unique case remains the statistical unit, and latency and tokens are first-class results because this is not a compute-matched comparison. Evidence Maintainer is ready to measure the question. It is not claiming an answer before the evidence exists.”
+“Across the four included cases and three trials per arm, both workflows earned Operational Decision Integrity on all 12 runs. The measured correctness difference was zero. The advanced workflow added 686,544 milliseconds and 349,026 tokens—about 2.67 times the total duration and 3.05 times the tokens. The honest conclusion is narrow: extra deliberation did not improve correctness on this small frozen holdout. It does not prove equivalence, generalization, or production safety.”
 
 ## Recording checklist
 
 - Show the exact repository commit and a clean intended release tree.
 - Keep `recorded`, `historical`, and `invalidated` labels visible whenever those artifacts appear.
 - Do not quote V1-V3 arm rates as performance.
-- State plainly that no live V4 comparison has run.
-- Show the empty public comparison selector.
+- State five frozen cases, one symmetric evaluator invalidation, and four included cases.
+- Quote only the adjudicated 12/12-per-arm result and corrected resource deltas.
 - Verify audio, readable text, and the absence of notifications or private content before upload.

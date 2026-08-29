@@ -1,0 +1,15 @@
+[
+  {
+    "id": "assay-440",
+    "sampleId": "sample-220",
+    "sampleClass": "serum",
+    "instrumentId": "spectrometer-a",
+    "instrumentOccurrenceId": "spectrometer-a-module-2026-04",
+    "measuredAt": "2026-08-29T19:20:00.000Z",
+    "rawSignal": 742,
+    "normalizedConcentration": 70,
+    "calibrationRevision": "cal-16",
+    "unit": "mg/L",
+    "status": "final"
+  }
+]

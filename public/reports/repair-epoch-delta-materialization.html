@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Epoch-scoped delta materialization repair — Evidence Maintainer</title>
+<style>
+:root{color-scheme:dark;--bg:#071018;--panel:#0d1822;--panel2:#111f2b;--ink:#f4f7fb;--muted:#91a2b4;--line:#263747;--cyan:#4cd7f6;--green:#54d19a;--orange:#ff8a2a;--red:#ff6b72}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(1120px,calc(100% - 32px));margin:0 auto;padding:48px 0 80px}.top{border-bottom:1px solid var(--line);padding-bottom:28px}.kicker{color:var(--cyan);font:700 12px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}.mode{display:inline-flex;margin-top:18px;padding:7px 10px;border:1px solid #28576a;border-radius:999px;color:#bcefff;background:#0d2833;font:700 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;text-transform:uppercase}h1{max-width:760px;margin:14px 0 8px;font-size:clamp(38px,7vw,72px);line-height:.98;letter-spacing:-.055em}h2{margin:0 0 18px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#b9c7d4}p{margin:0;color:var(--muted)}.context{margin:22px 0 0;padding:18px;border:1px solid #28576a;background:#0b2029;border-radius:10px}.context p+p{margin-top:7px}.context code{overflow-wrap:anywhere;color:#bcefff}.decision{margin:28px 0;padding:24px;border:1px solid #345266;border-left:4px solid var(--green);background:linear-gradient(90deg,#10242b,var(--panel));border-radius:10px}.decision strong{display:block;margin-top:6px;font-size:30px;letter-spacing:-.03em}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}.card{min-width:0;padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.wide{grid-column:1/-1}.event{display:grid;grid-template-columns:80px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line)}.event:first-of-type{border-top:0}.event code,.hashes code{overflow-wrap:anywhere;color:#bcefff}ul{margin:0;padding-left:20px;color:#d6e0e9}li+li{margin-top:6px}.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{padding:12px;border:1px solid var(--line);border-radius:7px;background:var(--panel2)}.pass{border-color:#265b4a}.fail{border-color:#73343a}.check b{color:var(--green)}.fail b{color:var(--red)}pre{margin:0;overflow:auto;padding:16px;border:1px solid var(--line);border-radius:8px;background:#071119;color:#cad5df;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.hashes{width:100%;border-collapse:collapse}.hashes th,.hashes td{text-align:left;vertical-align:top;padding:10px 0;border-top:1px solid var(--line)}.hashes th{width:36%;padding-right:18px;color:#c6d1db}.empty{color:#718397}.footer{margin-top:20px;color:#718397;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}@media(max-width:760px){.wrap{width:min(100% - 20px,1120px);padding-top:28px}.grid,.checks{grid-template-columns:1fr}.wide{grid-column:auto}.event{grid-template-columns:1fr;gap:5px}.hashes th,.hashes td{display:block;width:100%;border:0}.hashes tr{display:block;padding:10px 0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="kicker">Evidence Maintainer · Decision record</div><h1>Epoch-scoped delta materialization repair</h1><p>A delta adapter must choose one complete epoch and apply its ordered key operations without leaking state across resets.</p><span class="mode">Live agent evidence</span></header>
+<section class="context"><h2>Campaign context</h2><p><strong>holdout-v4-attempt-2</strong> · advanced arm · trial 1 · representative included-case run</p><p>This report is one of 24 included workflow runs. 1 evaluator-invalid case was excluded symmetrically: retry-signed-release-quorum.</p><p>Adjudicated source: <code>artifacts/evaluation/holdout-v4-attempt-2/summary.json</code> · Invalidation receipt: <code>holdout/v4/EVALUATOR-INVALIDATION-retry-signed-release-quorum.json</code></p></section>
+<section class="decision"><h2>Selected action</h2><strong>REPAIR_ADAPTER</strong><p>The authoritative, timely contract and policy establish an adapter defect: materialization leaks state across epochs and does not reject streams without a complete valid epoch. The repair validates a unique contiguous sequence with boundary markers only at its ends, selects the greatest valid epoch, and applies it from empty state.</p></section>
+<div class="grid">
+<section class="card wide"><h2>Evidence timeline</h2><article class="event"><code>evt-001 · CASE_OPENED</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: repair-epoch-delta-materialization</p></div></article><article class="event"><code>evt-002 · CANONICAL_SNAPSHOT</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: input/canonical.json</p></div></article><article class="event"><code>evt-003 · SOURCE_OBSERVATION</code><div><p>2026-08-29T19:45:00.000Z</p><p>Evidence: obs-epoch-delta-contract</p></div></article><article class="event"><code>evt-004 · POLICY_LOADED</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: input/policy.json</p></div></article><article class="event"><code>evt-005 · WORKSPACE_HASHED</code><div><p>2026-08-29T20:00:00.000Z</p><p>Evidence: adapter.test.ts, adapter.ts, input/canonical.json, input/observations.json, input/policy.json</p></div></article></section>
+<section class="card wide"><h2>Final decision</h2><pre>{
+  &quot;schemaVersion&quot;: 3,
+  &quot;caseId&quot;: &quot;repair-epoch-delta-materialization&quot;,
+  &quot;firstMaterialDivergence&quot;: &quot;adapter.ts applies mutations from every event in the stream instead of selecting and materializing only the numerically greatest complete valid epoch.&quot;,
+  &quot;failureOwner&quot;: &quot;adapter implementation&quot;,
+  &quot;evidenceAssessments&quot;: [
+    {
+      &quot;evidenceId&quot;: &quot;obs-epoch-delta-contract&quot;,
+      &quot;factPath&quot;: &quot;facts.epochField&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The timely authoritative contract identifies the field that scopes epoch state.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-epoch-delta-contract&quot;,
+      &quot;factPath&quot;: &quot;facts.sequenceField&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The timely authoritative contract identifies the ordering field used to validate and apply an epoch.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-epoch-delta-contract&quot;,
+      &quot;factPath&quot;: &quot;facts.beginKind&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The contract identifies BEGIN as the epoch-start marker.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-epoch-delta-contract&quot;,
+      &quot;factPath&quot;: &quot;facts.commitKind&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The contract identifies COMMIT as the epoch-completion marker.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-epoch-delta-contract&quot;,
+      &quot;factPath&quot;: &quot;facts.mutationKinds&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The contract identifies UPSERT and DELETE as the mutation kinds permitted between epoch boundaries.&quot;
+    },
+    {
+      &quot;evidenceId&quot;: &quot;obs-epoch-delta-contract&quot;,
+      &quot;factPath&quot;: &quot;facts.outputOrder&quot;,
+      &quot;disposition&quot;: &quot;SUPPORT&quot;,
+      &quot;reason&quot;: &quot;The contract requires key-ascending output order.&quot;
+    }
+  ],
+  &quot;affectedEntities&quot;: [
+    &quot;inventory-projection&quot;
+  ],
+  &quot;affectedFiles&quot;: [
+    &quot;adapter.ts&quot;
+  ],
+  &quot;preservedInvariants&quot;: [
+    &quot;State from different epochs is never combined&quot;,
+    &quot;Only one complete valid epoch is materialized&quot;,
+    &quot;Deletes and later key reuse are interpreted inside the selected epoch&quot;,
+    &quot;Output is sorted by key&quot;
+  ],
+  &quot;unresolvedUncertainty&quot;: [],
+  &quot;summary&quot;: &quot;The authoritative, timely contract and policy establish an adapter defect: materialization leaks state across epochs and does not reject streams without a complete valid epoch. The repair validates a unique contiguous sequence with boundary markers only at its ends, selects the greatest valid epoch, and applies it from empty state.&quot;,
+  &quot;action&quot;: &quot;REPAIR_ADAPTER&quot;,
+  &quot;operations&quot;: [
+    {
+      &quot;kind&quot;: &quot;REPLACE_TEXT&quot;,
+      &quot;file&quot;: &quot;adapter.ts&quot;,
+      &quot;find&quot;: &quot;export function materializeEpoch(events: DeltaEvent[]): Array&lt;{ key: string; value: number }&gt; {\n  const state = new Map&lt;string, number&gt;();\n  for (const event of events) {\n    if (event.kind === \&quot;UPSERT\&quot; &amp;&amp; event.key !== undefined &amp;&amp; event.value !== undefined) {\n      state.set(event.key, event.value);\n    } else if (event.kind === \&quot;DELETE\&quot; &amp;&amp; event.key !== undefined) {\n      state.delete(event.key);\n    }\n  }\n  return [...state].sort(([left], [right]) =&gt; left.localeCompare(right)).map(([key, value]) =&gt; ({ key, value }));\n}&quot;,
+      &quot;replace&quot;: &quot;export function materializeEpoch(events: DeltaEvent[]): Array&lt;{ key: string; value: number }&gt; {\n  const byEpoch = new Map&lt;number, DeltaEvent[]&gt;();\n  for (const event of events) {\n    const epochEvents = byEpoch.get(event.epoch) ?? [];\n    epochEvents.push(event);\n    byEpoch.set(event.epoch, epochEvents);\n  }\n\n  const completeEpochs = [...byEpoch.entries()].filter(([, epochEvents]) =&gt; {\n    const ordered = [...epochEvents].sort((left, right) =&gt; left.sequence - right.sequence);\n    return ordered.length &gt; 0\n      &amp;&amp; ordered[0].sequence === 0\n      &amp;&amp; ordered[0].kind === \&quot;BEGIN\&quot;\n      &amp;&amp; ordered.at(-1)?.kind === \&quot;COMMIT\&quot;\n      &amp;&amp; ordered.every((event, index) =&gt; event.sequence === index)\n      &amp;&amp; ordered.slice(1, -1).every((event) =&gt;\n        event.kind === \&quot;UPSERT\&quot; || event.kind === \&quot;DELETE\&quot;,\n      );\n  });\n\n  if (completeEpochs.length === 0) {\n    throw new Error(\&quot;No complete valid epoch\&quot;);\n  }\n\n  const [, selectedEvents] = completeEpochs.reduce((greatest, candidate) =&gt;\n    candidate[0] &gt; greatest[0] ? candidate : greatest,\n  );\n  const state = new Map&lt;string, number&gt;();\n  for (const event of [...selectedEvents].sort((left, right) =&gt; left.sequence - right.sequence)) {\n    if (event.kind === \&quot;UPSERT\&quot; &amp;&amp; event.key !== undefined &amp;&amp; event.value !== undefined) {\n      state.set(event.key, event.value);\n    } else if (event.kind === \&quot;DELETE\&quot; &amp;&amp; event.key !== undefined) {\n      state.delete(event.key);\n    }\n  }\n\n  return [...state]\n    .sort(([left], [right]) =&gt; left.localeCompare(right))\n    .map(([key, value]) =&gt; ({ key, value }));\n}&quot;,
+      &quot;expectedCount&quot;: 1
+    }
+  ],
+  &quot;reviewRequest&quot;: null,
+  &quot;retryPlan&quot;: null
+}</pre></section>
+<section class="card wide"><h2>Deterministic checks</h2><div class="checks"><div class="check pass"><b>PASS</b> · action-correct<p>The selected action is correct.</p></div><div class="check pass"><b>PASS</b> · artifact-correct<p>The action artifact is semantically correct.</p></div><div class="check pass"><b>PASS</b> · no-forbidden-mutation<p>All writes remain inside the declared sandbox surface.</p></div><div class="check pass"><b>PASS</b> · required-commands-passed<p>All required commands and probes passed.</p></div><div class="check pass"><b>PASS</b> · source-coverage<p>A required evidence-source bundle is covered.</p></div><div class="check pass"><b>PASS</b> · contradiction-free<p>The decision package is contradiction-free.</p></div><div class="check pass"><b>PASS</b> · annotation-aligned<p>Evidence annotations align with the adjudicated source set.</p></div></div></section>
+<section class="card"><h2>Changed files</h2><ul><li>Modified: adapter.ts</li></ul></section>
+<section class="card"><h2>Residual uncertainty</h2><p class="empty">No unresolved uncertainty was recorded.</p></section>
+<section class="card"><h2>Run-local eligibility decision</h2><p><strong>APPROVED</strong></p><p>The deterministic gate passed and isolated application was requested.</p><p>This is a workflow artifact, not external benchmark acceptance.</p></section>
+<section class="card"><h2>Recorded evidence</h2><p>Mode: live</p><p>Model: gpt-5.6-terra</p><p>Run: repair-epoch-delta-materialization-advanced-1788037401594</p></section>
+<section class="card wide"><h2>Artifact hashes</h2><table class="hashes"><tr><th>after-tree.json</th><td><code>c0d0e8d5076a25714359f7463511ac01c14c1b198dce96f4ac27f2c9f7e0c159</code></td></tr><tr><th>approval.json</th><td><code>551378fd1f1be2bf9f7b49d69f52c93d738ef6eb678051045ba08544e0f17f57</code></td></tr><tr><th>before-tree.json</th><td><code>e9eb557014b56b51d4ba098571d370101e3a0d57348652acfa5485c51fc74f21</code></td></tr><tr><th>challenger-critique.json</th><td><code>9531cb8163bae1eb2b2a5aa27290164afc2c8db1c6107219c4ab8c867b8b0ded</code></td></tr><tr><th>command-results.json</th><td><code>46737b60aa9e4aa547d0cad08eadc16d9351db52ddc4cfdfa8a302b96489c5ef</code></td></tr><tr><th>draft-decision.json</th><td><code>76dbec3b6f6992c130652b5a120d22df1a117123100c4b2aa1c031ae0b82e456</code></td></tr><tr><th>evidence.jsonl</th><td><code>8481ce54bc7fc523edd5b627d262bd71a03b712f4fbb78e3a49a21d3a2312ef6</code></td></tr><tr><th>final-decision.json</th><td><code>b9bf3d945daf90458d13c06efd72f9af30d93cce524024ea3b3af1213677b258</code></td></tr><tr><th>gate.json</th><td><code>edcd6b088ee88796825a7ed10685d14bc62e6db7deddd8ab0fcfad5266b86384</code></td></tr><tr><th>trajectories/challenger.jsonl</th><td><code>e759f07110f0852479851d21bf8207e0c508a3c45361618d7fed47a703717494</code></td></tr><tr><th>trajectories/challenger.jsonl.proxy-ledger/proxy.jsonl</th><td><code>fd2960901726186c6c085af9c5e87ee6bf145a075de1a4eccb84c93715ddc3f3</code></td></tr><tr><th>trajectories/maintainer.jsonl</th><td><code>43ff81a5147979785a10cc60ed9ba2786a84398d610883a80c856323a8c76b06</code></td></tr><tr><th>trajectories/maintainer.jsonl.proxy-ledger/proxy.jsonl</th><td><code>775b712f887594b0311830a54045af83cb48ddfb88c32b69c4a37ab5b491cb0c</code></td></tr><tr><th>trajectories/reviser.jsonl</th><td><code>9b3903e3ca6061d32043dbc9ed1d61e1161441d8a57ae78c2961084070cfe897</code></td></tr><tr><th>trajectories/reviser.jsonl.proxy-ledger/proxy.jsonl</th><td><code>7402c01946e65fa185eee6f1e7669d8040620276ee2f12e1b7542a6758d0fd8c</code></td></tr></table></section>
+</div>
+<p class="footer">Self-contained UTF-8 decision report · 2026-08-29T21:05:31.295Z</p>
+</main></body></html>

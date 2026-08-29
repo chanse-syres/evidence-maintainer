@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "campaign": "holdout-v4-attempt-2",
+  "caseId": "retry-signed-release-quorum",
+  "status": "EVALUATOR_INVALID",
+  "recordedAt": "2026-08-29T21:39:42.0037595Z",
+  "discoveredAfterExecution": true,
+  "publicComparisonEligible": false,
+  "failureOwner": "evaluator-contract",
+  "reason": "The public policy requires a bounded no-later-than retry deadline and requires generation, digest, and completion facts to bind the same confirmation occurrence. The final DecisionPackage schema cannot encode a retry deadline or an occurrence-group binding, while the evaluator accepts an in-window notBefore value and independently satisfiable fact conditions. It can therefore accept plans that retry after the deadline or combine facts from different observations.",
+  "disposition": {
+    "excludedSymmetrically": true,
+    "excludedWorkflowRows": 6,
+    "rerunAuthorized": false,
+    "retainedForResourceAccounting": true,
+    "replacementCaseAdded": false
+  },
+  "evidence": {
+    "policy": "holdout/v4/cases/retry-signed-release-quorum/workspace/input/policy.json",
+    "outputSchema": "src/core/schemas.ts",
+    "semanticEvaluator": "src/core/semantic-evaluator.ts",
+    "futureConditionMatcher": "src/core/future-conditions.ts",
+    "blindChallengerCritiques": [
+      "artifacts/evaluation/holdout-v4-attempt-2/runs/retry-signed-release-quorum/trial-1/advanced/challenger-critique.json",
+      "artifacts/evaluation/holdout-v4-attempt-2/runs/retry-signed-release-quorum/trial-2/advanced/challenger-critique.json",
+      "artifacts/evaluation/holdout-v4-attempt-2/runs/retry-signed-release-quorum/trial-3/advanced/challenger-critique.json"
+    ]
+  },
+  "scope": "This invalidates artifact-correct scoring for the named case only. It does not invalidate the remaining four cases, the model-session receipts, or resource measurements."
+}

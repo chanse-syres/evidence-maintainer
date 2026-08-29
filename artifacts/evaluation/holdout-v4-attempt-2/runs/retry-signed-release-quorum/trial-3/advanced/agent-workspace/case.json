@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-signed-release-quorum",
+  "title": "Signed release quorum retry",
+  "description": "A release remains unpublished until a valid signed manifest establishes its generation and digest and both independent replicas match those facts and report completion.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic independently confirmed publication quorum pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-v4-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "f32e26e5a9c9281c0e300ff24f5cd0fdccfa7c3df24d5dc3eb479533be2896b2"
+    },
+    {
+      "sourceId": "holdout-v4-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a01acf4acb9e9867a254b6997e9725f9ef02bfcaeed96552ce3709ed728b2eb6"
+    },
+    {
+      "sourceId": "holdout-v4-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "af9a8bb7c3d6bfe0c74400aec965a3af2472cea48b44cd6c88b10bcc6883ed54"
+    }
+  ]
+}

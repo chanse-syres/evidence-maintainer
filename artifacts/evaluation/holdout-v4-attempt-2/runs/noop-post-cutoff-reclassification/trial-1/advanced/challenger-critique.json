@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "caseId": "noop-post-cutoff-reclassification",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-classification-r7",
+    "obs-classification-r8"
+  ],
+  "critiqueCategories": [],
+  "findings": [
+    "No material conflict found: obs-classification-r7 is effective before the cutoff and matches canonical state, while obs-classification-r8 is future-effective."
+  ],
+  "summary": "The draft correctly selects r7 as controlling at the cutoff and takes no write action."
+}

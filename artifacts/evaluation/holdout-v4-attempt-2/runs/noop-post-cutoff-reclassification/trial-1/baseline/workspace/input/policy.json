@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 2,
+  "cutoff": "2026-08-29T20:00:00.000Z",
+  "authorityByField": {
+    "classification": "official-classification-register",
+    "classificationRevision": "official-classification-register",
+    "effectiveFrom": "official-classification-register"
+  },
+  "authorityValidity": [
+    {
+      "mode": "EFFECTIVE_UNTIL_SUPERSEDED",
+      "sourceId": "official-classification-register",
+      "authorityScope": "classification",
+      "applicabilityFactPath": "facts.revision"
+    }
+  ],
+  "retryLimit": 3,
+  "invariants": [
+    "Canonical classification represents the signed revision effective at the cutoff",
+    "Publication or observation time never substitutes for effective time",
+    "No files change when canonical state already matches the controlling revision"
+  ],
+  "rules": [
+    "Choose the latest signed classification whose effectiveAt is at or before the cutoff",
+    "Treat a signed future-effective revision as context, not current authority"
+  ]
+}

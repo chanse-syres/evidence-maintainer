@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "cutoff": "2026-08-29T20:00:00.000Z",
+  "authorityByField": {},
+  "authorityValidity": [
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-delta-stream-contract",
+      "authorityScope": "delta-stream-contract",
+      "maxAgeMinutes": 60
+    }
+  ],
+  "retryLimit": 3,
+  "invariants": [
+    "State from different epochs is never combined",
+    "Only one complete valid epoch is materialized",
+    "Deletes and later key reuse are interpreted inside the selected epoch",
+    "Output is sorted by key"
+  ],
+  "rules": [
+    "An epoch is complete and valid only when its events form one unique contiguous sequence beginning with BEGIN at sequence zero and ending with COMMIT",
+    "Choose the numerically greatest complete valid epoch and ignore incomplete or invalid epochs",
+    "Apply the selected epoch in sequence order from an empty state; UPSERT sets a key and DELETE removes it",
+    "Throw when no complete valid epoch exists"
+  ]
+}

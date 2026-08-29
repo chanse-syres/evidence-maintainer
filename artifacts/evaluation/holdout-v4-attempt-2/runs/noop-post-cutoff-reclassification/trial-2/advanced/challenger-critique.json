@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "caseId": "noop-post-cutoff-reclassification",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-classification-r7",
+    "obs-classification-r8"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The draft correctly treats r7 as controlling at the cutoff and r8 as future-effective context; canonical state already matches r7, so NO_ACTION is supported."
+}

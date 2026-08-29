@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "caseId": "repair-epoch-delta-materialization",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-epoch-delta-contract"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The repair is confined to the allowed adapter.ts surface and implements epoch grouping, contiguous-sequence validation, greatest-valid-epoch selection, empty-state materialization, ordered mutation application, required failure behavior, and key-ascending output. The cited observation is timely and applicable; no conflicting public authority or material regression is evident."
+}

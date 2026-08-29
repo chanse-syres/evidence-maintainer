@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "action-correct",
+      "passed": true,
+      "blocking": true,
+      "summary": "The selected action is correct.",
+      "details": []
+    },
+    {
+      "id": "artifact-correct",
+      "passed": true,
+      "blocking": true,
+      "summary": "The action artifact is semantically correct.",
+      "details": []
+    },
+    {
+      "id": "no-forbidden-mutation",
+      "passed": true,
+      "blocking": true,
+      "summary": "All writes remain inside the declared sandbox surface.",
+      "details": []
+    },
+    {
+      "id": "required-commands-passed",
+      "passed": true,
+      "blocking": true,
+      "summary": "All required commands and probes passed.",
+      "details": []
+    },
+    {
+      "id": "source-coverage",
+      "passed": true,
+      "blocking": true,
+      "summary": "A required evidence-source bundle is covered.",
+      "details": []
+    },
+    {
+      "id": "contradiction-free",
+      "passed": true,
+      "blocking": true,
+      "summary": "The decision package is contradiction-free.",
+      "details": []
+    },
+    {
+      "id": "annotation-aligned",
+      "passed": true,
+      "blocking": false,
+      "summary": "Evidence annotations align with the adjudicated source set.",
+      "details": []
+    }
+  ],
+  "changedFiles": [],
+  "diff": {
+    "added": [],
+    "removed": [],
+    "modified": []
+  }
+}

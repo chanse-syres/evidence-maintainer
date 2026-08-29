@@ -85,8 +85,8 @@ export default async function Home() {
           <div className="eyebrow">Proof-first autonomous operations</div>
           <h1 id="project-title">Safe maintenance is a decision problem.</h1>
           <p className="hero-copy">
-            Direct and propose-critique-revise workflows emit the same final decision
-            package. One shared finalizer and semantic evaluator measure both systems.
+            On the valid frozen cases, adding a propose-critique-revise loop did not
+            improve correctness. It took longer and used more tokens.
           </p>
           {overview.flagshipHref && overview.flagshipCaseId ? (
             <div className="hero-actions">
@@ -105,7 +105,7 @@ export default async function Home() {
           <div className="proof-unit">percentage points</div>
           <div className="proof-comparison">
             <span><b>{percent(overview.baseline.odi)}</b> direct baseline</span>
-            <span><b>{percent(overview.advanced.odi)}</b> evidence-first</span>
+            <span><b>{percent(overview.advanced.odi)}</b> propose-critique-revise</span>
           </div>
         </aside>
       </section>
@@ -122,14 +122,14 @@ export default async function Home() {
           <div className="metric-foot">{overview.advanced.operationalDecisions}/{overview.advanced.workflowRunCount} operationally correct decisions</div>
         </article>
         <article className="metric-card">
-          <div className="metric-label">Forbidden-mutation protection</div>
-          <div className="paired-stat"><span>{overview.baseline.noForbiddenMutationCount}</span><i>→</i><strong>{overview.advanced.noForbiddenMutationCount}</strong></div>
-          <div className="metric-foot">passing runs · baseline → evidence-first</div>
+          <div className="metric-label">Valid frozen cases</div>
+          <div className="metric-value">{overview.selection.includedCaseCount}/{overview.selection.selectedCaseCount}</div>
+          <div className="metric-foot">{overview.selection.excludedCaseCount} evaluator-invalid case excluded symmetrically</div>
         </article>
         <article className="metric-card">
-          <div className="metric-label">Evidence source coverage</div>
-          <div className="paired-stat"><span>{overview.baseline.sourceCoverageCount}</span><i>→</i><strong>{overview.advanced.sourceCoverageCount}</strong></div>
-          <div className="metric-foot">passing runs · annotation match reported separately</div>
+          <div className="metric-label">Resource delta</div>
+          <div className="metric-value">+{overview.resourceComparison.advancedMinusBaselineTotalDurationMs.toLocaleString()} ms</div>
+          <div className="metric-foot">+{overview.resourceComparison.advancedMinusBaselineTotalTokens.toLocaleString()} tokens · advanced minus baseline</div>
         </article>
       </section>
 
@@ -148,10 +148,10 @@ export default async function Home() {
 
       <section className="cases-panel" aria-labelledby="cases-title">
         <div className="section-heading">
-          <div><div className="eyebrow">Case ledger</div><h2 id="cases-title">Every decision remains inspectable.</h2></div>
+          <div><div className="eyebrow">Case ledger</div><h2 id="cases-title">Representative included-case decisions.</h2></div>
           <div className="compact-stats">
-            <span>Median {duration(overview.advanced.medianDurationMs)}</span>
-            <span>{overview.advanced.totalTokens.toLocaleString()} recorded tokens</span>
+            <span>Advanced median {duration(overview.advanced.medianDurationMs)}</span>
+            <span>{overview.advanced.totalTokens.toLocaleString()} advanced included-case tokens</span>
           </div>
         </div>
         <div className="case-list">
@@ -161,7 +161,7 @@ export default async function Home() {
                 <div className="case-title"><b>{item.title}</b><code>{item.caseId}</code></div>
                 <span className={`action-badge tone-${item.actionBadge.tone}`}>{item.actionBadge.label}</span>
                 <div className="arm-result"><span>Direct</span><b className={item.baseline.odi === 1 ? "is-safe" : "is-failed"}>{percent(item.baseline.odi)}</b></div>
-                <div className="arm-result"><span>Assisted</span><b className={item.advanced.odi === 1 ? "is-safe" : "is-failed"}>{percent(item.advanced.odi)}</b></div>
+                <div className="arm-result"><span>Revised</span><b className={item.advanced.odi === 1 ? "is-safe" : "is-failed"}>{percent(item.advanced.odi)}</b></div>
                 <span className="row-arrow" aria-hidden="true">{item.detailHref ? "↗" : "—"}</span>
               </>
             );

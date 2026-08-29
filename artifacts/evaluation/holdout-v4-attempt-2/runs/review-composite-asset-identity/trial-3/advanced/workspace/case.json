@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "review-composite-asset-identity",
+  "title": "Composite asset identity review",
+  "description": "An inspection names a display label shared by two registered assets but omits the serial and site needed to bind one occurrence.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic composite physical-asset identity pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-v4-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "2b1aab81bb89665f75aded7a4e480dbb8f214f4198c1d91ceac36a053da5a6e7"
+    },
+    {
+      "sourceId": "holdout-v4-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "91d48a1c974326001836397b8c882de0a8cf04aa7a29972ea82596bdc39263ba"
+    },
+    {
+      "sourceId": "holdout-v4-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "c8d106cd39ca97cb78e667b7814543c784149f7b84f475af6d7064836daa4f19"
+    }
+  ]
+}

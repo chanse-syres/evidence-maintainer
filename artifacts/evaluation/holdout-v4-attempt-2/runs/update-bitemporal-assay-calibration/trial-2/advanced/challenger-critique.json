@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "caseId": "update-bitemporal-assay-calibration",
+  "recommendation": "ACCEPT_DRAFT",
+  "evidenceIds": [
+    "obs-assay-440",
+    "obs-calibration-cal-17",
+    "obs-calibration-cal-18"
+  ],
+  "critiqueCategories": [],
+  "findings": [],
+  "summary": "The draft uses the signed, serum-eligible calibration for the exact instrument occurrence effective at measurement time. Its calculation and allowlisted write are supported; the later future-effective calibration is correctly excluded."
+}

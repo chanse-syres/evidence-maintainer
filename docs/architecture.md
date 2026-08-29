@@ -109,4 +109,4 @@ Run manifests bind the case, arm, model, timeout, role trajectories, structured 
 
 The unique case is the outer statistical unit. Repeated trials remain nested within case so an uneven row count cannot silently reweight the comparison.
 
-The public selector in [`config/public-comparison.json`](../config/public-comparison.json) is the only authority for a headline comparison. It currently selects nothing because no valid live V4 campaign has completed.
+The public selector in [`config/public-comparison.json`](../config/public-comparison.json) is the only authority for a headline comparison. It selects the adjudicated V4 attempt-2 summary, whose four included cases are distinct from the one evaluator-invalid case retained in the same campaign record.

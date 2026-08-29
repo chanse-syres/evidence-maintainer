@@ -10,4 +10,4 @@ The useful conclusions that survived audit are narrow:
 - resource cost must be reported alongside correctness;
 - a comparison must be able to show no improvement or a negative result.
 
-The current repository does not claim a valid comparative result. See [Evaluation contract and evidence status](evaluation.md) and [Improvement and invalidation changelog](improvement-changelog.md).
+The current repository publishes one adjudicated V4 comparison: 12/12 ODI in both arms across four included cases, with one case excluded symmetrically as evaluator-invalid. See [Evaluation contract and evidence status](evaluation.md) and [Improvement and invalidation changelog](improvement-changelog.md).

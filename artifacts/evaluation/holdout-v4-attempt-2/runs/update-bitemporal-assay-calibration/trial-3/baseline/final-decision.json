@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 3,
+  "caseId": "update-bitemporal-assay-calibration",
+  "firstMaterialDivergence": "assay-440.calibrationRevision",
+  "failureOwner": "canonical-data",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-assay-440",
+      "factPath": "facts.measuredAt",
+      "disposition": "SUPPORT",
+      "reason": "Establishes the final assay measurement time as 2026-08-29T19:20:00.000Z."
+    },
+    {
+      "evidenceId": "obs-assay-440",
+      "factPath": "facts.rawSignal",
+      "disposition": "SUPPORT",
+      "reason": "Supplies raw signal 742 for the required concentration calculation."
+    },
+    {
+      "evidenceId": "obs-assay-440",
+      "factPath": "facts.sampleClass",
+      "disposition": "SUPPORT",
+      "reason": "Identifies the assay sample class as serum."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-16",
+      "factPath": "effectiveAt",
+      "disposition": "CONTEXT",
+      "reason": "This calibration was effective before the measurement but was superseded by a later eligible calibration before measurement time."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "This is the latest calibration effective at or before the 2026-08-29T19:20:00.000Z measurement."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "facts.blankOffset",
+      "disposition": "SUPPORT",
+      "reason": "Blank offset 12 yields normalized concentration (742 minus 12) times 0.1 = 73."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "facts.eligibleSampleClasses",
+      "disposition": "SUPPORT",
+      "reason": "Serum is an eligible sample class for this calibration."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "facts.signatureValid",
+      "disposition": "SUPPORT",
+      "reason": "The controlling calibration is signed and valid."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-18",
+      "factPath": "effectiveAt",
+      "disposition": "REJECT",
+      "reason": "Its effective time is after the measurement and cannot rewrite the earlier final assay."
+    }
+  ],
+  "affectedEntities": [
+    "assay-440"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "preservedInvariants": [
+    "Assay, sample, instrument-occurrence, measurement-time, raw-signal, unit, and final-status identity remain unchanged",
+    "A calibration belongs only to its exact instrument occurrence and declared sample class",
+    "A later-published or future-effective calibration never rewrites an earlier measurement"
+  ],
+  "unresolvedUncertainty": [],
+  "summary": "Update assay-440 to the eligible signed calibration cal-17 effective at measurement time and recompute normalized concentration to 73 mg/L.",
+  "action": "UPDATE_DATA",
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "assay-440",
+      "assignments": [
+        {
+          "field": "normalizedConcentration",
+          "value": 73
+        },
+        {
+          "field": "calibrationRevision",
+          "value": "cal-17"
+        }
+      ]
+    }
+  ],
+  "reviewRequest": null,
+  "retryPlan": null
+}

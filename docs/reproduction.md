@@ -1,6 +1,6 @@
 # Reproduction Guide
 
-This guide verifies the V4 engine without creating or implying a model-performance result.
+This guide verifies the V4 engine and selected evidence without rerunning the live model campaign.
 
 ## Requirements
 
@@ -34,7 +34,7 @@ A passing engine gate proves that the checked-in contracts and deterministic com
 npm run dev
 ```
 
-Open `http://localhost:3000`. The public comparison state is read from [`config/public-comparison.json`](../config/public-comparison.json). Until a valid V4 campaign is selected, the interface must report that the comparative result is pending.
+Open `http://localhost:3000`. The public comparison state is read from [`config/public-comparison.json`](../config/public-comparison.json), which selects adjudicated V4 attempt 2. The interface should show four included cases, one symmetric evaluator invalidation, 12/12 ODI for each arm, and the exact resource deltas.
 
 Historical recorded fixtures and invalidated campaign artifacts may still be inspected for debugging. They must remain labeled as engineering or invalidation evidence.
 
@@ -81,9 +81,9 @@ V1, V2, and V3 are not reproducible performance claims. Their frozen bytes and r
 
 Running an old campaign again would not repair its evaluator or case defects. A correction requires a new version, a new freeze, and a new campaign.
 
-## Requirements for a live V4 campaign
+## Validate the selected V4 evidence
 
-Do not start a live V4 comparison until all of the following are true:
+The selected campaign was published only after these checks were satisfied:
 
 - the V4 prompts, schemas, evaluator, runtime image, measurement code, and cases are frozen before target-model execution;
 - both arms use identical selected case bytes, model, timeout, finalizer, and semantic evaluator;
@@ -93,7 +93,7 @@ Do not start a live V4 comparison until all of the following are true:
 - no target-model output is inspected while authoring or freezing the cases;
 - `npm run engine:verify` passes at the exact evaluation commit.
 
-When a valid campaign completes, preserve every slot, audit all nonpasses, record any invalidation before aggregation, and update `config/public-comparison.json` only after the retained evidence supports selection.
+The repository retains all 30 raw workflow slots, the evaluator-invalidation receipt, the 24 included rows, 60 session trajectories and proxy ledgers, and the selected report hashes. Run `npm run reports:selected` to regenerate the four public decision reports from the selected evidence, then run `npm run submission:verify` from a clean tree to validate the release.
 
 ## Troubleshooting
 

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "cutoff": "2026-08-29T20:00:00.000Z",
+  "authorityByField": {
+    "assetSerial": "official-inspection-log+official-asset-registry",
+    "siteCode": "official-inspection-log+official-asset-registry"
+  },
+  "authorityValidity": [
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-inspection-log",
+      "authorityScope": "inspection",
+      "maxAgeMinutes": 60
+    },
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-asset-registry",
+      "authorityScope": "asset-identity",
+      "maxAgeMinutes": 60
+    }
+  ],
+  "retryLimit": 3,
+  "invariants": [
+    "A display label is not a stable asset occurrence identifier",
+    "Distinct site and serial pairs remain distinct even when labels match",
+    "No maintenance record is mutated without one exact asset occurrence"
+  ],
+  "rules": [
+    "Bind an inspection only when its asset serial and site code identify exactly one registry occurrence",
+    "When either binding field is absent and multiple occurrences match the label, request both missing fields from the inspection authority"
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "obs-epoch-delta-contract",
+    "sourceId": "official-delta-stream-contract",
+    "observedAt": "2026-08-29T19:45:00.000Z",
+    "effectiveAt": "2026-08-29T19:40:00.000Z",
+    "authorityScope": [
+      "delta-stream-contract"
+    ],
+    "subjectId": "inventory-projection",
+    "kind": "signed-schema-contract",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "epoch-delta-v3",
+    "facts": {
+      "epochField": "epoch",
+      "sequenceField": "sequence",
+      "beginKind": "BEGIN",
+      "commitKind": "COMMIT",
+      "mutationKinds": [
+        "UPSERT",
+        "DELETE"
+      ],
+      "outputOrder": "key-ascending"
+    }
+  }
+]

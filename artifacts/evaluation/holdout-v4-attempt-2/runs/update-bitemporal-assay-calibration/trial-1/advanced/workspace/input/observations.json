@@ -1,0 +1,96 @@
+[
+  {
+    "id": "obs-assay-440",
+    "sourceId": "official-assay-ledger",
+    "observedAt": "2026-08-29T19:22:00.000Z",
+    "effectiveAt": "2026-08-29T19:20:00.000Z",
+    "authorityScope": [
+      "assay-measurement",
+      "sample-class",
+      "instrument-occurrence"
+    ],
+    "subjectId": "assay-440",
+    "kind": "final-assay",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "final-assay-v4",
+    "facts": {
+      "sampleId": "sample-220",
+      "sampleClass": "serum",
+      "instrumentId": "spectrometer-a",
+      "instrumentOccurrenceId": "spectrometer-a-module-2026-04",
+      "measuredAt": "2026-08-29T19:20:00.000Z",
+      "rawSignal": 742,
+      "status": "final"
+    }
+  },
+  {
+    "id": "obs-calibration-cal-16",
+    "sourceId": "official-calibration-registry",
+    "observedAt": "2026-08-01T08:05:00.000Z",
+    "effectiveAt": "2026-08-01T08:00:00.000Z",
+    "authorityScope": [
+      "calibration-revision"
+    ],
+    "subjectId": "spectrometer-a-module-2026-04",
+    "kind": "signed-calibration",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "calibration-v6",
+    "facts": {
+      "revision": "cal-16",
+      "blankOffset": 42,
+      "scale": 0.1,
+      "eligibleSampleClasses": [
+        "serum"
+      ],
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-calibration-cal-17",
+    "sourceId": "official-calibration-registry",
+    "observedAt": "2026-08-29T19:05:00.000Z",
+    "effectiveAt": "2026-08-29T19:00:00.000Z",
+    "authorityScope": [
+      "calibration-revision"
+    ],
+    "subjectId": "spectrometer-a-module-2026-04",
+    "kind": "signed-calibration",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "calibration-v6",
+    "facts": {
+      "revision": "cal-17",
+      "blankOffset": 12,
+      "scale": 0.1,
+      "eligibleSampleClasses": [
+        "serum"
+      ],
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-calibration-cal-18",
+    "sourceId": "official-calibration-registry",
+    "observedAt": "2026-08-29T19:25:00.000Z",
+    "effectiveAt": "2026-08-29T20:10:00.000Z",
+    "authorityScope": [
+      "calibration-revision"
+    ],
+    "subjectId": "spectrometer-a-module-2026-04",
+    "kind": "signed-calibration",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "calibration-v6",
+    "facts": {
+      "revision": "cal-18",
+      "blankOffset": 10,
+      "scale": 0.12,
+      "eligibleSampleClasses": [
+        "serum"
+      ],
+      "signatureValid": true
+    }
+  }
+]

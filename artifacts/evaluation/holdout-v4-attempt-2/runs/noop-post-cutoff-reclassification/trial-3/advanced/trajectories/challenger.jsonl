@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04f54-3a7f-7b30-b6f1-ec758890aede"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":2,\"caseId\":\"noop-post-cutoff-reclassification\",\"recommendation\":\"ACCEPT_DRAFT\",\"evidenceIds\":[\"obs-classification-r7\",\"obs-classification-r8\"],\"critiqueCategories\":[],\"findings\":[],\"summary\":\"r7 is the latest signed classification effective at or before the cutoff and matches canonical state. r8 is signed but effective after the cutoff, so NO_ACTION is supported.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":11005,"cached_input_tokens":6912,"cache_write_input_tokens":0,"output_tokens":97,"reasoning_output_tokens":0}}

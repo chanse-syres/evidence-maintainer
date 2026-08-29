@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "caseId": "retry-signed-release-quorum",
+  "recommendation": "REVISE_DRAFT",
+  "evidenceIds": [
+    "obs-manifest-42",
+    "obs-replica-east-42",
+    "obs-replica-west-41"
+  ],
+  "critiqueCategories": [
+    "TEMPORAL",
+    "ACTION"
+  ],
+  "findings": [
+    "The retry plan sets a not-before time but no deadline or attempt schedule enforcing the policy requirement to retry no later than 2026-08-29T20:20:00.000Z.",
+    "`maxAttempts: 3` permits only one retry, whereas the policy requires use of two or three attempts. Specify at least two attempts and ensure all attempts occur within the bounded window."
+  ],
+  "summary": "RETRY_LATER and preservation of the unpublished release are supported by the mismatched west confirmation, but the retry plan does not fully encode the required bounded two-or-three-attempt process."
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "id": "obs-manifest-42",
+    "sourceId": "official-release-manifest",
+    "observedAt": "2026-08-29T19:50:00.000Z",
+    "effectiveAt": "2026-08-29T19:50:00.000Z",
+    "authorityScope": [
+      "release-manifest"
+    ],
+    "subjectId": "release-42",
+    "kind": "signed-manifest",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "release-manifest-v5",
+    "facts": {
+      "generation": 42,
+      "digest": "89f0c287c01ca7af66eeb8197089dfe1484f544d5e93f4982df8a9fd46fc3189",
+      "signatureValid": true,
+      "expectedReplicas": [
+        "east",
+        "west"
+      ]
+    }
+  },
+  {
+    "id": "obs-replica-east-42",
+    "sourceId": "official-replica-east",
+    "observedAt": "2026-08-29T19:52:00.000Z",
+    "effectiveAt": "2026-08-29T19:52:00.000Z",
+    "authorityScope": [
+      "replica-confirmation"
+    ],
+    "subjectId": "release-42",
+    "kind": "replica-confirmation",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "replica-confirmation-v3",
+    "facts": {
+      "generation": 42,
+      "digest": "89f0c287c01ca7af66eeb8197089dfe1484f544d5e93f4982df8a9fd46fc3189",
+      "complete": true
+    }
+  },
+  {
+    "id": "obs-replica-west-41",
+    "sourceId": "official-replica-west",
+    "observedAt": "2026-08-29T19:53:00.000Z",
+    "effectiveAt": "2026-08-29T19:53:00.000Z",
+    "authorityScope": [
+      "replica-confirmation"
+    ],
+    "subjectId": "release-42",
+    "kind": "replica-confirmation",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "replica-confirmation-v3",
+    "facts": {
+      "generation": 41,
+      "digest": "3b4bbb98a16f01e7c77c5fa48daef582475e5360da12b1d37154c6b5f9ac3cf0",
+      "complete": true
+    }
+  }
+]

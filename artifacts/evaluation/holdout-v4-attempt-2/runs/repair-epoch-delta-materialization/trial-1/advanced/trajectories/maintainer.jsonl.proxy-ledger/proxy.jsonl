@@ -1,0 +1,2 @@
+{"schemaVersion":1,"sequence":1,"recordedAt":"2026-08-29T21:03:23.688Z","type":"proxy_started","allowedModel":"gpt-5.6-terra","maxRequests":12}
+{"schemaVersion":1,"sequence":2,"recordedAt":"2026-08-29T21:03:57.650Z","type":"upstream_response","requestId":"29cff4a0-22a0-41ef-9a71-0bcda94892fb","model":"gpt-5.6-terra","requestSha256":"ebc81d6f2b12945bd2920a2bb5e914d8fb29737dff9f06c530f7f61184bafd2e","upstreamStatus":200,"responseSha256":"7e54f318432defc7130a0269409579d71a27e62ff201eb82665aecfa8136f2a3","usage":null,"usageCaptured":false,"upstreamError":null}

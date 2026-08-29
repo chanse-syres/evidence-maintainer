@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 3,
+  "caseId": "noop-post-cutoff-reclassification",
+  "firstMaterialDivergence": "The signed r8 classification differs from canonical classification, but its effectiveAt is after the 2026-08-29T20:00:00.000Z cutoff.",
+  "failureOwner": "No failure: canonical state correctly reflects the controlling r7 revision at the cutoff.",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-classification-r7",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "r7 became effective at 2026-08-29T19:00:00.000Z, before the cutoff."
+    },
+    {
+      "evidenceId": "obs-classification-r7",
+      "factPath": "facts.revision",
+      "disposition": "SUPPORT",
+      "reason": "Signed revision r7 is the latest applicable revision at the cutoff and matches canonical classificationRevision."
+    },
+    {
+      "evidenceId": "obs-classification-r7",
+      "factPath": "facts.classification",
+      "disposition": "SUPPORT",
+      "reason": "The applicable r7 classification is restricted, matching canonical state."
+    },
+    {
+      "evidenceId": "obs-classification-r8",
+      "factPath": "effectiveAt",
+      "disposition": "CONTEXT",
+      "reason": "r8 is effective at 2026-08-29T20:30:00.000Z, after the cutoff, so it is future context rather than current authority."
+    },
+    {
+      "evidenceId": "obs-classification-r8",
+      "factPath": "facts.classification",
+      "disposition": "CONTEXT",
+      "reason": "The future open classification does not control the canonical snapshot at the cutoff."
+    }
+  ],
+  "affectedEntities": [],
+  "affectedFiles": [],
+  "preservedInvariants": [
+    "Canonical classification represents the signed revision effective at the cutoff",
+    "Publication or observation time never substitutes for effective time",
+    "No files change when canonical state already matches the controlling revision"
+  ],
+  "unresolvedUncertainty": [],
+  "summary": "The authoritative signed r7 revision was effective before the cutoff and already matches policy-77. The signed r8 revision is future-effective and therefore does not warrant a canonical change.",
+  "action": "NO_ACTION",
+  "operations": [],
+  "reviewRequest": null,
+  "retryPlan": null
+}

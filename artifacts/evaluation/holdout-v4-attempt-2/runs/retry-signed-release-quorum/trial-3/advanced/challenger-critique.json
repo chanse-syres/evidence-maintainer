@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "caseId": "retry-signed-release-quorum",
+  "recommendation": "REVISE_DRAFT",
+  "evidenceIds": [
+    "obs-replica-west-41"
+  ],
+  "critiqueCategories": [
+    "TEMPORAL"
+  ],
+  "findings": [
+    "The retry plan sets a not-before time and attempt limit but omits the required no-later-than deadline of 2026-08-29T20:20:00.000Z. An attempt count alone does not ensure retries or escalation occur within the policy's bounded window after the west mismatch."
+  ],
+  "summary": "Preserving the unpublished release and retrying for a matching west confirmation are supported, but the retry plan needs an explicit latest retry/escalation deadline."
+}

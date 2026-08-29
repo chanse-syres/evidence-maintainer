@@ -16,6 +16,6 @@ The governing V4 contract now requires:
 - typed model, infrastructure, evaluator, and genuine semantic failure ownership;
 - symmetric exclusion of evaluator-invalid cases;
 - case-balanced repeated-trial analysis;
-- no selected public comparison until a valid V4 campaign completes.
+- selection only after a frozen V4 campaign completes, its receipts reconcile, and evaluator-invalid cases are excluded symmetrically.
 
 See [Evaluation contract and evidence status](evaluation.md), [Architecture and trust boundaries](architecture.md), and [`config/public-comparison.json`](../config/public-comparison.json).

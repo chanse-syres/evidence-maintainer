@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 3,
+  "caseId": "update-bitemporal-assay-calibration",
+  "firstMaterialDivergence": "canonical.assay-440.calibrationRevision",
+  "failureOwner": "canonical-data",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-assay-440",
+      "factPath": "facts.rawSignal",
+      "disposition": "SUPPORT",
+      "reason": "The final assay raw signal is 742 for recomputation."
+    },
+    {
+      "evidenceId": "obs-assay-440",
+      "factPath": "facts.sampleClass",
+      "disposition": "SUPPORT",
+      "reason": "The assay sample class is serum."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-16",
+      "factPath": "effectiveAt",
+      "disposition": "CONTEXT",
+      "reason": "This signed calibration became effective before the measurement but is superseded by a later applicable calibration."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "This calibration is effective at 19:00, before the 19:20 measurement, and is the latest such calibration."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "facts.eligibleSampleClasses",
+      "disposition": "SUPPORT",
+      "reason": "The calibration declares serum as eligible."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-17",
+      "factPath": "facts.signatureValid",
+      "disposition": "SUPPORT",
+      "reason": "The controlling calibration signature is valid."
+    },
+    {
+      "evidenceId": "obs-calibration-cal-18",
+      "factPath": "effectiveAt",
+      "disposition": "REJECT",
+      "reason": "This calibration becomes effective after the measurement and cannot govern it."
+    }
+  ],
+  "affectedEntities": [
+    "assay-440",
+    "spectrometer-a-module-2026-04"
+  ],
+  "affectedFiles": [
+    "input/canonical.json"
+  ],
+  "preservedInvariants": [
+    "Assay, sample, instrument-occurrence, measurement-time, raw-signal, unit, and final-status identity remain unchanged",
+    "A calibration belongs only to its exact instrument occurrence and declared sample class",
+    "A later-published or future-effective calibration never rewrites an earlier measurement"
+  ],
+  "unresolvedUncertainty": [],
+  "summary": "Update assay-440 to controlling calibration cal-17 and recompute normalized concentration as (742 - 12) × 0.1 = 73 mg/L.",
+  "action": "UPDATE_DATA",
+  "operations": [
+    {
+      "kind": "SET_RECORD_FIELDS",
+      "file": "input/canonical.json",
+      "recordId": "assay-440",
+      "assignments": [
+        {
+          "field": "normalizedConcentration",
+          "value": 73
+        },
+        {
+          "field": "calibrationRevision",
+          "value": "cal-17"
+        }
+      ]
+    }
+  ],
+  "reviewRequest": null,
+  "retryPlan": null
+}

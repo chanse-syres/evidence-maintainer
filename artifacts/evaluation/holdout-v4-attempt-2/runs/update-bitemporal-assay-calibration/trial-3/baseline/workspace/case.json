@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "update-bitemporal-assay-calibration",
+  "title": "Bitemporal assay calibration reconciliation",
+  "description": "A final assay must be recomputed with the signed calibration that governed its exact instrument occurrence when the measurement was taken.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic bitemporal laboratory calibration pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "input/canonical.json"
+  ],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-v4-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "0071fa300740fad70f5471cd7635ac928abdfb38c2a7ed70b722bd2ff9757f89"
+    },
+    {
+      "sourceId": "holdout-v4-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "bd699224489a472c06b29615873f645f4c72b53f89b141a9bf1b954d34147957"
+    },
+    {
+      "sourceId": "holdout-v4-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-29T20:00:00.000Z",
+      "transformation": "Synthetic V4 holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "1c12d41e80896da44fe5c6570575bc81e369319cbb0542db26436fa3c2640e3b"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "cutoff": "2026-08-29T20:00:00.000Z",
+  "authorityByField": {},
+  "authorityValidity": [
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-release-manifest",
+      "authorityScope": "release-manifest",
+      "maxAgeMinutes": 60
+    },
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-replica-east",
+      "authorityScope": "replica-confirmation",
+      "maxAgeMinutes": 60
+    },
+    {
+      "mode": "SNAPSHOT_MAX_AGE",
+      "sourceId": "official-replica-west",
+      "authorityScope": "replica-confirmation",
+      "maxAgeMinutes": 60
+    }
+  ],
+  "retryLimit": 3,
+  "invariants": [
+    "The currently published release remains unchanged until the full quorum is satisfied",
+    "Manifest and replica confirmations must bind the same release occurrence",
+    "A partial or mismatched quorum is never published"
+  ],
+  "rules": [
+    "The signed manifest establishes generation 42 and its digest; it must have a valid signature, and both named replica authorities must independently match that generation and digest and report complete status",
+    "Retry no earlier than 2026-08-29T20:05:00.000Z and no later than 2026-08-29T20:20:00.000Z; use two or three attempts and escalate no later than attempt three",
+    "Future acceptance conditions bind source, release subject, observation kind, and fact path rather than current evidence IDs"
+  ]
+}

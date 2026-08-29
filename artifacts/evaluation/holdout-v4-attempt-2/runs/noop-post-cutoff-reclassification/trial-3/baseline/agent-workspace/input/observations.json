@@ -1,0 +1,40 @@
+[
+  {
+    "id": "obs-classification-r7",
+    "sourceId": "official-classification-register",
+    "observedAt": "2026-08-29T19:05:00.000Z",
+    "effectiveAt": "2026-08-29T19:00:00.000Z",
+    "authorityScope": [
+      "classification"
+    ],
+    "subjectId": "policy-77",
+    "kind": "signed-classification",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "classification-v4",
+    "facts": {
+      "classification": "restricted",
+      "revision": "r7",
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-classification-r8",
+    "sourceId": "official-classification-register",
+    "observedAt": "2026-08-29T19:55:00.000Z",
+    "effectiveAt": "2026-08-29T20:30:00.000Z",
+    "authorityScope": [
+      "classification"
+    ],
+    "subjectId": "policy-77",
+    "kind": "signed-classification",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "classification-v4",
+    "facts": {
+      "classification": "open",
+      "revision": "r8",
+      "signatureValid": true
+    }
+  }
+]

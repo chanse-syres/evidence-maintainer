@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "caseId": "repair-epoch-delta-materialization",
+  "firstMaterialDivergence": "adapter.ts: materializeEpoch applies mutations from every event before identifying a complete valid epoch.",
+  "failureOwner": "adapter",
+  "evidenceAssessments": [
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.epochField",
+      "disposition": "SUPPORT",
+      "reason": "The contract identifies epoch as the scope for isolating materialized state."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.sequenceField",
+      "disposition": "SUPPORT",
+      "reason": "The contract identifies sequence as the ordering field for epoch operations."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.beginKind",
+      "disposition": "SUPPORT",
+      "reason": "BEGIN is the required opening boundary for a valid epoch."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.commitKind",
+      "disposition": "SUPPORT",
+      "reason": "COMMIT is the required closing boundary for a valid epoch."
+    },
+    {
+      "evidenceId": "obs-epoch-delta-contract",
+      "factPath": "facts.outputOrder",
+      "disposition": "SUPPORT",
+      "reason": "The required result order is ascending by key."
+    }
+  ],
+  "affectedEntities": [
+    "inventory-projection"
+  ],
+  "affectedFiles": [
+    "adapter.ts"
+  ],
+  "preservedInvariants": [
+    "State from different epochs is never combined",
+    "Only one complete valid epoch is materialized",
+    "Deletes and later key reuse are interpreted inside the selected epoch",
+    "Output is sorted by key"
+  ],
+  "unresolvedUncertainty": [],
+  "summary": "Repair the adapter to validate epoch-local contiguous event sequences, select the greatest valid complete epoch, and materialize only its ordered mutations from an empty state.",
+  "action": "REPAIR_ADAPTER",
+  "operations": [
+    {
+      "kind": "REPLACE_TEXT",
+      "file": "adapter.ts",
+      "find": "export function materializeEpoch(events: DeltaEvent[]): Array<{ key: string; value: number }> {\n  const state = new Map<string, number>();\n  for (const event of events) {\n    if (event.kind === \"UPSERT\" && event.key !== undefined && event.value !== undefined) {\n      state.set(event.key, event.value);\n    } else if (event.kind === \"DELETE\" && event.key !== undefined) {\n      state.delete(event.key);\n    }\n  }\n  return [...state].sort(([left], [right]) => left.localeCompare(right)).map(([key, value]) => ({ key, value }));\n}\n",
+      "replace": "export function materializeEpoch(events: DeltaEvent[]): Array<{ key: string; value: number }> {\n  const byEpoch = new Map<number, DeltaEvent[]>();\n  for (const event of events) {\n    const epochEvents = byEpoch.get(event.epoch) ?? [];\n    epochEvents.push(event);\n    byEpoch.set(event.epoch, epochEvents);\n  }\n\n  const completeEpochs = [...byEpoch.entries()].filter(([, epochEvents]) => {\n    const ordered = [...epochEvents].sort((left, right) => left.sequence - right.sequence);\n    return ordered.length > 0\n      && ordered[0].sequence === 0\n      && ordered[0].kind === \"BEGIN\"\n      && ordered[ordered.length - 1].kind === \"COMMIT\"\n      && ordered.every((event, index) => event.sequence === index);\n  });\n\n  if (completeEpochs.length === 0) {\n    throw new Error(\"No complete valid epoch\");\n  }\n\n  const [, selectedEvents] = completeEpochs.reduce((greatest, candidate) =>\n    candidate[0] > greatest[0] ? candidate : greatest,\n  );\n  const state = new Map<string, number>();\n  for (const event of [...selectedEvents].sort((left, right) => left.sequence - right.sequence)) {\n    if (event.kind === \"UPSERT\" && event.key !== undefined && event.value !== undefined) {\n      state.set(event.key, event.value);\n    } else if (event.kind === \"DELETE\" && event.key !== undefined) {\n      state.delete(event.key);\n    }\n  }\n\n  return [...state]\n    .sort(([left], [right]) => left.localeCompare(right))\n    .map(([key, value]) => ({ key, value }));\n}\n",
+      "expectedCount": 1
+    }
+  ],
+  "reviewRequest": null,
+  "retryPlan": null
+}

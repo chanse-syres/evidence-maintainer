@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a04f58-e98c-7893-b156-b96d7e851265"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"schemaVersion\":2,\"caseId\":\"repair-epoch-delta-materialization\",\"recommendation\":\"ACCEPT_DRAFT\",\"evidenceIds\":[\"obs-epoch-delta-contract\"],\"critiqueCategories\":[],\"findings\":[],\"summary\":\"The repair is confined to the allowed adapter.ts surface, selects the greatest contiguous BEGIN-to-COMMIT epoch, materializes it from empty state in sequence order, preserves key-ascending output, and throws when none is valid.\"}"}}
+{"type":"turn.completed","usage":{"input_tokens":12215,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":572,"reasoning_output_tokens":466}}

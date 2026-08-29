@@ -3,7 +3,12 @@ import { access, readFile, readdir } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
+import { sha256Text } from "../src/core/canonical-json.ts";
+import { renderDecisionReport } from "../src/reports/render-decision-report.ts";
 import { verifyPublicTree } from "../src/release/public-tree.ts";
+import { verifySelectedV4Campaign } from "../src/release/selected-v4.ts";
+
+export { verifySelectedV4Campaign };
 
 const execFileAsync = promisify(execFile);
 
@@ -35,12 +40,16 @@ const REQUIRED_FILES = [
   "src/evaluation/score-run.ts",
   "src/evaluation/aggregate.ts",
   "src/evaluation/run-evaluation.ts",
+  "src/evaluation/adjudicate.ts",
   "src/reports/load-artifacts.ts",
   "src/reports/render-decision-report.ts",
   "src/ui/public-comparison.ts",
   "src/ui/overview-model.ts",
   "src/ui/case-model.ts",
   "src/release/public-tree.ts",
+  "src/release/selected-v4.ts",
+  "scripts/adjudicate-evaluation.ts",
+  "scripts/generate-selected-reports.ts",
   "app/page.tsx",
   "app/cases/[caseId]/page.tsx",
 ] as const;
@@ -108,6 +117,18 @@ function normalizedRelativePath(value: unknown): value is string {
     !/^[A-Za-z]:/.test(value) &&
     !value.split("/").some((segment) => segment === "" || segment === "." || segment === "..")
   );
+}
+
+function equalStringArrays(left: unknown, right: unknown): boolean {
+  return Array.isArray(left) && Array.isArray(right) &&
+    left.every((value) => typeof value === "string") && right.every((value) => typeof value === "string") &&
+    JSON.stringify([...left].sort()) === JSON.stringify([...right].sort());
+}
+
+function assertSummaryArm(value: unknown, label: string): asserts value is Record<string, unknown> {
+  if (!isRecord(value) || !Number.isInteger(value.workflowRunCount) || (value.workflowRunCount as number) < 0) {
+    throw new Error(`Selected summary has an invalid ${label} arm`);
+  }
 }
 
 async function readJson<T>(path: string): Promise<T> {
@@ -230,10 +251,119 @@ function parsePublicComparisonConfig(value: unknown): PublicComparisonConfig {
   return value as unknown as PublicComparisonConfig;
 }
 
-function verifySelectedV4Summary(campaign: string): never {
-  throw new Error(
-    `Selected V4 comparison is blocked until the real V4 freeze and campaign validator is implemented: ${campaign}`,
+export async function verifyPublicReports(
+  root: string,
+  campaign: string,
+  selectedSummary: string,
+  caseSetHash: string,
+): Promise<number> {
+  if (!normalizedRelativePath(selectedSummary)) {
+    throw new Error("Selected summary path is not normalized for public reports");
+  }
+  const absoluteRoot = resolve(root);
+  const summary = await readJson<unknown>(resolve(absoluteRoot, ...selectedSummary.split("/")));
+  if (!isRecord(summary) || !isRecord(summary.selection) || !Array.isArray(summary.selection.includedCaseIds)) {
+    throw new Error("Selected summary has no included case registry");
+  }
+  if (!Array.isArray(summary.rows) || !isRecord(summary.arms)) {
+    throw new Error("Selected summary has no workflow row registry");
+  }
+  assertSummaryArm(summary.arms.baseline, "baseline");
+  assertSummaryArm(summary.arms.advanced, "advanced");
+  const includedCaseIds = summary.selection.includedCaseIds;
+  if (
+    includedCaseIds.some((caseId) => typeof caseId !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(caseId)) ||
+    new Set(includedCaseIds).size !== includedCaseIds.length
+  ) {
+    throw new Error("Selected summary has an invalid included case registry");
+  }
+
+  const manifest = await readJson<unknown>(resolve(absoluteRoot, "public", "reports", "manifest.json"));
+  if (
+    !isRecord(manifest) || manifest.schemaVersion !== 1 || manifest.campaign !== campaign ||
+    manifest.summaryPath !== selectedSummary || manifest.caseSetHash !== caseSetHash ||
+    manifest.includedWorkflowRunCount !==
+      (summary.arms.baseline.workflowRunCount as number) + (summary.arms.advanced.workflowRunCount as number) ||
+    !Array.isArray(manifest.excludedEvaluatorInvalidCaseIds) ||
+    !equalStringArrays(manifest.excludedEvaluatorInvalidCaseIds, summary.selection.excludedCaseIds) ||
+    !Array.isArray(manifest.invalidationReceiptPaths) ||
+    !Array.isArray(manifest.reports)
+  ) {
+    throw new Error("Invalid public report manifest");
+  }
+  const invalidationReceiptPaths = (manifest.invalidationReceiptPaths as unknown[]).map((value) => {
+    if (!normalizedRelativePath(value)) throw new Error("Invalid public report invalidation receipt path");
+    return value;
+  });
+  const expectedInvalidationReceiptPaths = (summary.selection.excludedCaseIds as string[]).map(
+    (caseId) => `holdout/v4/EVALUATOR-INVALIDATION-${caseId}.json`,
   );
+  if (!equalStringArrays(invalidationReceiptPaths, expectedInvalidationReceiptPaths)) {
+    throw new Error("Public report invalidation receipt registry mismatch");
+  }
+  for (const relativePath of invalidationReceiptPaths) {
+    await access(resolve(absoluteRoot, ...relativePath.split("/")));
+  }
+  if (manifest.reports.length !== includedCaseIds.length) {
+    throw new Error("Public report count does not match the selected case registry");
+  }
+
+  const expectedReportFiles = new Set([
+    "manifest.json",
+    ...(includedCaseIds as string[]).map((caseId) => `${caseId}.html`),
+  ]);
+  for (const entry of await readdir(resolve(absoluteRoot, "public", "reports"), { withFileTypes: true })) {
+    if (!entry.isFile() || !expectedReportFiles.has(entry.name)) {
+      throw new Error(`Unexpected public report file: ${entry.name}`);
+    }
+  }
+
+  const reportsByCase = new Map<string, Record<string, unknown>>();
+  for (const value of manifest.reports) {
+    if (!isRecord(value) || typeof value.caseId !== "string" || reportsByCase.has(value.caseId)) {
+      throw new Error("Invalid or duplicate public report declaration");
+    }
+    reportsByCase.set(value.caseId, value);
+  }
+  for (const caseId of includedCaseIds as string[]) {
+    const report = reportsByCase.get(caseId);
+    const expectedPath = `reports/${caseId}.html`;
+    const canonicalRows = (summary.rows as Array<Record<string, unknown>>)
+      .filter((row) => row.caseId === caseId && row.arm === "advanced" && normalizedRelativePath(row.runPath))
+      .sort((left, right) => String(left.runPath).localeCompare(String(right.runPath)));
+    const canonicalRunPath = canonicalRows[0]?.runPath;
+    if (
+      !report || report.path !== expectedPath || !normalizedRelativePath(report.path) ||
+      !normalizedRelativePath(report.runPath) || report.runPath !== canonicalRunPath ||
+      typeof report.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(report.sha256)
+    ) {
+      throw new Error(`Invalid public report declaration: ${caseId}`);
+    }
+    const html = await readFile(resolve(absoluteRoot, "public", ...expectedPath.split("/")), "utf8");
+    if (sha256Text(html) !== report.sha256) {
+      throw new Error(`Public report hash mismatch: ${caseId}`);
+    }
+    const match = /^runs\/[^/]+\/trial-(\d+)\/(advanced)$/.exec(report.runPath);
+    if (!match) throw new Error(`Public report is not bound to an advanced trial: ${caseId}`);
+    const regenerated = await renderDecisionReport(
+      resolve(absoluteRoot, "artifacts", "evaluation", campaign, ...report.runPath.split("/")),
+      {
+        campaignContext: {
+          campaign,
+          arm: "advanced",
+          trial: Number(match[1]),
+          includedWorkflowRunCount: manifest.includedWorkflowRunCount as number,
+          excludedEvaluatorInvalidCaseIds: manifest.excludedEvaluatorInvalidCaseIds as string[],
+          selectedSummaryPath: selectedSummary,
+          invalidationReceiptPaths,
+        },
+      },
+    );
+    if (regenerated !== html) {
+      throw new Error(`Public report is not a fresh render of the selected run: ${caseId}`);
+    }
+  }
+  return includedCaseIds.length;
 }
 
 async function countDirectories(path: string): Promise<number> {
@@ -263,8 +393,9 @@ export async function verifySubmission(
   );
   const invalidatedCampaigns = await verifyInvalidations(absoluteRoot, config);
   let comparisonState: "pending" | "selected";
-  const selectedWorkflowRunCount = 0;
-  const caseSetHash: string | null = null;
+  let selectedWorkflowRunCount = 0;
+  let caseSetHash: string | null = null;
+  let reportCount = 0;
   if (config.selectedCampaign === null || config.selectedSummary === null) {
     if (config.status !== "PENDING_VALID_V4_CAMPAIGN") {
       throw new Error("A release with no selected comparison must declare the pending V4 state");
@@ -276,7 +407,26 @@ export async function verifySubmission(
     ) {
       throw new Error(`Invalidated campaign cannot be selected: ${config.selectedCampaign}`);
     }
-    verifySelectedV4Summary(config.selectedCampaign);
+    if (config.status !== "SELECTED_VALID_V4_CAMPAIGN") {
+      throw new Error("A selected V4 comparison must declare the selected-valid state");
+    }
+    if (!normalizedRelativePath(config.selectedSummary)) {
+      throw new Error("Selected V4 summary path is not normalized");
+    }
+    const validation = await verifySelectedV4Campaign(
+      absoluteRoot,
+      config.selectedCampaign,
+      config.selectedSummary,
+    );
+    comparisonState = "selected";
+    selectedWorkflowRunCount = validation.workflowRunCount;
+    caseSetHash = validation.caseSetHash;
+    reportCount = await verifyPublicReports(
+      absoluteRoot,
+      config.selectedCampaign,
+      config.selectedSummary,
+      validation.caseSetHash,
+    );
   }
 
   await verifyPublicTree(absoluteRoot);
@@ -288,7 +438,7 @@ export async function verifySubmission(
     root: absoluteRoot,
     requiredFileCount: REQUIRED_FILES.length,
     caseCount: await countDirectories(resolve(absoluteRoot, "cases")),
-    reportCount: await countDirectories(resolve(absoluteRoot, "artifacts", "demo", "reports")),
+    reportCount,
     comparisonState,
     selectedCampaign: config.selectedCampaign,
     selectedSummary: config.selectedSummary,
