@@ -1,103 +1,98 @@
 # Evidence Maintainer
 
-Evidence Maintainer is an agentic reliability system for a deceptively dangerous maintenance problem: deciding whether a new observation justifies changing canonical public data.
+Evidence Maintainer is an agentic evaluation system for a narrow but consequential maintenance decision: whether a new public observation justifies changing canonical data.
 
-Most autonomous maintainers optimize for successful writes. This project optimizes for **Safe Decision Rate**: make the right change when the evidence is authoritative, repair the ingestion path when the adapter is broken, wait when retrieval is incomplete, escalate genuine ambiguity, and do nothing when a new observation is not a new fact.
+The system supports five dispositions:
 
-> **Hot take:** The safest autonomous maintainer is not the one that changes the most data. It is the one that can prove when a new observation is not yet a new fact.
-
-## Why this matters
-
-Public-data products repeatedly ingest noisy, delayed, duplicated, filtered, and structurally drifting sources. A plausible but incorrect update can survive ordinary tests and silently corrupt every downstream consumer. Human maintainers therefore spend too much time reconstructing source authority, temporal semantics, identity, and adapter behavior before they can decide whether any write is justified.
-
-Evidence Maintainer turns that bottleneck into an auditable workflow. It supports five explicit dispositions:
-
-- `UPDATE_DATA` when public authority justifies an exact canonical change;
-- `REPAIR_ADAPTER` when the source is valid but ingestion logic has drifted;
-- `RETRY_LATER` when the observation is incomplete or transient;
+- `UPDATE_DATA` when agent-visible authority supports an exact canonical change;
+- `REPAIR_ADAPTER` when a source is valid but ingestion logic is wrong;
+- `RETRY_LATER` when future evidence can resolve an incomplete observation;
 - `NO_ACTION` when the apparent change is not a new authoritative fact;
-- `HUMAN_REVIEW` when authorities or identities genuinely conflict.
+- `HUMAN_REVIEW` when the missing decision-bearing facts require human resolution.
 
-## The system
+## Research question
 
-The comparison is deliberately asymmetric but fair:
+Does a bounded propose-challenge-revise workflow produce more correct final maintenance decisions than a direct single-agent workflow when both receive the same case bytes and are scored by the same external evaluator?
 
-1. A **direct baseline agent** receives the same immutable case workspace and returns one decision.
-2. The advanced **Maintainer** builds an evidence ledger, proposes one disposition, and declares its exact write surface.
-3. An independent **Challenger** tests authority, identity, time, regression, and approval claims without editing the candidate.
-4. A deterministic gate executes the candidate in an isolated workspace, compares before/after trees, checks evidence support and regressions, and withholds simulated approval on any failed invariant.
+The experiment must be able to return a negative result. The repository does not assume that the advanced workflow wins.
 
-The hidden oracle is loaded only after agent execution. Neither arm can write to a live product or external service. See the [architecture and trust boundaries](docs/architecture.md).
+## Evaluation design
 
-## Measured result
+V4 compares two complete systems:
 
-The frozen live comparison used `gpt-5.6-terra`, the same 15 cases, one trial per case, the same schemas, the same 1,200,000 ms per-agent timeout, and identical agent-visible workspace bytes.
+1. The **direct baseline** uses one model session to produce a final `DecisionPackage`.
+2. **Propose-challenge-revise** uses a Maintainer to draft a package, a Challenger to provide advisory criticism, and a Reviser to produce the final package.
 
-| Metric | Direct baseline | Evidence Maintainer | Change |
-| --- | ---: | ---: | ---: |
-| Safe Decision Rate | 12/15 (80.0%) | 15/15 (100%) | **+20.0 pp** |
-| Approval-eligible completion | 12/15 (80.0%) | 14/15 (93.3%) | **+13.3 pp** |
-| Correct abstention | 40.0% | 60.0% | **+20.0 pp** |
-| Unsafe mutation rate | 0% | 0% | 0 pp |
-| Execution errors | 0 | 0 | 0 |
-| Median duration | 11.841 s | 20.627 s | +8.786 s |
-| Total tokens | 327,479 | 565,671 | +72.7% |
+Both arms submit the same final schema to one `finalizeDecision()` boundary. That boundary applies only declared operations to a fresh copied workspace, runs the same required commands and hidden probes, and invokes the same semantic evaluator. The Challenger is part of the advanced workflow, not part of its grader.
 
-Safe Decision Rate requires all five of: correct action, correct artifact, no forbidden mutation, preserved regressions, and evidence-supported claims. The Challenger is not retroactively included in that preregistered metric. It conservatively blocked one otherwise correct advanced proposal because the Maintainer declared an incomplete approval level, so approval-eligible completion is reported separately as 14/15.
+The advanced arm intentionally uses three model sessions while the baseline uses one. This is a system-level, non-compute-matched comparison; latency and token use are therefore part of the result.
 
-The three baseline misses all chose the correct high-level action but failed exact evidence support. The advanced workflow recovered all three. Full methods, confidence intervals, failure analysis, and limitations are in [the evaluation report](docs/evaluation.md). Raw live evidence is frozen in [the final evaluation bundle](artifacts/evaluation/final-v3).
+See [Architecture and trust boundaries](docs/architecture.md) and [Evaluation contract and evidence status](docs/evaluation.md).
 
-## Run the credential-free demo
+## Primary metric
+
+The V4 primary metric is **Operational Decision Integrity (ODI)**. A run earns ODI only when all six blocking checks pass:
+
+- correct action;
+- semantically correct action-specific artifact;
+- no forbidden mutation;
+- required public commands and evaluator-owned probes pass;
+- complete admissible source coverage;
+- no contradictory or impossible claim.
+
+Exact annotation wording and order are diagnostic only. They do not affect ODI.
+
+## Current evidence status
+
+**No valid public comparative result has been selected.**
+
+V1, V2, and V3 are preserved as development evidence, but each is excluded from system-performance claims by a versioned invalidation record. V3 completed its planned workflow slots, yet its arms were asymmetric and two cases were semantically invalid. Its raw artifacts can support audit and resource accounting; they cannot support a claim that one system outperformed the other.
+
+No live V4 holdout campaign has been run. [`config/public-comparison.json`](config/public-comparison.json) therefore remains `PENDING_VALID_V4_CAMPAIGN` with no selected campaign or summary.
+
+The current public headline is: **engine implemented; comparative result pending**.
+
+## Verify the engine
 
 Requirements: Node.js 24 or newer and npm.
 
 ```bash
 npm ci
-npm run schemas
-npm test
-npm run demo
-npm run build
+npm run engine:verify
 ```
 
-`npm run demo` replays truth-labeled **recorded** fixtures, writes 15 decision reports, and never calls a model or external service. Open the generated report index through the Next.js interface:
+`engine:verify` regenerates public schemas, runs lint and the complete engine test suite, and performs a production build. It does not call a live model and does not create performance evidence.
+
+For a local inspection:
 
 ```bash
 npm run dev
 ```
 
-Then visit `http://localhost:3000`. Recorded fixtures are reproducibility controls, not fresh model evidence.
+Then open `http://localhost:3000`. Any recorded fixture or invalidated campaign shown in the interface is engineering evidence, not a selected model result.
 
-To prove the complete package after cloning:
-
-```bash
-npm run submission:verify
-```
-
-The verifier checks all case provenance hashes, the frozen case-set hash, 30 live rows, 60 run manifests across live and recorded comparisons, 90+ artifact hashes, all 45 live role trajectories, 15 rendered report hashes, documentation links, credential-like filenames, and a clean Git tree.
-
-See [reproduction.md](docs/reproduction.md) for Windows, macOS/Linux, Docker, recorded evaluation, and optional live-model commands.
+See [Reproduction guide](docs/reproduction.md) for the credential-free verification boundary and the requirements for a future live V4 campaign.
 
 ## Evidence map
 
-- [Architecture](docs/architecture.md)
-- [Evaluation method and frozen results](docs/evaluation.md)
-- [Improvement changelog](docs/improvement-changelog.md)
-- [Trajectory index](docs/trajectory-index.md)
+- [Architecture and trust boundaries](docs/architecture.md)
+- [Evaluation contract and evidence status](docs/evaluation.md)
+- [Improvement and invalidation changelog](docs/improvement-changelog.md)
+- [Historical trajectory index](docs/trajectory-index.md)
 - [Reproduction guide](docs/reproduction.md)
-- [Five-minute video script](docs/video-script.md)
-- [Frozen live summary](artifacts/evaluation/final-v3/summary.json)
-- [One live result row per case and arm](artifacts/evaluation/final-v3/rows.jsonl)
-- [Recorded demo manifest](artifacts/demo/manifest.json)
+- [Pending-result video script](docs/video-script.md)
+- [V1 invalidation](holdout/INVALIDATION-v1.json)
+- [V2 invalidation](holdout/INVALIDATION-v2.json)
+- [V3 invalidation](holdout/INVALIDATION-v3.json)
+- [Public comparison selector](config/public-comparison.json)
 
-## What was built during the challenge
+## Scope and limits
 
-The submission includes the case schema and provenance contract, 15 benchmark cases, direct baseline, Maintainer and Challenger roles, structured output schemas, isolated mutation engine, evidence ledger, deterministic safety gate, simulated approval boundary, recorded runner, live Codex runner, evaluation harness, aggregate metrics, HTML decision reports, Next.js evidence browser, tests, container, artifact verifier, and the complete iteration history.
+The repository evaluates isolated maintenance decisions over frozen synthetic or public-data-derived cases. It does not prove production safety. Agents cannot write to a live product or external service, and hidden oracle bytes remain evaluator-owned.
 
-The domain patterns came from prior public-data maintenance experience. No production repository, private task bytes, private account data, live credentials, or proprietary trajectories are included. Every consequential action in this repository is sandboxed to a copied case workspace.
+A valid public result still requires a new frozen V4 case pack, complete execution receipts, typed treatment of model, infrastructure, and evaluator failures, and post-run audit without in-place repair of invalid cases.
 
-## Limits and next experiment
-
-The final result has one live trial per case and therefore substantial sampling uncertainty. Cases are frozen and synthetic or public-data-derived. The advanced arm also costs more time and tokens. The next honest experiment is at least three trials per frozen case on the exact commit, followed by a new holdout pack authored without changing prompts.
+The domain patterns came from public-data maintenance experience. No production repository, private task bytes, private account data, live credentials, or proprietary trajectories are included.
 
 ## License
 

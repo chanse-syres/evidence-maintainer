@@ -247,3 +247,113 @@ test("recorded offline fixtures cover every core case and all three agent roles"
     ChallengerVerdictSchema.parse(fixtures[`${caseId}:challenger`]);
   }
 });
+
+test("holdout invalidations are immutable versioned disclosures", async () => {
+  const expected = [
+    {
+      file: "INVALIDATION-v1.json",
+      campaign: "holdout-v1",
+      status: "INVALID_EVALUATOR_ABORTED_NO_SCORE",
+      freezeIdentity: "2e876ef3189eef5dc6103ab5714d4c2ffba6a2b8",
+    },
+    {
+      file: "INVALIDATION-v2.json",
+      campaign: "holdout-v2",
+      status: "INVALID_FOR_PRIMARY_SAFE_DECISION_RATE",
+      freezeIdentity: "8fbdfb94c237a7634b091332d3dcfbd9ed10b8c7",
+    },
+    {
+      file: "INVALIDATION-v3.json",
+      campaign: "holdout-v3",
+      status: "INVALID_FOR_SYSTEM_COMPARISON",
+      freezeIdentity: "f69d58d67c919456807c505a2e5aeea991f01a86",
+    },
+  ] as const;
+
+  const files = (await readdir(resolve("holdout")))
+    .filter((entry) => /^INVALIDATION-v\d+\.json$/.test(entry))
+    .sort();
+  for (const expectedRecord of expected) {
+    assert.ok(files.includes(expectedRecord.file), `${expectedRecord.file} must remain a separate disclosure`);
+  }
+
+  for (const expectedRecord of expected) {
+    const record = JSON.parse(
+      await readFile(resolve("holdout", expectedRecord.file), "utf8"),
+    ) as Record<string, unknown>;
+    assert.equal(record.schemaVersion, 1);
+    assert.equal(record.campaign, expectedRecord.campaign);
+    assert.equal(record.status, expectedRecord.status);
+    assert.equal(
+      record.freezeCommit ?? record.frozenHarnessCommit,
+      expectedRecord.freezeIdentity,
+      `${expectedRecord.file} must remain bound to its original frozen campaign`,
+    );
+  }
+});
+
+test("v3 invalidation preserves evidence without permitting a system comparison", async () => {
+  const record = JSON.parse(
+    await readFile(resolve("holdout", "INVALIDATION-v3.json"), "utf8"),
+  ) as {
+    publicComparisonEligible: boolean;
+    freezeTag: string;
+    freezeCommit: string;
+    freezeLockSha256: string;
+    runDirectory: string;
+    completedWorkflowSlots: number;
+    defects: Array<{ defectId: string; affectedCaseIds?: string[] }>;
+    rawDescriptiveCounts: {
+      allWorkflowSlots: Record<string, number>;
+      baseline: Record<string, number>;
+      advanced: Record<string, number>;
+    };
+  };
+
+  assert.equal(record.publicComparisonEligible, false);
+  assert.equal(record.freezeTag, "holdout-freeze-v3");
+  assert.equal(record.freezeCommit, "f69d58d67c919456807c505a2e5aeea991f01a86");
+  assert.equal(record.freezeLockSha256, "42c230c4d5f017b79c93be3487fa22404a02eda93f88acd5075a6e4f09994b7d");
+  assert.equal(record.runDirectory, "artifacts/evaluation/holdout-v3");
+  assert.equal(record.completedWorkflowSlots, 30);
+  assert.deepEqual(
+    record.defects.map((defect) => defect.defectId),
+    ["ASYMMETRIC_CHALLENGER", "SEMANTICALLY_INVALID_CASES"],
+  );
+  assert.deepEqual(record.defects[1]?.affectedCaseIds, [
+    "retry-shard-watermark-barrier",
+    "update-effective-energy-tariff",
+  ]);
+  assert.deepEqual(record.rawDescriptiveCounts.allWorkflowSlots, {
+    completed: 30,
+    correctActions: 30,
+    sourceCoveragePasses: 30,
+    forbiddenMutations: 0,
+  });
+  assert.equal(record.rawDescriptiveCounts.baseline.workflowSlots, 15);
+  assert.equal(record.rawDescriptiveCounts.baseline.operationalDecisionIntegrityPasses, 15);
+  assert.equal(record.rawDescriptiveCounts.advanced.workflowSlots, 15);
+  assert.equal(record.rawDescriptiveCounts.advanced.operationalDecisionIntegrityPasses, 14);
+});
+
+test("no invalidated v1-v3 campaign is selected as the public comparison", async () => {
+  const selection = JSON.parse(
+    await readFile(resolve("config", "public-comparison.json"), "utf8"),
+  ) as {
+    schemaVersion: number;
+    status: string;
+    selectedCampaign: string | null;
+    selectedSummary: string | null;
+    excludedCampaigns: Array<{ campaign: string; invalidation: string }>;
+  };
+
+  assert.equal(selection.schemaVersion, 1);
+  assert.equal(selection.status, "PENDING_VALID_V4_CAMPAIGN");
+  assert.equal(selection.selectedCampaign, null);
+  assert.equal(selection.selectedSummary, null);
+  assert.deepEqual(selection.excludedCampaigns, [
+    { campaign: "holdout-v1", invalidation: "holdout/INVALIDATION-v1.json" },
+    { campaign: "holdout-v2", invalidation: "holdout/INVALIDATION-v2.json" },
+    { campaign: "holdout-v3", invalidation: "holdout/INVALIDATION-v3.json" },
+  ]);
+});

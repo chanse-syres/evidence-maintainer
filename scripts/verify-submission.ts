@@ -1,10 +1,9 @@
 import { execFile } from "node:child_process";
 import { access, readFile, readdir } from "node:fs/promises";
-import { basename, dirname, extname, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
-import { sha256Json, sha256Text } from "../src/core/canonical-json.ts";
-import { loadPublicCase } from "../src/core/case-loader.ts";
+import { verifyPublicTree } from "../src/release/public-tree.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -24,10 +23,26 @@ const REQUIRED_FILES = [
   "docs/reproduction.md",
   "docs/trajectory-index.md",
   "docs/video-script.md",
-  "artifacts/evaluation/final-v3/summary.json",
-  "artifacts/evaluation/final-v3/rows.jsonl",
-  "artifacts/evaluation/recorded-all/summary.json",
-  "artifacts/demo/manifest.json",
+  "config/public-comparison.json",
+  "schemas/decision-package.schema.json",
+  "schemas/challenger-critique.schema.json",
+  "src/core/schemas.ts",
+  "src/core/case-loader.ts",
+  "src/workflows/finalize-decision.ts",
+  "src/workflows/baseline.ts",
+  "src/workflows/advanced.ts",
+  "src/core/semantic-evaluator.ts",
+  "src/evaluation/score-run.ts",
+  "src/evaluation/aggregate.ts",
+  "src/evaluation/run-evaluation.ts",
+  "src/reports/load-artifacts.ts",
+  "src/reports/render-decision-report.ts",
+  "src/ui/public-comparison.ts",
+  "src/ui/overview-model.ts",
+  "src/ui/case-model.ts",
+  "src/release/public-tree.ts",
+  "app/page.tsx",
+  "app/cases/[caseId]/page.tsx",
 ] as const;
 
 const PUBLIC_MARKDOWN = [
@@ -40,6 +55,7 @@ const PUBLIC_MARKDOWN = [
   "docs/video-script.md",
 ] as const;
 
+const REQUIRED_INVALIDATED_CAMPAIGNS = ["holdout-v1", "holdout-v2", "holdout-v3"] as const;
 const IGNORED_DIRECTORY_NAMES = new Set([".git", ".next", "node_modules"]);
 const FORBIDDEN_FILE_NAMES = new Set([
   "credentials.json",
@@ -50,45 +66,20 @@ const FORBIDDEN_FILE_NAMES = new Set([
   "secrets.json",
 ]);
 
-interface EvaluationSummary {
-  caseSetHash: string;
-  mode: string;
-  model: string;
-  trialsPerCase: number;
-  arms: {
-    baseline: { caseCount: number; sdr: number; unsafeMutationRate: number };
-    advanced: { caseCount: number; sdr: number; unsafeMutationRate: number };
-  };
+interface PublicComparisonConfig {
+  schemaVersion: number;
+  status: string;
+  selectedCampaign: string | null;
+  selectedSummary: string | null;
+  selectionRule: string;
+  excludedCampaigns: Array<{ campaign: string; invalidation: string }>;
 }
 
-interface EvaluationRow {
-  caseId: string;
-  arm: string;
-  mode: string;
-  model: string;
-  action: string;
-}
-
-interface RunManifest {
-  caseId: string;
-  arm: string;
-  mode: string;
-  model: string;
-  trajectoryPaths: string[];
-  artifactSha256: Record<string, string>;
-}
-
-interface RunErrorReceipt {
-  caseId: string;
-  arm: string;
-  classification: "MODEL_EXECUTION";
-  kind: string;
-}
-
-interface DemoManifest {
-  caseSetHash: string;
-  sourceMode: string;
-  reports: Array<{ caseId: string; path: string; sha256: string }>;
+interface InvalidationDisclosure {
+  schemaVersion: number;
+  campaign: string;
+  status: string;
+  publicComparisonEligible?: boolean;
 }
 
 export interface SubmissionVerificationResult {
@@ -96,82 +87,51 @@ export interface SubmissionVerificationResult {
   requiredFileCount: number;
   caseCount: number;
   reportCount: number;
-  roles: string[];
-  liveTrajectoryCount: number;
-  recordedTrajectoryCount: number;
-  caseSetHash: string;
+  comparisonState: "pending" | "selected";
+  selectedCampaign: string | null;
+  selectedSummary: string | null;
+  selectedWorkflowRunCount: number;
+  invalidatedCampaigns: string[];
+  caseSetHash: string | null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function normalizedRelativePath(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.length > 0 &&
+    !value.includes("\\") &&
+    !value.startsWith("/") &&
+    !/^[A-Za-z]:/.test(value) &&
+    !value.split("/").some((segment) => segment === "" || segment === "." || segment === "..")
+  );
 }
 
 async function readJson<T>(path: string): Promise<T> {
-  return JSON.parse(await readFile(path, "utf8")) as T;
+  let value: unknown;
+  try {
+    value = JSON.parse(await readFile(path, "utf8"));
+  } catch (error) {
+    throw new Error(`Invalid JSON: ${path}`, { cause: error });
+  }
+  return value as T;
 }
 
 async function listFiles(root: string): Promise<string[]> {
   const output: string[] = [];
   async function visit(directory: string): Promise<void> {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
-      if (entry.isDirectory() && IGNORED_DIRECTORY_NAMES.has(entry.name)) {
-        continue;
-      }
+      if (entry.isDirectory() && IGNORED_DIRECTORY_NAMES.has(entry.name)) continue;
       const path = resolve(directory, entry.name);
-      if (entry.isDirectory()) {
-        await visit(path);
-      } else if (entry.isFile()) {
-        output.push(path);
-      }
+      if (entry.isDirectory()) await visit(path);
+      else if (entry.isFile()) output.push(path);
     }
   }
   await visit(root);
   return output;
-}
-
-async function verifyRunBundle(
-  root: string,
-  expectedMode: "live" | "recorded",
-): Promise<{ manifests: RunManifest[]; errors: RunErrorReceipt[]; trajectories: string[] }> {
-  const files = await listFiles(root);
-  const manifestPaths = files.filter((path) => basename(path) === "manifest.json");
-  const errorPaths = files.filter((path) => basename(path) === "error.json");
-  const trajectories = files.filter(
-    (path) => extname(path) === ".jsonl" && basename(dirname(path)) === "trajectories",
-  );
-  const manifests: RunManifest[] = [];
-  const errors: RunErrorReceipt[] = [];
-
-  for (const manifestPath of manifestPaths) {
-    const manifest = await readJson<RunManifest>(manifestPath);
-    if (manifest.mode !== expectedMode) {
-      throw new Error(`Unexpected mode in ${manifestPath}: ${manifest.mode}`);
-    }
-    const runDir = dirname(manifestPath);
-    for (const [relativePath, expectedHash] of Object.entries(manifest.artifactSha256)) {
-      const artifactPath = resolve(runDir, relativePath);
-      const bytes = await readFile(artifactPath);
-      const actualHash = sha256Text(bytes);
-      if (actualHash !== expectedHash) {
-        throw new Error(`Artifact hash mismatch: ${artifactPath}`);
-      }
-    }
-    for (const trajectoryPath of manifest.trajectoryPaths) {
-      await access(resolve(runDir, trajectoryPath));
-    }
-    manifests.push(manifest);
-  }
-
-  for (const errorPath of errorPaths) {
-    const receipt = await readJson<RunErrorReceipt>(errorPath);
-    if (
-      receipt.classification !== "MODEL_EXECUTION" ||
-      !receipt.caseId ||
-      !["baseline", "advanced"].includes(receipt.arm) ||
-      !receipt.kind
-    ) {
-      throw new Error(`Invalid typed model-error receipt: ${errorPath}`);
-    }
-    errors.push(receipt);
-  }
-
-  return { manifests, errors, trajectories };
 }
 
 async function verifyMarkdown(root: string): Promise<void> {
@@ -179,20 +139,16 @@ async function verifyMarkdown(root: string): Promise<void> {
   const markdownLinkPattern = /\[[^\]]*\]\(([^)]+)\)/g;
 
   for (const relativePath of PUBLIC_MARKDOWN) {
-    const path = resolve(root, relativePath);
+    const path = resolve(root, ...relativePath.split("/"));
     const text = await readFile(path, "utf8");
     if (absolutePathPattern.test(text)) {
       throw new Error(`Public documentation contains a local absolute path: ${relativePath}`);
     }
     for (const match of text.matchAll(markdownLinkPattern)) {
       const rawTarget = match[1]?.trim().replace(/^<|>$/g, "");
-      if (!rawTarget || /^(?:https?:|mailto:|#)/i.test(rawTarget)) {
-        continue;
-      }
+      if (!rawTarget || /^(?:https?:|mailto:|#)/i.test(rawTarget)) continue;
       const targetWithoutAnchor = rawTarget.split("#", 1)[0];
-      if (!targetWithoutAnchor) {
-        continue;
-      }
+      if (!targetWithoutAnchor) continue;
       try {
         await access(resolve(dirname(path), decodeURIComponent(targetWithoutAnchor)));
       } catch {
@@ -218,8 +174,74 @@ async function verifyCleanGit(root: string): Promise<void> {
     cwd: root,
     windowsHide: true,
   });
-  if (stdout.trim()) {
-    throw new Error("Git worktree is not clean");
+  if (stdout.trim()) throw new Error("Git worktree is not clean");
+}
+
+async function verifyInvalidations(
+  root: string,
+  config: PublicComparisonConfig,
+): Promise<string[]> {
+  if (!Array.isArray(config.excludedCampaigns)) {
+    throw new Error("Public comparison config has no invalidation registry");
+  }
+  const disclosed: string[] = [];
+  for (const campaign of REQUIRED_INVALIDATED_CAMPAIGNS) {
+    const entry = config.excludedCampaigns.find((candidate) => candidate?.campaign === campaign);
+    if (!entry || !normalizedRelativePath(entry.invalidation)) {
+      throw new Error(`Missing invalidation disclosure for ${campaign}`);
+    }
+    const path = resolve(root, ...entry.invalidation.split("/"));
+    try {
+      await access(path);
+    } catch (error) {
+      throw new Error(`Missing invalidation disclosure for ${campaign}`, { cause: error });
+    }
+    const invalidation = await readJson<InvalidationDisclosure>(path);
+    if (
+      invalidation.schemaVersion !== 1 ||
+      invalidation.campaign !== campaign ||
+      typeof invalidation.status !== "string" ||
+      !invalidation.status.includes("INVALID") ||
+      invalidation.publicComparisonEligible === true
+    ) {
+      throw new Error(`Invalid invalidation disclosure for ${campaign}`);
+    }
+    disclosed.push(campaign);
+  }
+  return disclosed;
+}
+
+function parsePublicComparisonConfig(value: unknown): PublicComparisonConfig {
+  if (!isRecord(value) || value.schemaVersion !== 1) {
+    throw new Error("Invalid public comparison config");
+  }
+  if (
+    typeof value.status !== "string" || !value.status ||
+    typeof value.selectionRule !== "string" || !value.selectionRule ||
+    !(value.selectedCampaign === null || typeof value.selectedCampaign === "string") ||
+    !(value.selectedSummary === null || typeof value.selectedSummary === "string") ||
+    !Array.isArray(value.excludedCampaigns)
+  ) {
+    throw new Error("Invalid public comparison config");
+  }
+  if ((value.selectedCampaign === null) !== (value.selectedSummary === null)) {
+    throw new Error("Public comparison campaign and summary must be selected together");
+  }
+  return value as unknown as PublicComparisonConfig;
+}
+
+function verifySelectedV4Summary(campaign: string): never {
+  throw new Error(
+    `Selected V4 comparison is blocked until the real V4 freeze and campaign validator is implemented: ${campaign}`,
+  );
+}
+
+async function countDirectories(path: string): Promise<number> {
+  try {
+    return (await readdir(path, { withFileTypes: true })).filter((entry) => entry.isDirectory()).length;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return 0;
+    throw error;
   }
 }
 
@@ -230,119 +252,48 @@ export async function verifySubmission(
   const absoluteRoot = resolve(root);
   for (const relativePath of REQUIRED_FILES) {
     try {
-      await access(resolve(absoluteRoot, relativePath));
+      await access(resolve(absoluteRoot, ...relativePath.split("/")));
     } catch {
       throw new Error(`Missing required file: ${relativePath}`);
     }
   }
 
-  const caseEntries = (await readdir(resolve(absoluteRoot, "cases"), { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
-  if (caseEntries.length !== 15) {
-    throw new Error(`Expected 15 cases, found ${caseEntries.length}`);
-  }
-
-  const caseIndex: Array<{ caseId: string; workspaceHash: string }> = [];
-  for (const caseId of caseEntries) {
-    const loaded = await loadPublicCase(resolve(absoluteRoot, "cases", caseId));
-    if (loaded.manifest.id !== caseId) {
-      throw new Error(`Case directory and manifest disagree: ${caseId}`);
+  const config = parsePublicComparisonConfig(
+    await readJson(resolve(absoluteRoot, "config", "public-comparison.json")),
+  );
+  const invalidatedCampaigns = await verifyInvalidations(absoluteRoot, config);
+  let comparisonState: "pending" | "selected";
+  const selectedWorkflowRunCount = 0;
+  const caseSetHash: string | null = null;
+  if (config.selectedCampaign === null || config.selectedSummary === null) {
+    if (config.status !== "PENDING_VALID_V4_CAMPAIGN") {
+      throw new Error("A release with no selected comparison must declare the pending V4 state");
     }
-    caseIndex.push({ caseId, workspaceHash: loaded.workspaceHash });
-  }
-  const caseSetHash = sha256Json(caseIndex);
-
-  const liveSummary = await readJson<EvaluationSummary>(
-    resolve(absoluteRoot, "artifacts/evaluation/final-v3/summary.json"),
-  );
-  if (
-    liveSummary.mode !== "live" ||
-    liveSummary.model !== "gpt-5.6-terra" ||
-    liveSummary.trialsPerCase !== 1 ||
-    liveSummary.caseSetHash !== caseSetHash ||
-    liveSummary.arms.baseline.caseCount !== 15 ||
-    liveSummary.arms.advanced.caseCount !== 15
-  ) {
-    throw new Error("Frozen live summary does not match the declared evaluation contract");
-  }
-
-  const liveRows = (await readFile(
-    resolve(absoluteRoot, "artifacts/evaluation/final-v3/rows.jsonl"),
-    "utf8",
-  ))
-    .split(/\r?\n/)
-    .filter(Boolean)
-    .map((line) => JSON.parse(line) as EvaluationRow);
-  if (
-    liveRows.length !== 30 ||
-    liveRows.some(
-      (row) =>
-        row.mode !== "live" ||
-        row.model !== "gpt-5.6-terra" ||
-        row.action === "ERROR" ||
-        !caseEntries.includes(row.caseId) ||
-        !["baseline", "advanced"].includes(row.arm),
-    )
-  ) {
-    throw new Error("Frozen live rows are incomplete or contain execution errors");
-  }
-
-  const demoManifest = await readJson<DemoManifest>(
-    resolve(absoluteRoot, "artifacts/demo/manifest.json"),
-  );
-  if (
-    demoManifest.sourceMode !== "recorded" ||
-    demoManifest.caseSetHash !== caseSetHash ||
-    demoManifest.reports.length !== 15
-  ) {
-    throw new Error("Recorded demo manifest does not match the frozen case set");
-  }
-  for (const report of demoManifest.reports) {
-    const reportPath = resolve(absoluteRoot, "artifacts/demo", report.path);
-    const actualHash = sha256Json({ html: await readFile(reportPath, "utf8") });
-    if (actualHash !== report.sha256) {
-      throw new Error(`Demo report hash mismatch: ${report.path}`);
+    comparisonState = "pending";
+  } else {
+    if (
+      config.excludedCampaigns.some((entry) => entry?.campaign === config.selectedCampaign)
+    ) {
+      throw new Error(`Invalidated campaign cannot be selected: ${config.selectedCampaign}`);
     }
+    verifySelectedV4Summary(config.selectedCampaign);
   }
 
-  const live = await verifyRunBundle(
-    resolve(absoluteRoot, "artifacts/evaluation/final-v3"),
-    "live",
-  );
-  const recorded = await verifyRunBundle(
-    resolve(absoluteRoot, "artifacts/evaluation/recorded-all"),
-    "recorded",
-  );
-  if (
-    live.manifests.length + live.errors.length !== 30 ||
-    recorded.manifests.length + recorded.errors.length !== 30
-  ) {
-    throw new Error("Expected 30 completed run slots in both live and recorded evaluations");
-  }
-  if (live.trajectories.length !== 45 || recorded.trajectories.length < 45) {
-    throw new Error("Agent trajectory bundles are incomplete");
-  }
-  const roles = [...new Set(live.trajectories.map((path) => basename(path, ".jsonl")))].sort();
-  if (roles.join(",") !== "baseline,challenger,maintainer") {
-    throw new Error(`Unexpected trajectory roles: ${roles.join(", ")}`);
-  }
-
+  await verifyPublicTree(absoluteRoot);
   await verifyMarkdown(absoluteRoot);
   await verifyNoCredentialFiles(absoluteRoot);
-  if (options.checkGit !== false) {
-    await verifyCleanGit(absoluteRoot);
-  }
+  if (options.checkGit !== false) await verifyCleanGit(absoluteRoot);
 
   return {
     root: absoluteRoot,
     requiredFileCount: REQUIRED_FILES.length,
-    caseCount: caseEntries.length,
-    reportCount: demoManifest.reports.length,
-    roles,
-    liveTrajectoryCount: live.trajectories.length,
-    recordedTrajectoryCount: recorded.trajectories.length,
+    caseCount: await countDirectories(resolve(absoluteRoot, "cases")),
+    reportCount: await countDirectories(resolve(absoluteRoot, "artifacts", "demo", "reports")),
+    comparisonState,
+    selectedCampaign: config.selectedCampaign,
+    selectedSummary: config.selectedSummary,
+    selectedWorkflowRunCount,
+    invalidatedCampaigns,
     caseSetHash,
   };
 }

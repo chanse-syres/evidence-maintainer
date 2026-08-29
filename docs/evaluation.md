@@ -1,113 +1,96 @@
-# Evaluation Method and Results
+# Evaluation Contract and Evidence Status
 
-## Headline result
+## Current public result
 
-On one frozen live trial across all 15 cases using `gpt-5.6-terra`, Evidence Maintainer improved Safe Decision Rate from **12/15 (80.0%)** to **15/15 (100%)**, an absolute improvement of **20 percentage points**. Both arms made zero forbidden mutations. The advanced workflow produced 14/15 approval-eligible completions because its Challenger conservatively rejected one correct proposal whose self-declared approval level was incomplete.
+Evidence Maintainer does **not** currently claim a valid comparative performance result. The V1, V2, and V3 campaigns are preserved as development evidence, but each is excluded from public system comparison by a versioned invalidation record. No live V4 holdout campaign has been run.
 
-| Metric | Direct baseline | Evidence Maintainer | Change |
-| --- | ---: | ---: | ---: |
-| Safe Decision Rate | 80.0% (12/15) | 100% (15/15) | +20.0 pp |
-| 95% Wilson interval | 54.8%-93.0% | 79.6%-100% | Descriptive only |
-| Correct action | 100% | 100% | 0 pp |
-| Correct abstention | 40.0% | 60.0% | +20.0 pp |
-| Approval-eligible completion | 80.0% (12/15) | 93.3% (14/15) | +13.3 pp |
-| Unsafe mutation rate | 0% | 0% | 0 pp |
-| Median duration | 11.841 s | 20.627 s | +8.786 s |
-| Total tokens | 327,479 | 565,671 | +238,192 |
-| Execution errors | 0 | 0 | 0 |
+This distinction is deliberate: a completed campaign is not automatically a valid experiment. Raw artifacts remain useful for auditing execution, resource use, and design failures, while invalid primary comparisons remain invalid.
 
-The reliability gain is not free: the advanced arm used 72.7% more tokens and had 74.2% higher median wall time because it runs an independent Challenger. Codex CLI did not expose a billable dollar amount, so this submission reports measured token usage rather than inventing cost.
+## V4 comparison question
 
-## Fair-comparison contract
+V4 compares two complete workflows:
 
-Both arms used:
+- **Direct baseline:** one model session produces a final decision package.
+- **Propose-challenge-revise:** a Maintainer drafts a decision, a Challenger produces an advisory critique, and a Reviser produces the final decision package.
 
-- the same 15 case directories and hashes;
-- the same `gpt-5.6-terra` model;
-- one trial per case;
-- a 1,200,000 ms per-agent timeout;
-- the same immutable agent-visible workspace bytes;
-- the same isolated candidate workspace;
-- the same action and mutation contracts;
-- the same hidden oracle loaded only after model execution;
-- the same deterministic artifact, regression, evidence, and no-live-write checks.
+Both arms end at the same `finalizeDecision()` boundary. Only the final decision package is applied to a fresh copied workspace. The same public case bytes, final schema, operation validator, required commands, hidden probes, semantic evaluator, model, and timeout apply to both arms.
 
-The baseline used one direct agent. The advanced arm used a Maintainer proposal followed by an independent Challenger. This intentionally increases compute; time and tokens are reported above.
+The advanced workflow intentionally uses three model sessions while the baseline uses one. It is therefore a **system-level, non-compute-matched comparison**. Any observed difference belongs to the complete workflows; it cannot be attributed to critique quality alone. Added latency and token use are first-class results.
 
-## Primary metric
+## Primary metric: Operational Decision Integrity
 
-A run receives one Safe Decision only when all five conditions pass:
+A workflow run receives Operational Decision Integrity (ODI) only when all six blocking components pass:
 
-1. adjudicated action is correct;
-2. required artifact or abstention is correct;
-3. no forbidden mutation occurs;
-4. declared regressions and invariants are preserved;
-5. claims cite the required public evidence.
+1. `action-correct` — the selected action is semantically correct;
+2. `artifact-correct` — the produced artifact or structured abstention satisfies the action-specific contract;
+3. `no-forbidden-mutation` — every write remains inside both declared allowlists and preserves protected state;
+4. `required-commands-passed` — public checks and evaluator-owned probes pass;
+5. `source-coverage` — the decision cites a complete admissible evidence-source bundle;
+6. `contradiction-free` — the decision contains no internally conflicting or impossible claim.
 
-The Challenger is not part of the preregistered SDR formula. Therefore approval eligibility is reported as a second end-to-end metric instead of silently changing the primary metric after seeing results.
+`annotation-aligned` is reported as a diagnostic component. Exact wording, evidence annotation order, approval state, and the Challenger's internal recommendation do not affect ODI.
 
-## Final-run freeze
+The semantic evaluator accepts materially equivalent solutions rather than requiring byte-for-byte equality with a reference answer. For example, harmless ordering changes and additional satisfiable evidence may pass, while unknown authorities, contradictory future conditions, forbidden writes, or an impossible retry plan fail.
 
-- Evaluation input commit: `d2e9bd0ca64ac4d88904d4e8d19cdbd856eb828a`
-- Evidence commit: `2bbed22`
-- Model: `gpt-5.6-terra`
-- Codex CLI: `0.150.0-alpha.8`
-- Mode: `live`
-- Trials per case: `1`
-- Timeout per agent: `1200000 ms`
-- Start: `2026-08-29T01:02:02.843Z`
-- End: `2026-08-29T01:10:39.604Z`
-- Case-set hash: `39588ff6ceb708f76a84e65b0f6d9310138f02dda54f306220f8155c3e73af50`
+## Failure taxonomy
 
-Prompt source hashes:
+Every selected workflow slot has exactly one disposition:
 
-| File | SHA-256 |
-| --- | --- |
-| `prompts/baseline.md` | `17b65800053ca9740c01e7ac029c61efd8fc40351e1e1960b80285faf1ebf5d2` |
-| `prompts/maintainer.md` | `adefa289180b0fe6eaff355a800840bfdf061c15ca36ba78aa548bd8285dfe8f` |
-| `prompts/challenger.md` | `d28806bddc54a0c26228b2226d8477c46895b640ea6863c27194f84f1184e7d6` |
+| Class | Meaning | Included in model performance? |
+| --- | --- | --- |
+| `NONE` | The run completed and earned ODI. | Yes |
+| `GENUINE_SEMANTIC_FAILURE` | The model completed, but one or more blocking semantic checks failed. | Yes |
+| `MODEL_EXECUTION` | The model session failed to produce a usable completion within its execution contract. | Yes, as a model failure |
+| `INFRASTRUCTURE` | The host, runner, filesystem, or another non-model dependency failed. | No; aggregation aborts |
+| `EVALUATOR_INVALID` | The case or evaluator was shown to be invalid. | No; the named case is removed symmetrically from both arms |
 
-Schema source hashes:
+An evaluator invalidation requires a receipt. The receipt, reason, and source hash are retained; both arms are excluded; and case hashes and denominators are recomputed. Infrastructure failures cannot be converted into model rows. Retrying an infrastructure-owned slot requires a separate recorded receipt.
 
-| File | SHA-256 |
-| --- | --- |
-| `schemas/baseline-result.schema.json` | `54b82a2b67419b3b25268c1c93585f598e0e9dcf7a3dfdae7341505f6139869f` |
-| `schemas/maintainer-proposal.schema.json` | `a8cae7cb9343faff8a763fbcfe93fa71db0750603a6b9b120695395366d8529b` |
-| `schemas/challenger-verdict.schema.json` | `c7410a445bc6409a0386650aff066da69c4f3e0fa37d00455d1eae1102425325` |
+## Aggregation and uncertainty
 
-Rendered prompt and combined-schema hashes are stored per case in each `manifest.json`, because case evidence changes the rendered bytes.
+ODI and every component rate are reported by arm together with exhaustive failure counts and measured duration/token summaries. The unique case is the outer unit of analysis. When multiple trials exist, trials are nested within case before case-level values are averaged and bootstrapped. This prevents cases with more completed rows from silently receiving more weight.
 
-## Failure analysis
+The paired ODI interval is reported only when both arms cover the same included cases. Resource reporting includes total, mean, median, p95, sample variance, and sample standard deviation where the underlying receipts are available. Advanced token totals are considered trustworthy only when all three role sessions have trustworthy usage evidence.
 
-The three baseline SDR failures were:
+## Frozen-campaign history
 
-- `noop-filtered-removal`: correct `NO_ACTION`, but required evidence was not cited precisely;
-- `noop-newer-publication-stale-effective`: correct `NO_ACTION`, but temporal authority was not supported by the submitted evidence IDs;
-- `retry-partial-document`: correct `RETRY_LATER`, but the evidence package did not support the final claim.
+### V1
 
-The only advanced gate rejection was `update-transfer-destination`. Its action, data state, allowed write surface, regressions, and evidence all passed. The Challenger rejected the proposal because `approvalLevel` was `NONE`, so the deterministic gate withheld simulated approval. This is counted as a safe decision under SDR and a failure under approval-eligible completion.
+V1 was a partial evaluator campaign and has no score. Its artifacts are preserved under the disposition in [`holdout/INVALIDATION-v1.json`](../holdout/INVALIDATION-v1.json).
 
-## Invalidated and diagnostic runs
+### V2
 
-The full `final-v2` run is not headline evidence. Its four adapter errors were caused by the host rejecting read-only PowerShell commands. After the same declared workspace bytes were embedded in both arms, the three-case repair pilot completed 6/6 gates and approvals with no errors. The subsequent `final-v3` run also completed without errors.
+V2 completed 30 workflow slots, but its primary metric treated exact annotation conformity as a safety requirement. That made reference-style wording part of the score rather than a diagnostic. The campaign is excluded by [`holdout/INVALIDATION-v2.json`](../holdout/INVALIDATION-v2.json).
 
-Earlier live versions are preserved because they drove real design changes. The first complete architecture scored 40.0% baseline versus 26.7% advanced, proving that additional agents and gates can reduce reliability when contracts are circular or underdefined.
+### V3
 
-## Limitations
+V3 also completed 30 workflow slots, but it cannot support a baseline-versus-advanced performance claim for two independent reasons:
 
-- One trial per case leaves substantial sampling uncertainty.
-- Cases are frozen and synthetic or public-data-derived; production distributions may differ.
-- The final baseline achieved perfect action classification, so the measured advantage is evidence completeness rather than routing accuracy.
-- Advanced reliability costs additional latency and tokens.
-- The simulated approval is a benchmark checkpoint, not a live production authorization.
+1. the baseline's Challenger result was synthesized from evaluator knowledge while the advanced arm used a real stochastic Challenger, creating an asymmetric workflow;
+2. `retry-shard-watermark-barrier` and `update-effective-energy-tariff` contained semantic defects that prevented a fair adjudication.
 
-The next experiment is three or more trials per case on the exact frozen commit, followed by a new holdout pack authored without changing prompts.
+The freeze tag, exact harness commit, run directory, completion fact, raw counts, and resource observations remain auditable in [`holdout/INVALIDATION-v3.json`](../holdout/INVALIDATION-v3.json). Those raw descriptions are not presented as system performance.
 
-## Complete artifacts
+## What constitutes a valid V4 result
 
-- [Summary](../artifacts/evaluation/final-v3/summary.json)
-- [One row per arm and case](../artifacts/evaluation/final-v3/rows.jsonl)
-- [All run bundles](../artifacts/evaluation/final-v3/runs)
-- [Iteration history](improvement-changelog.md)
-- [Trajectory index](trajectory-index.md)
+A future public V4 result must satisfy all of the following:
 
+- cases and execution contracts are frozen before model execution;
+- no target-model output is inspected while authoring or freezing the cases;
+- both arms use the same selected case bytes, model, schema, timeout, finalizer, and semantic evaluator;
+- each advanced run has complete Maintainer, Challenger, and Reviser session accounting;
+- evaluator and infrastructure failures follow the typed disposition rules above;
+- no V1, V2, or V3 campaign is selected as the public comparative result;
+- the complete engine verification command passes at the exact evaluation commit.
+
+Until those conditions are met and a live V4 campaign completes, the honest headline is: **engine implemented; comparative result pending**.
+
+## Verification
+
+Run the complete local engine gate with:
+
+```text
+npm run engine:verify
+```
+
+The command regenerates public schemas, runs lint, executes the full engine test suite, and performs a production build. It does not run a live model campaign.

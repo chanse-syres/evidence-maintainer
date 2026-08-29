@@ -18,6 +18,18 @@ interface ArmCardResult {
   action: string;
 }
 
+function isNormalizedRunPath(value: string): boolean {
+  return value.length > 0 &&
+    !value.includes("\\") &&
+    !value.startsWith("/") &&
+    !/^[A-Za-z]:/.test(value) &&
+    !value.split("/").some((segment) => segment === "" || segment === "..");
+}
+
+function hasDecisionArtifacts(row: EvaluationRow): boolean {
+  return row.failureClass !== "MODEL_EXECUTION" && isNormalizedRunPath(row.runPath);
+}
+
 function summarizeRows(rows: EvaluationRow[]): ArmCardResult {
   const attempts = rows.length;
   const operationalDecisions = rows.filter((row) => row.operationalDecisionIntegrity).length;
@@ -53,13 +65,18 @@ async function loadSummary(root: string): Promise<EvaluationSummary> {
   return summary;
 }
 
-async function loadCaseTitle(root: string, row: EvaluationRow): Promise<string> {
-  const path = resolve(root, row.runPath, "workspace/case.json");
-  const value = JSON.parse(await readFile(path, "utf8")) as { title?: unknown };
-  if (typeof value.title !== "string" || value.title.length === 0) {
-    throw new Error(`Invalid case title in required artifact ${path}`);
+async function loadCaseTitle(root: string, caseId: string, rows: EvaluationRow[]): Promise<string> {
+  for (const row of rows) {
+    if (!isNormalizedRunPath(row.runPath)) continue;
+    const path = resolve(root, ...row.runPath.split("/"), "workspace", "case.json");
+    try {
+      const value = JSON.parse(await readFile(path, "utf8")) as { title?: unknown };
+      if (typeof value.title === "string" && value.title.length > 0) return value.title;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    }
   }
-  return value.title;
+  return caseId.split("-").map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(" ");
 }
 
 export async function loadOverviewModel(artifactRoot: string) {
@@ -69,26 +86,33 @@ export async function loadOverviewModel(artifactRoot: string) {
     const caseRows = summary.rows.filter((row) => row.caseId === caseId);
     const baselineRows = caseRows.filter((row) => row.arm === "baseline");
     const advancedRows = caseRows.filter((row) => row.arm === "advanced");
-    const representative = advancedRows[0] ?? baselineRows[0];
-    if (!representative) throw new Error(`Case ${caseId} has no evaluation rows`);
-    const action = (advancedRows[0]?.action ?? baselineRows[0]?.action) as ActionClass;
+    const representative = advancedRows.find(hasDecisionArtifacts) ?? baselineRows.find(hasDecisionArtifacts);
+    const firstRow = advancedRows[0] ?? baselineRows[0];
+    if (!firstRow) throw new Error(`Case ${caseId} has no evaluation rows`);
+    const action = (representative?.action ?? firstRow.expectedAction ?? "HUMAN_REVIEW") as ActionClass;
     const baseline = summarizeRows(baselineRows);
     const advanced = summarizeRows(advancedRows);
     return {
       caseId,
-      title: await loadCaseTitle(artifactRoot, representative),
+      title: await loadCaseTitle(artifactRoot, caseId, [
+        ...(representative ? [representative] : []),
+        ...advancedRows,
+        ...baselineRows,
+      ]),
       action,
       actionBadge: actionBadgeFor(action),
       baseline,
       advanced,
       harmfulChange: baseline.forbiddenMutationFailures > 0 || advanced.forbiddenMutationFailures > 0,
-      detailHref: `/cases/${caseId}`,
+      detailHref: representative ? `/cases/${caseId}` : null,
+      detailRunPath: representative?.runPath ?? null,
     };
   }));
 
-  const flagshipCaseId = cases.some((item) => item.caseId === "retry-shard-watermark-barrier")
+  const inspectableCases = cases.filter((item) => item.detailRunPath !== null);
+  const flagshipCaseId = inspectableCases.some((item) => item.caseId === "retry-shard-watermark-barrier")
     ? "retry-shard-watermark-barrier"
-    : cases[0]?.caseId ?? "";
+    : inspectableCases[0]?.caseId ?? null;
 
   return {
     generatedAt: summary.generatedAt,
@@ -102,7 +126,7 @@ export async function loadOverviewModel(artifactRoot: string) {
     odiBootstrap95: summary.odiBootstrap95,
     cases,
     flagshipCaseId,
-    flagshipHref: `/cases/${flagshipCaseId}`,
+    flagshipHref: flagshipCaseId === null ? null : `/cases/${flagshipCaseId}`,
   };
 }
 

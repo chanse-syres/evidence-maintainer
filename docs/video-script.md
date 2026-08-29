@@ -1,76 +1,70 @@
 # Five-Minute Demo Script
 
-Target runtime: **4:45**. Record at 1080p. Keep the repository commit visible at the start, use the local application only, and never show credentials, account pages, private repositories, or terminal history outside this project.
+Target runtime: **4:30-4:50**. Record at 1080p. Keep credentials, account pages, private repositories, and unrelated terminal history off screen.
 
-## 0:00-0:25 — Problem and thesis
+This script reflects the current evidence state: the V4 engine is implemented, but no valid comparative result has been selected.
 
-**Screen:** Repository README, title and hot take.
+## 0:00-0:30 — The maintenance decision
 
-**Narration:**
-
-“Public-data maintainers face a harder problem than applying updates. They must decide whether a new observation is an authoritative new fact, an adapter failure, a transient fetch, a duplicate, or a genuine conflict. A plausible wrong write can silently corrupt every downstream consumer. My project is Evidence Maintainer, and its thesis is simple: the safest autonomous maintainer is not the one that changes the most data. It is the one that can prove when a new observation is not yet a new fact.”
-
-## 0:25-1:05 — Architecture
-
-**Screen:** [Architecture diagram](architecture.md), then the application overview.
+**Screen:** Repository README, then the five dispositions.
 
 **Narration:**
 
-“I compare two workflows on identical immutable case bytes. The direct baseline makes one schema-bound decision. The advanced workflow separates responsibilities: a Maintainer builds an evidence ledger and proposes one exact disposition; an independent Challenger tries to falsify authority, identity, temporal, regression, and approval claims; then a deterministic gate executes only inside a copied workspace, checks the hidden oracle, tree diff, regressions, evidence, and forbidden-write boundary. No agent can write to a live system, and the oracle is loaded only after model execution.”
+“Public-data maintenance is not simply an update problem. A new observation may be an authoritative fact, an adapter defect, an incomplete fetch, a duplicate, or a real conflict. Evidence Maintainer evaluates whether an agent can choose the right disposition before it changes canonical data: update, repair, retry, do nothing, or request human review.”
 
-## 1:05-1:45 — The task format
+## 0:30-1:15 — The comparison
 
-**Screen:** Open the `noop-filtered-removal` case page. Highlight the `recorded` mode label, action vocabulary, public observations, and evidence IDs.
-
-**Narration:**
-
-“The benchmark has 15 cases covering data updates, adapter repairs, transient retries, no-action decisions, and human escalation. Every public workspace file is provenance hashed. The agent must choose among five observable actions and support its claims with exact evidence IDs. Correct classification alone does not earn a Safe Decision. The artifact, mutation surface, regressions, and evidence must also be correct.”
-
-## 1:45-2:25 — Concrete baseline failure
-
-**Screen:** Baseline result for `noop-filtered-removal`, then the advanced report for the same case.
+**Screen:** [Architecture diagram](architecture.md), moving from both arms into the shared finalizer.
 
 **Narration:**
 
-“Here the source response is filtered, so an absent entity is not evidence of removal. In the frozen live run, the baseline chose the right high-level action, `NO_ACTION`, but failed to cite the evidence needed to support that conclusion. The advanced Maintainer grounded the same decision correctly, and the Challenger confirmed it. This distinction matters in production: a fluent explanation is not an evidence-backed maintenance decision.”
+“V4 compares two complete workflows. The direct baseline uses one model session to produce a final decision package. The advanced workflow uses three sessions: a Maintainer drafts, a Challenger provides advisory criticism, and a Reviser produces the final package. Both arms receive the same public case bytes and end at the same finalizer. Only the final package is applied, and both arms face the same commands, hidden probes, mutation rules, and semantic evaluator.”
 
-## 2:25-3:05 — Repair and conservative blocking
+## 1:15-1:55 — What the evaluator measures
 
-**Screen:** Show `repair-json-nesting`, its changed file and passing regression gate. Then show `update-transfer-destination` and the Challenger rejection.
-
-**Narration:**
-
-“The system also performs real isolated repairs. In this JSON-nesting case, it changes only the declared adapter, runs the regression command, and preserves the canonical data boundary. It is intentionally conservative. On one correct transfer update, the Maintainer declared an incomplete approval level. The Challenger rejected it, so the gate withheld simulated approval. I did not hide that result: primary Safe Decision Rate is 15 of 15, while approval-eligible completion is 14 of 15.”
-
-## 3:05-3:50 — Measured improvement
-
-**Screen:** Evaluation table in the README, then [frozen summary](../artifacts/evaluation/final-v3/summary.json).
+**Screen:** [Evaluation contract](evaluation.md), highlighting the six ODI components.
 
 **Narration:**
 
-“The definitive comparison used `gpt-5.6-terra`, one trial on all 15 frozen cases, the same timeout, schemas, and agent-visible bytes. Safe Decision Rate improved from 12 of 15, or 80 percent, to 15 of 15, or 100 percent: plus 20 percentage points. Correct abstention improved by 20 points. Both arms made zero forbidden mutations and had zero execution errors. The reliability is not free: the Challenger increased total tokens by 72.7 percent and median time from 11.8 to 20.6 seconds. Those costs are reported directly.”
+“The primary metric is Operational Decision Integrity. A run earns it only if the action and action-specific artifact are correct, writes stay inside the permitted surface, required commands and hidden probes pass, source coverage is complete, and the decision is contradiction-free. Exact wording and annotation order are reported separately. They do not decide operational correctness.”
 
-## 3:50-4:20 — Trajectories and reproducibility
+## 1:55-2:35 — One concrete case shape
 
-**Screen:** [Trajectory index](trajectory-index.md), a raw JSONL trajectory, then terminal running `npm run demo` and `npm run submission:verify`.
-
-**Narration:**
-
-“The repository includes 45 raw live trajectories: 15 baseline, 15 Maintainer, and 15 Challenger sessions, plus structured outputs, prompt and schema hashes, token usage, gate results, and approvals. A credential-free recorded mode reproduces the complete harness. The submission verifier recalculates every case provenance hash, run artifact hash, report hash, documentation link, and trajectory count and rejects dirty or credential-bearing packages.”
-
-## 4:20-4:45 — Close
-
-**Screen:** Return to the overview and hot take.
+**Screen:** A credential-free case page showing public observations, authority rules, a final decision package, and deterministic checks. Keep any recorded or historical label visible.
 
 **Narration:**
 
-“Evidence Maintainer turns autonomous maintenance from ‘did the agent write something plausible?’ into ‘can it prove the safest correct disposition?’ The result is a measurable 20-point reliability gain, an auditable failure boundary, and a benchmark that rewards restraint as rigorously as action. That is the kind of autonomy I would trust with public data.”
+“Consider a source response in which an entity is absent because the request was filtered. Absence alone does not prove a real-world removal. A sound no-action decision must identify the relevant source and subject, apply the visible authority and time rules, avoid mutation, and state a consistent reason. The evaluator checks the semantics of that outcome rather than requiring one reference sentence.”
+
+## 2:35-3:25 — Why the old result was withdrawn
+
+**Screen:** [`holdout/INVALIDATION-v3.json`](../holdout/INVALIDATION-v3.json), then [`config/public-comparison.json`](../config/public-comparison.json).
+
+**Narration:**
+
+“The repository also records when its own evaluation was wrong. V3 completed all 30 planned workflow slots, but audit found that the baseline received a Challenger result synthesized from hidden oracle data while the advanced arm used a real Challenger that could reject its proposal. Two cases were also semantically invalid. I preserved the freeze, receipts, raw counts, latency, and token use, but withdrew the comparison. The public selector is deliberately empty. There is no valid performance headline yet.”
+
+## 3:25-4:05 — Reproducibility and failure handling
+
+**Screen:** [Reproduction guide](reproduction.md), then run `npm run engine:verify`.
+
+**Narration:**
+
+“The engine gate regenerates schemas, runs lint and the complete test suite, and builds the application without model credentials. Future runs use an exhaustive failure taxonomy. Model execution failures count against the workflow. Infrastructure failures abort aggregation. Evaluator-invalid cases are removed from both arms with a retained receipt. A broken evaluator cannot be silently repaired and rescored under the same version.”
+
+## 4:05-4:40 — What comes next
+
+**Screen:** Return to the README current-status section and V4 requirements.
+
+**Narration:**
+
+“The next experiment is a newly frozen V4 case pack with repeated trials and complete three-session accounting for the advanced arm. The unique case remains the statistical unit, and latency and tokens are first-class results because this is not a compute-matched comparison. Evidence Maintainer is ready to measure the question. It is not claiming an answer before the evidence exists.”
 
 ## Recording checklist
 
-- Show the final commit and a clean repository state.
-- Keep the `recorded` label visible whenever the credential-free demo is shown.
-- State that the frozen metrics come from the retained `live` bundle.
-- Show the 14/15 approval-eligible nuance; do not imply the Challenger accepted every proposal.
-- Keep total runtime under five minutes.
-- Verify audio, readable text, and no notifications or private content before upload.
+- Show the exact repository commit and a clean intended release tree.
+- Keep `recorded`, `historical`, and `invalidated` labels visible whenever those artifacts appear.
+- Do not quote V1-V3 arm rates as performance.
+- State plainly that no live V4 comparison has run.
+- Show the empty public comparison selector.
+- Verify audio, readable text, and the absence of notifications or private content before upload.

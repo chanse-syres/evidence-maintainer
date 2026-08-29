@@ -2,112 +2,111 @@
 
 ## Objective
 
-Evidence Maintainer evaluates whether an agent can convert uncertain public observations into a safe maintenance disposition. It is not a generic coding benchmark and it is not a maximally active update bot. The core problem is deciding what kind of event has occurred before choosing whether any mutation is legitimate.
+Evidence Maintainer evaluates whether an agent can turn uncertain public observations into a correct maintenance disposition. The five actions are `UPDATE_DATA`, `REPAIR_ADAPTER`, `RETRY_LATER`, `NO_ACTION`, and `HUMAN_REVIEW`.
 
-The five valid actions are `UPDATE_DATA`, `REPAIR_ADAPTER`, `RETRY_LATER`, `NO_ACTION`, and `HUMAN_REVIEW`. A correct label alone is insufficient: the resulting artifact, changed-file surface, regression state, and cited evidence must also be correct.
+A correct action label is not sufficient. The final package must also produce the right action-specific artifact, remain inside the allowed write surface, pass required execution checks, cite an admissible evidence bundle, and avoid contradictory claims.
 
-## Data flow
+## Compared workflows
 
 ```text
-Frozen case directory
-  |-- public manifest + provenance hashes
-  |-- immutable agent-visible workspace bytes
-  |-- evaluator-only oracle
+Frozen public case bytes
   |
-  +--> Direct baseline agent ------------------------------+
-  |                                                        |
-  +--> Maintainer --> structured proposal --> Challenger --+--> deterministic gate
-                                                               |-- action adjudication
-                                                               |-- evidence support
-                                                               |-- allowed mutation surface
-                                                               |-- before/after tree
-                                                               |-- regression commands
-                                                               +-- simulated approval
-                                                                    |
-                                                                    +--> immutable run bundle
-                                                                         |-- manifest + hashes
-                                                                         |-- raw trajectories
-                                                                         |-- structured decisions
-                                                                         |-- gate and approval
-                                                                         +-- rendered report
+  +--> Direct baseline --> final DecisionPackage -------------------+
+  |                                                               |
+  +--> Maintainer --> draft --> Challenger --> critique --> Reviser +
+                                                                  |
+                                                                  v
+                                                      finalizeDecision()
+                                                        |-- fresh workspace copy
+                                                        |-- declared operations only
+                                                        |-- public commands
+                                                        |-- hidden probes
+                                                        |-- shared semantic evaluator
+                                                        +-- immutable run evidence
 ```
 
-## Components
+### Direct baseline
 
-### Frozen cases
+The direct arm receives the frozen public snapshot and uses one model session to emit a final `DecisionPackage`. It never receives a Challenger artifact or hidden evaluator data.
 
-Each directory under [cases](../cases) contains:
+### Propose-challenge-revise
 
-- `case.json`, the public manifest, visible file list, policy, and SHA-256 provenance;
-- `workspace/`, the only bytes shown to agents and the only candidate workspace copied for execution;
-- `oracle.json`, evaluator-only expected behavior loaded after the agent finishes.
+The advanced arm receives the same public snapshot.
 
-The loader rejects absolute paths, path traversal, symlinks, undeclared visible files, duplicate provenance entries, and hash mismatches. The complete frozen case-set hash is derived from the sorted `(caseId, workspaceHash)` pairs.
+1. The Maintainer emits a draft `DecisionPackage` without mutating the workspace.
+2. The Challenger reads the public bytes and draft, then emits an advisory critique.
+3. The Reviser reads the same public bytes, draft, and critique, then emits the final `DecisionPackage`.
 
-### Baseline
+Only the revised final package reaches execution and scoring. The Challenger is a component of the advanced system, not an arm-specific evaluator. Changing only the critique while holding the final package fixed cannot change the external score.
 
-The direct baseline receives the complete agent-visible snapshot and returns a schema-bound result in one model session. It has the same public evidence, candidate bytes, action vocabulary, hidden oracle, timeout, and downstream deterministic checks as the advanced arm. It does not receive a Challenger.
+## Shared finalization boundary
 
-### Maintainer
+`finalizeDecision()` is the sole post-model execution boundary for both arms. It:
 
-The Maintainer must first ground the observation in an append-only evidence ledger, then produce exactly one structured proposal. The proposal declares:
+1. loads the public case and evaluator-owned oracle on the host;
+2. creates a fresh copied workspace;
+3. validates the final package and declared operations;
+4. applies only permitted operations;
+5. runs required public commands and hidden probes;
+6. captures before and after trees plus command evidence;
+7. invokes the same semantic evaluator;
+8. writes the final package and deterministic evidence.
 
-- the intended action and rationale;
-- evidence IDs supporting observable claims;
-- exact mutations, if any;
-- expected changed files;
-- regression commands and invariants;
-- confidence and required approval level.
+Neither workflow can provide a pre-mutated workspace or substitute precomputed command results.
 
-This separates reasoning from mutation. No proposed write is applied during the model session.
+## Semantic evaluation
 
-### Challenger
+Operational Decision Integrity is the conjunction of six blocking checks:
 
-The Challenger receives the same frozen evidence plus the Maintainer proposal. It cannot edit the candidate. Its job is to seek disconfirming evidence across five failure surfaces: source authority, temporal semantics, identity continuity, regression risk, and process/approval completeness. It returns a structured accept-or-reject verdict with reason codes.
+| Check | Question |
+| --- | --- |
+| `action-correct` | Is the selected maintenance action semantically correct? |
+| `artifact-correct` | Does the action-specific artifact satisfy the public contract? |
+| `no-forbidden-mutation` | Did every write remain inside the permitted surface and preserve protected state? |
+| `required-commands-passed` | Did public commands and evaluator-owned probes pass? |
+| `source-coverage` | Does the decision cite a complete admissible source bundle? |
+| `contradiction-free` | Is the package internally consistent and satisfiable? |
 
-This role is intentionally independent. It can reduce throughput by blocking a correct proposal, as happened once in the final comparison. That cost is reported rather than hidden.
+`annotation-aligned` is diagnostic only. The evaluator accepts materially equivalent artifacts instead of requiring byte-for-byte equality with one reference serialization.
 
-### Mutation engine and deterministic gate
+## Authority and future evidence
 
-Only declared mutations are applied, and only inside the copied case workspace. The gate then verifies:
+Policies express authority using one of three explicit modes:
 
-1. the proposal and Challenger outputs satisfy their schemas;
-2. the adjudicated action matches the hidden oracle;
-3. the resulting artifact or abstention is exact;
-4. changed files are within the allowed action-specific surface;
-5. regression commands complete successfully;
-6. required invariants remain true;
-7. evidence IDs support the submitted claims;
-8. no external or live write occurred.
+- `SNAPSHOT_MAX_AGE` for observations whose authority expires after a stated age;
+- `EFFECTIVE_UNTIL_SUPERSEDED` for signed or effective-dated entries;
+- `EVENT_AT_CUTOFF` for state determined at a declared event boundary.
 
-The simulated approval step is downstream of the gate. It is evidence that the benchmark workflow reached its authorization boundary, not authorization to mutate a production system.
+Cross-subject authority requires an agent-visible applicability binding.
+
+Retry plans identify future evidence with semantic selectors—source, subject, optional kind, fact path, operator, and expected value—rather than requiring a future observation to reuse a current immutable evidence ID.
 
 ## Isolation boundaries
 
-| Boundary | Agent can read | Agent can write | Enforced by |
+| Boundary | Model can read | Model can write | Enforcement |
 | --- | --- | --- | --- |
-| Public case | Declared workspace bytes | Nothing | Manifest and provenance loader |
-| Candidate run | Copied workspace | Declared candidate files only | Mutation engine and tree diff |
-| Oracle | Nothing during execution | Nothing | Evaluator-only load after session |
-| Challenger | Evidence and proposal | Structured verdict only | Separate role schema |
+| Public case | Declared case bytes | Nothing | Manifest and provenance loader |
+| Draft and critique | Role-appropriate public process artifacts | Structured output only | Role schema |
+| Candidate workspace | None before finalization | Declared operations through the finalizer | Operation validation and tree diff |
+| Oracle and hidden probes | Nothing | Nothing | Evaluator-owned host load after model execution |
 | External services | None required | Never | Offline case design and runner contract |
-| Approval | Gate result | Simulated record only | Deterministic approval module |
 
-Shell-independent input is a reliability feature, not privileged context. Both arms receive identical immutable file bytes already declared in `case.json`; the actual candidate still executes inside the isolated workspace. This removed host-shell policy as an accidental variable in the final experiment.
+## Failure ownership
 
-## Artifact lineage
+Every selected slot has one disposition:
 
-Every run bundle has a `manifest.json` that binds case, arm, truth-labeled mode, model, timeout, rendered prompt hash, output schema hash, trajectory paths, artifact hashes, timing, tokens when available, and final outcome. The raw JSONL trajectories remain adjacent to their structured outputs.
+- `NONE` for a completed ODI pass;
+- `GENUINE_SEMANTIC_FAILURE` for a completed package that fails a blocking check;
+- `MODEL_EXECUTION` for a model-owned failure to produce a usable completion;
+- `INFRASTRUCTURE` for a host or service failure, which aborts aggregation;
+- `EVALUATOR_INVALID` for an invalid case or grader, excluded symmetrically from both arms with a retained receipt.
 
-The aggregate summary binds the sorted case-set hash and one row per arm and case. The credential-free demo produces HTML reports whose hashes are recorded in its own manifest. The submission verifier independently recalculates case, artifact, report, trajectory, documentation, and repository-integrity checks before release.
+No evaluator defect may be repaired in place and silently rescored. A corrected case requires a new version and freeze.
 
-## Live versus recorded truth labels
+## Provenance and reporting
 
-- `live` means a fresh model session was executed and its raw trajectory was retained.
-- `recorded` means a deterministic fixture was replayed to prove the harness without credentials or compute.
+Run manifests bind the case, arm, model, timeout, role trajectories, structured outputs, runtime image, artifact hashes, duration, and trustworthy token receipts. The advanced arm requires complete Maintainer, Challenger, and Reviser accounting.
 
-Recorded results are never presented as live evidence. The UI, manifests, reports, evaluation documentation, and reproduction guide preserve this distinction.
+The unique case is the outer statistical unit. Repeated trials remain nested within case so an uneven row count cannot silently reweight the comparison.
 
-## Why two agents instead of a swarm
-
-The observed failures were evidence and contract failures, not a lack of parallel ideation. A Maintainer and one adversarial Challenger provide non-overlapping responsibilities while keeping causality and cost measurable. A larger swarm was considered but was neither implemented nor measured, so the submission makes no claim that additional agents would improve reliability.
+The public selector in [`config/public-comparison.json`](../config/public-comparison.json) is the only authority for a headline comparison. It currently selects nothing because no valid live V4 campaign has completed.

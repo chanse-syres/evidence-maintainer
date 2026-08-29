@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "status": "PENDING_VALID_V4_CAMPAIGN",
+  "selectedCampaign": null,
+  "selectedSummary": null,
+  "selectionRule": "Select only a completed, non-invalidated V4 campaign produced by the symmetric final-decision contract and shared semantic evaluator.",
+  "excludedCampaigns": [
+    {
+      "campaign": "holdout-v1",
+      "invalidation": "holdout/INVALIDATION-v1.json"
+    },
+    {
+      "campaign": "holdout-v2",
+      "invalidation": "holdout/INVALIDATION-v2.json"
+    },
+    {
+      "campaign": "holdout-v3",
+      "invalidation": "holdout/INVALIDATION-v3.json"
+    }
+  ]
+}

@@ -1,51 +1,45 @@
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import test, { before } from "node:test";
-import { runEvaluation } from "../src/evaluation/run-evaluation.ts";
 import { renderDecisionReport } from "../src/reports/render-decision-report.ts";
+import { writeV4EvaluationFixture } from "./helpers/v4-run-fixture.ts";
 
-let recordedRun: string;
+let baselineRun: string;
+let advancedRun: string;
 
 before(async () => {
-  const root = await mkdtemp(join(tmpdir(), "evidence-report-v2-"));
-  await runEvaluation({
-    caseIds: ["update-official-commitment"],
-    trials: 1,
-    mode: "recorded",
-    model: "recorded-fixture",
-    timeoutMs: 30_000,
-    outDir: root,
-  });
-  recordedRun = join(root, "runs", "update-official-commitment", "trial-1", "advanced");
+  ({ baselineRun, advancedRun } = await writeV4EvaluationFixture());
 });
 
-test("decision report renders every evidence and approval section", async () => {
-  const html = await renderDecisionReport(recordedRun);
+test("decision report renders the V4 final decision and verification sections", async () => {
+  const html = await renderDecisionReport(advancedRun);
   for (const heading of [
     "Recorded evidence",
     "Selected action",
     "Evidence timeline",
-    "Maintainer proposal",
-    "Challenger verdict",
+    "Final decision",
     "Deterministic checks",
     "Changed files",
-    "Residual risk",
-    "Approval decision",
+    "Residual uncertainty",
+    "Eligibility decision",
     "Artifact hashes",
   ]) {
     assert.match(html, new RegExp(`>${heading}<`));
   }
   assert.doesNotMatch(html, /Live agent result/);
-  assert.match(html, /UPDATE_DATA/);
-  assert.match(html, /obs-official-commitment/);
+  assert.match(html, /NO_ACTION/);
+  assert.match(html, /obs-v4-report-case/);
   assert.match(html, /<style>/);
   assert.doesNotMatch(html, /<script|https?:\/\//);
 });
 
+test("baseline report renders without an advanced evidence ledger", async () => {
+  const html = await renderDecisionReport(baselineRun);
+  assert.match(html, /No recorded evidence events\./);
+  assert.match(html, /Final decision/);
+});
+
 test("decision report escapes agent-controlled text", async () => {
-  const html = await renderDecisionReport(recordedRun, {
+  const html = await renderDecisionReport(advancedRun, {
     titleOverride: '<img src=x onerror="alert(1)">',
   });
   assert.match(html, /&lt;img src=x onerror=&quot;alert\(1\)&quot;&gt;/);

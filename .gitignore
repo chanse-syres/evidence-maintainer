@@ -13,3 +13,4 @@ artifacts/evaluation/final-v4/runs/
 *.tmp
 .DS_Store
 Thumbs.db
+docs/superpowers/

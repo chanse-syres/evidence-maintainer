@@ -53,15 +53,14 @@ export async function renderDecisionReport(
 </head>
 <body><main class="wrap">
 <header class="top"><div class="kicker">Evidence Maintainer · Decision record</div><h1>${escapeHtml(title)}</h1><p>${escapeHtml(artifacts.caseManifest.description)}</p><span class="mode">${modeLabel}</span></header>
-<section class="decision"><h2>Selected action</h2><strong>${escapeHtml(artifacts.proposal.action)}</strong><p>${escapeHtml(artifacts.proposal.summary)}</p></section>
+<section class="decision"><h2>Selected action</h2><strong>${escapeHtml(artifacts.decision.action)}</strong><p>${escapeHtml(artifacts.decision.summary)}</p></section>
 <div class="grid">
-<section class="card wide"><h2>Evidence timeline</h2>${artifacts.evidence.map((event) => `<article class="event"><code>${escapeHtml(event.id)} · ${escapeHtml(event.kind)}</code><div><p>${escapeHtml(event.occurredAt)}</p><p>Evidence: ${escapeHtml(event.evidenceIds.join(", "))}</p></div></article>`).join("")}</section>
-<section class="card"><h2>Maintainer proposal</h2><pre>${pretty(artifacts.proposal)}</pre></section>
-<section class="card"><h2>Challenger verdict</h2><p><strong>${escapeHtml(artifacts.challenger.verdict)}</strong></p><p>${escapeHtml(artifacts.challenger.summary)}</p><div style="margin-top:14px">${list(artifacts.challenger.violations, "No violations identified.")}</div></section>
+<section class="card wide"><h2>Evidence timeline</h2>${artifacts.evidence.length === 0 ? '<p class="empty">No recorded evidence events.</p>' : artifacts.evidence.map((event) => `<article class="event"><code>${escapeHtml(event.id)} · ${escapeHtml(event.kind)}</code><div><p>${escapeHtml(event.occurredAt)}</p><p>Evidence: ${escapeHtml(event.evidenceIds.join(", "))}</p></div></article>`).join("")}</section>
+<section class="card wide"><h2>Final decision</h2><pre>${pretty(artifacts.decision)}</pre></section>
 <section class="card wide"><h2>Deterministic checks</h2><div class="checks">${artifacts.gate.checks.map((check) => `<div class="check ${check.passed ? "pass" : "fail"}"><b>${check.passed ? "PASS" : "FAIL"}</b> · ${escapeHtml(check.id)}<p>${escapeHtml(check.summary)}</p></div>`).join("")}</div></section>
 <section class="card"><h2>Changed files</h2>${list(changedFiles, "No files changed.")}</section>
-<section class="card"><h2>Residual risk</h2>${list(artifacts.challenger.residualRisks, "No residual risk identified by the Challenger.")}</section>
-<section class="card"><h2>Approval decision</h2><p><strong>${escapeHtml(artifacts.approval.decision)}</strong></p><p>${escapeHtml(artifacts.approval.reason)}</p></section>
+<section class="card"><h2>Residual uncertainty</h2>${list(artifacts.decision.unresolvedUncertainty, "No unresolved uncertainty was recorded.")}</section>
+<section class="card"><h2>Eligibility decision</h2><p><strong>${escapeHtml(artifacts.approval.decision)}</strong></p><p>${escapeHtml(artifacts.approval.reason)}</p></section>
 <section class="card"><h2>Recorded evidence</h2><p>Mode: ${escapeHtml(artifacts.manifest.mode)}</p><p>Model: ${escapeHtml(artifacts.manifest.model)}</p><p>Run: ${escapeHtml(artifacts.manifest.runId)}</p></section>
 <section class="card wide"><h2>Artifact hashes</h2><table class="hashes">${hashes}</table></section>
 </div>
