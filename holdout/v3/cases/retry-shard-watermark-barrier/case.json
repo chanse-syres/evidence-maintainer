@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "retry-shard-watermark-barrier",
+  "title": "Sharded index publication barrier",
+  "description": "A signed index manifest and two shard watermarks disagree inside the allowed publication window.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic multi-shard atomic publication pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "e6b730b658ff4a83fe000ef26f8ff1b0882c783e5d4bb3bae710cd144dd9af7e"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "6d340ecbbd1713ded5fba54e832af8fda1b722de1143e91f826f94369a3b7652"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "5a767277846b92a8977881f4febde0ed8a9d4693018dcc309f0c939e7a9bfb0c"
+    }
+  ]
+}

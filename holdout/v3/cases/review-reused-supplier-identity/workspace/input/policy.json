@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {
+    "supplierLegalEntityId": "official-award-register+official-business-register",
+    "supplierJurisdiction": "official-award-register+official-business-register"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "A trading name is not a legal-entity identifier",
+    "A dissolved entity and a successor remain distinct occurrences even when names match"
+  ],
+  "rules": [
+    "Attribute an award only when its supplier registration and jurisdiction bind exactly one registry occurrence",
+    "Request the missing binding fields when multiple occurrences share the supplied name"
+  ]
+}

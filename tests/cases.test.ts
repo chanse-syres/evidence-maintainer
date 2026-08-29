@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, readdir } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -9,6 +9,7 @@ import { copyCaseWorkspace, loadOracle, loadPublicCase } from "../src/core/case-
 import { BaselineResultSchema, ChallengerVerdictSchema, MaintainerProposalSchema } from "../src/core/schemas.ts";
 import { snapshotTree } from "../src/core/tree-snapshot.ts";
 import { generateHoldoutCases, HOLDOUT_CASE_IDS } from "../scripts/generate-holdout-cases.ts";
+import { generateHoldoutV3Cases, HOLDOUT_V3_CASE_IDS } from "../scripts/generate-holdout-v3-cases.ts";
 
 export const CORE_CASE_IDS = [
   "update-official-commitment",
@@ -133,6 +134,75 @@ test("the holdout release-skew case is inside its visible transient window", asy
     loaded.observations.every((observation) => new Date(observation.observedAt).getTime() >= earliestAllowed),
     "every release-skew observation must be inside the policy's visible freshness window",
   );
+});
+
+test("holdout-v3 is reproducible, balanced, and checked in byte-for-byte", async () => {
+  const generatedRoot = await mkdtemp(join(tmpdir(), "evidence-holdout-v3-check-"));
+  assert.deepEqual(await generateHoldoutV3Cases(generatedRoot), [...HOLDOUT_V3_CASE_IDS]);
+  const actions = new Set<string>();
+  for (const caseId of HOLDOUT_V3_CASE_IDS) {
+    const loaded = await loadPublicCase(join(generatedRoot, caseId));
+    const oracle = await loadOracle(join(generatedRoot, caseId));
+    assert.equal(loaded.manifest.id, caseId);
+    assert.match(loaded.workspaceHash, /^[a-f0-9]{64}$/);
+    actions.add(oracle.expectedAction);
+  }
+  assert.deepEqual(
+    [...actions].sort(),
+    ["HUMAN_REVIEW", "NO_ACTION", "REPAIR_ADAPTER", "RETRY_LATER", "UPDATE_DATA"],
+  );
+  assert.deepEqual(
+    await snapshotTree(resolve("holdout", "v3", "cases")),
+    await snapshotTree(generatedRoot),
+  );
+});
+
+test("holdout-v3 pagination starter is broken and the bounded reference repair passes", async () => {
+  const caseId = "repair-generation-bound-pagination";
+  const caseDir = resolve("holdout", "v3", "cases", caseId);
+  const loaded = await loadPublicCase(caseDir);
+  const starter = await run(loaded.manifest.requiredCommands[0], join(caseDir, "workspace"));
+  assert.notEqual(starter.code, 0);
+  assert.match(starter.output, /pass 1/i);
+  assert.match(starter.output, /fail 1/i);
+
+  const root = await mkdtemp(join(tmpdir(), "evidence-holdout-v3-reference-"));
+  const workspace = await copyCaseWorkspace(caseDir, join(root, "workspace"));
+  await writeFile(join(workspace, "adapter.ts"), `export interface CatalogRecord { id: string; value: number }
+export interface CatalogPage {
+  generation: number;
+  requestCursor: string | null;
+  nextCursor: string | null;
+  records: CatalogRecord[];
+}
+
+export function materializeSnapshot(pages: CatalogPage[]): CatalogRecord[] {
+  let current: { generation: number; nextCursor: string | null; records: CatalogRecord[] } | null = null;
+  let completed: CatalogRecord[] | null = null;
+  for (const page of pages) {
+    if (page.requestCursor === null) {
+      current = { generation: page.generation, nextCursor: page.nextCursor, records: [...page.records] };
+    } else if (
+      current !== null &&
+      page.generation === current.generation &&
+      page.requestCursor === current.nextCursor
+    ) {
+      current.records.push(...page.records);
+      current.nextCursor = page.nextCursor;
+    } else {
+      current = null;
+    }
+    if (current?.nextCursor === null) {
+      completed = [...current.records];
+      current = null;
+    }
+  }
+  if (current !== null || completed === null) throw new Error("No complete terminal generation");
+  return completed;
+}
+`, "utf8");
+  const reference = await run(loaded.manifest.requiredCommands[0], workspace);
+  assert.equal(reference.code, 0, reference.output);
 });
 
 test("human-review cases require an exact resolving-information request and zero mutation", async () => {

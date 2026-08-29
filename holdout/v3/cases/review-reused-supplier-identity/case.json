@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "review-reused-supplier-identity",
+  "title": "Reused supplier-name attribution",
+  "description": "An award names a supplier whose trading name is shared by a dissolved entity and its successor.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic legal-entity occurrence identity pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "f5f063209ee17a8f1fd6c8b793d15855808cc014031f31dd4cfad9034b73d52f"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "1aa2ed71d50bc394fc1b2d01889927e0abb2b040052a092ccc954f660a90e4b1"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "935ff4263a5faf56c79bd8d79ebe958faae11b444720878fe2eb641ab70ae44e"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-29T23:00:00.000Z",
+  "authorityByField": {
+    "rate": "official-levy-register",
+    "materializedRevision": "official-levy-register",
+    "effectiveFrom": "official-levy-register"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Canonical state represents the authoritative revision effective at the cutoff",
+    "Publication time never substitutes for effective time"
+  ],
+  "rules": [
+    "Choose the latest signed revision with effectiveAt at or before the cutoff",
+    "Do not write when that effective revision already matches canonical state"
+  ]
+}

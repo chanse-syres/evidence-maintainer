@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 2,
+  "caseId": "review-reused-supplier-identity",
+  "expectedAction": "HUMAN_REVIEW",
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-award-882",
+        "factPath": "facts.supplierRegistrationId",
+        "disposition": "CONTEXT",
+        "reason": "The award omits the registration needed for occurrence binding."
+      },
+      {
+        "evidenceId": "obs-harbor-old",
+        "factPath": "facts.registrationId",
+        "disposition": "CONTEXT",
+        "reason": "One historical entity owns the shared trading name."
+      },
+      {
+        "evidenceId": "obs-harbor-new",
+        "factPath": "facts.registrationId",
+        "disposition": "CONTEXT",
+        "reason": "A distinct active entity also owns the shared trading name."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-award-882",
+      "factPath": "facts.supplierRegistrationId",
+      "disposition": "CONTEXT",
+      "reason": "The award omits the registration needed for occurrence binding."
+    },
+    {
+      "evidenceId": "obs-harbor-old",
+      "factPath": "facts.registrationId",
+      "disposition": "CONTEXT",
+      "reason": "One historical entity owns the shared trading name."
+    },
+    {
+      "evidenceId": "obs-harbor-new",
+      "factPath": "facts.registrationId",
+      "disposition": "CONTEXT",
+      "reason": "A distinct active entity also owns the shared trading name."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
+    "obs-award-882",
+    "obs-harbor-old",
+    "obs-harbor-new"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [
+    {
+      "subjectId": "award-882",
+      "targetEvidenceId": "obs-award-882",
+      "requestedFactPaths": [
+        "facts.supplierJurisdiction",
+        "facts.supplierRegistrationId"
+      ]
+    }
+  ],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
+}

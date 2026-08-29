@@ -1,0 +1,11 @@
+[
+  {
+    "id": "account-314",
+    "windowStart": "2026-08-20T00:00:00.000Z",
+    "windowEnd": "2026-08-21T00:00:00.000Z",
+    "usageKwh": 18,
+    "chargeCents": 396,
+    "tariffRevision": "rev-11",
+    "status": "open"
+  }
+]

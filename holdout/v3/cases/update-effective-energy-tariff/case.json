@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "update-effective-energy-tariff",
+  "title": "Metered-energy tariff reconciliation",
+  "description": "A metered billing window and an effective tariff revision jointly determine the canonical charge.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic effective-dated utility billing pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "input/canonical.json"
+  ],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "41bedbab13da524599d51e88251328629f3e95faf9cafddfcbcbbb90e062533f"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "b9788e35b600ef407f3c08622834c04ec9e3eeb7718c5287434137e8d4f1eeba"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "126addbfe1a1090f62a056479dc7d3eba3720bfeb3f84ffbe99b4762b3f289c0"
+    }
+  ]
+}

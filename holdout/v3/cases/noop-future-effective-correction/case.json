@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "noop-future-effective-correction",
+  "title": "Future-effective levy revision",
+  "description": "A newer official levy revision is published before the cutoff but does not become effective until afterward.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic bitemporal policy materialization pattern",
+  "agentVisibleFiles": [
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [],
+  "requiredCommands": [],
+  "provenance": [
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "af9918a3d13d686cde845ba34d6e4abaaa1b474860e90ab5ab281d204a23a96b"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "e34d2c13ae1322988369b4d16f7f520448c1fd1d1289e0cf40bbbc5d63ee8d9c"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "1c295292403fd1656f061c279437231ae4428672f32cba318318d1a53fdf58c5"
+    }
+  ]
+}

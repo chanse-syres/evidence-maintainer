@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 2,
+  "caseId": "retry-shard-watermark-barrier",
+  "expectedAction": "RETRY_LATER",
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-index-manifest-205",
+        "factPath": "facts.generation",
+        "disposition": "SUPPORT",
+        "reason": "The manifest declares the candidate generation."
+      },
+      {
+        "evidenceId": "obs-east-shard-205",
+        "factPath": "facts.generation",
+        "disposition": "SUPPORT",
+        "reason": "The east shard has reached the candidate generation."
+      },
+      {
+        "evidenceId": "obs-west-shard-204",
+        "factPath": "facts.generation",
+        "disposition": "SUPPORT",
+        "reason": "The west shard remains one generation behind."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-index-manifest-205",
+      "factPath": "facts.generation",
+      "disposition": "SUPPORT",
+      "reason": "The manifest declares the candidate generation."
+    },
+    {
+      "evidenceId": "obs-east-shard-205",
+      "factPath": "facts.generation",
+      "disposition": "SUPPORT",
+      "reason": "The east shard has reached the candidate generation."
+    },
+    {
+      "evidenceId": "obs-west-shard-204",
+      "factPath": "facts.generation",
+      "disposition": "SUPPORT",
+      "reason": "The west shard remains one generation behind."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
+    "obs-index-manifest-205",
+    "obs-east-shard-205",
+    "obs-west-shard-204"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": {
+    "notBefore": "2026-08-28T17:12:00.000Z",
+    "maxAttempts": 3,
+    "escalateAfterAttempt": 3,
+    "preserveRecordIds": [
+      "search-index"
+    ],
+    "agreementChecks": [
+      {
+        "leftEvidenceId": "obs-index-manifest-205",
+        "leftFactPath": "facts.generation",
+        "rightEvidenceId": "obs-east-shard-205",
+        "rightFactPath": "facts.generation"
+      },
+      {
+        "leftEvidenceId": "obs-index-manifest-205",
+        "leftFactPath": "facts.generation",
+        "rightEvidenceId": "obs-west-shard-204",
+        "rightFactPath": "facts.generation"
+      },
+      {
+        "leftEvidenceId": "obs-index-manifest-205",
+        "leftFactPath": "facts.eastWatermark",
+        "rightEvidenceId": "obs-east-shard-205",
+        "rightFactPath": "facts.watermark"
+      },
+      {
+        "leftEvidenceId": "obs-index-manifest-205",
+        "leftFactPath": "facts.westWatermark",
+        "rightEvidenceId": "obs-west-shard-204",
+        "rightFactPath": "facts.watermark"
+      }
+    ],
+    "valueChecks": [
+      {
+        "evidenceId": "obs-index-manifest-205",
+        "factPath": "facts.signatureValid",
+        "expectedValue": true
+      },
+      {
+        "evidenceId": "obs-east-shard-205",
+        "factPath": "facts.complete",
+        "expectedValue": true
+      },
+      {
+        "evidenceId": "obs-west-shard-204",
+        "factPath": "facts.complete",
+        "expectedValue": true
+      }
+    ]
+  },
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
+}

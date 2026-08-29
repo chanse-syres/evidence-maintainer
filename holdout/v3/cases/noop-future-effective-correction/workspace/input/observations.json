@@ -1,0 +1,42 @@
+[
+  {
+    "id": "obs-levy-rev-18",
+    "sourceId": "official-levy-register",
+    "observedAt": "2026-08-01T08:00:00.000Z",
+    "effectiveAt": "2026-08-01T00:00:00.000Z",
+    "authorityScope": [
+      "levy-rate",
+      "revision"
+    ],
+    "subjectId": "district-levy-9",
+    "kind": "signed-revision",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "levy-revision-v2",
+    "facts": {
+      "revision": "rev-18",
+      "rate": 0.012,
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-levy-rev-19",
+    "sourceId": "official-levy-register",
+    "observedAt": "2026-08-29T16:00:00.000Z",
+    "effectiveAt": "2026-09-01T00:00:00.000Z",
+    "authorityScope": [
+      "levy-rate",
+      "revision"
+    ],
+    "subjectId": "district-levy-9",
+    "kind": "signed-revision",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "levy-revision-v2",
+    "facts": {
+      "revision": "rev-19",
+      "rate": 0.014,
+      "signatureValid": true
+    }
+  }
+]

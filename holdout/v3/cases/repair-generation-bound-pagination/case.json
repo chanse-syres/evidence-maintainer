@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "repair-generation-bound-pagination",
+  "title": "Generation-bound pagination repair",
+  "description": "An adapter must materialize one complete snapshot when a paginated source rolls generations between requests.",
+  "sourceClass": "SYNTHETIC",
+  "createdFrom": "Synthetic generation-bound cursor pagination pattern",
+  "agentVisibleFiles": [
+    "workspace/adapter.test.ts",
+    "workspace/adapter.ts",
+    "workspace/input/canonical.json",
+    "workspace/input/observations.json",
+    "workspace/input/policy.json"
+  ],
+  "allowedWritePaths": [
+    "adapter.ts"
+  ],
+  "requiredCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "provenance": [
+    {
+      "sourceId": "holdout-adapter.test.ts",
+      "path": "workspace/adapter.test.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "aafe5d35e070c2fc89557129ea55d59a0d87ae394b49ccd2e4d24dffa563d82c"
+    },
+    {
+      "sourceId": "holdout-adapter.ts",
+      "path": "workspace/adapter.ts",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "aeb7e5c53c87f70c80c0ef45f46c2b3d0034b9ea767e58a04bdce7fc2ca4859a"
+    },
+    {
+      "sourceId": "holdout-input-canonical.json",
+      "path": "workspace/input/canonical.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "sourceId": "holdout-input-observations.json",
+      "path": "workspace/input/observations.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "a255af11fd907f4df5270d7eeebc13ca7565a327d42fd21a88483b3b2dfc383c"
+    },
+    {
+      "sourceId": "holdout-input-policy.json",
+      "path": "workspace/input/policy.json",
+      "sourceClass": "SYNTHETIC",
+      "capturedAt": "2026-08-28T23:30:00.000Z",
+      "transformation": "Synthetic holdout fixture created before the frozen evaluation campaign",
+      "permissionBasis": "Created for this benchmark",
+      "sha256": "ebcef2df96d3099f33b25833cb6b946bf353ffaac2ec44ef4b88acfa36c3de48"
+    }
+  ]
+}

@@ -9,7 +9,7 @@ import type {
   ReviewRequest,
 } from "../src/core/schemas.ts";
 
-interface HoldoutDefinition {
+export interface HoldoutDefinition {
   id: string;
   title: string;
   description: string;
@@ -35,11 +35,11 @@ interface HoldoutDefinition {
   };
 }
 
-const json = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
+export const json = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 const capturedAt = "2026-08-28T23:30:00.000Z";
 const adapterCommand = "node --experimental-strip-types --test adapter.test.ts";
 
-function policy(input: {
+export function policy(input: {
   cutoff?: string;
   authorityByField?: Record<string, string>;
   freshnessWindowMinutes?: number;
@@ -58,7 +58,7 @@ function policy(input: {
   };
 }
 
-function observation(input: {
+export function observation(input: {
   id: string;
   sourceId: string;
   observedAt: string;
@@ -688,7 +688,7 @@ test("each current endpoint uses its declared offset", () => {
 
 export const HOLDOUT_CASE_IDS = definitions.map((definition) => definition.id) as readonly string[];
 
-async function writeCase(root: string, definition: HoldoutDefinition): Promise<void> {
+export async function writeCase(root: string, definition: HoldoutDefinition): Promise<void> {
   const caseDir = resolve(root, definition.id);
   await rm(caseDir, { recursive: true, force: true });
   const provenance = [];

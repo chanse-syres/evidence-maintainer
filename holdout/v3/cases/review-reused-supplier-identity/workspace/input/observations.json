@@ -1,0 +1,65 @@
+[
+  {
+    "id": "obs-award-882",
+    "sourceId": "official-award-register",
+    "observedAt": "2026-08-28T15:00:00.000Z",
+    "effectiveAt": "2026-08-28T14:30:00.000Z",
+    "authorityScope": [
+      "award",
+      "supplier-reference"
+    ],
+    "subjectId": "award-882",
+    "kind": "signed-award",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "award-v3",
+    "facts": {
+      "supplierName": "Harbor Analytics",
+      "supplierRegistrationId": null,
+      "supplierJurisdiction": null,
+      "signatureValid": true
+    }
+  },
+  {
+    "id": "obs-harbor-old",
+    "sourceId": "official-business-register",
+    "observedAt": "2026-08-28T12:00:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "legal-entity-identity"
+    ],
+    "subjectId": "entity-old-44",
+    "kind": "entity-record",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "entity-record-v5",
+    "facts": {
+      "tradingName": "Harbor Analytics",
+      "registrationId": "OR-4401",
+      "jurisdiction": "OR",
+      "entityStatus": "dissolved",
+      "dissolvedAt": "2026-07-31T00:00:00.000Z"
+    }
+  },
+  {
+    "id": "obs-harbor-new",
+    "sourceId": "official-business-register",
+    "observedAt": "2026-08-28T12:01:00.000Z",
+    "effectiveAt": null,
+    "authorityScope": [
+      "legal-entity-identity"
+    ],
+    "subjectId": "entity-new-91",
+    "kind": "entity-record",
+    "status": 200,
+    "contentType": "application/json",
+    "schemaFingerprint": "entity-record-v5",
+    "facts": {
+      "tradingName": "Harbor Analytics",
+      "registrationId": "WA-9107",
+      "jurisdiction": "WA",
+      "entityStatus": "active",
+      "formedAt": "2026-08-01T00:00:00.000Z"
+    }
+  }
+]

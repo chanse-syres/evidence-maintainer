@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 2,
+  "caseId": "update-effective-energy-tariff",
+  "expectedAction": "UPDATE_DATA",
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-meter-window-314",
+        "factPath": "facts.usageKwh",
+        "disposition": "SUPPORT",
+        "reason": "The final meter window supplies settled usage."
+      },
+      {
+        "evidenceId": "obs-meter-window-314",
+        "factPath": "facts.settlementState",
+        "disposition": "SUPPORT",
+        "reason": "Only final settlement may update the bill."
+      },
+      {
+        "evidenceId": "obs-tariff-rev-12",
+        "factPath": "effectiveAt",
+        "disposition": "SUPPORT",
+        "reason": "The tariff is effective before the billing window begins."
+      },
+      {
+        "evidenceId": "obs-tariff-rev-12",
+        "factPath": "facts.revision",
+        "disposition": "SUPPORT",
+        "reason": "The signed revision identifies the applied tariff."
+      },
+      {
+        "evidenceId": "obs-tariff-rev-12",
+        "factPath": "facts.signatureValid",
+        "disposition": "SUPPORT",
+        "reason": "A signed tariff is required."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-meter-window-314",
+      "factPath": "facts.usageKwh",
+      "disposition": "SUPPORT",
+      "reason": "The final meter window supplies settled usage."
+    },
+    {
+      "evidenceId": "obs-meter-window-314",
+      "factPath": "facts.settlementState",
+      "disposition": "SUPPORT",
+      "reason": "Only final settlement may update the bill."
+    },
+    {
+      "evidenceId": "obs-tariff-rev-12",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "The tariff is effective before the billing window begins."
+    },
+    {
+      "evidenceId": "obs-tariff-rev-12",
+      "factPath": "facts.revision",
+      "disposition": "SUPPORT",
+      "reason": "The signed revision identifies the applied tariff."
+    },
+    {
+      "evidenceId": "obs-tariff-rev-12",
+      "factPath": "facts.signatureValid",
+      "disposition": "SUPPORT",
+      "reason": "A signed tariff is required."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
+    "obs-meter-window-314",
+    "obs-tariff-rev-12"
+  ],
+  "allowedChangedFiles": [
+    "input/canonical.json"
+  ],
+  "expectedRecords": [
+    {
+      "file": "input/canonical.json",
+      "recordId": "account-314",
+      "fields": {
+        "usageKwh": 26.5,
+        "chargeCents": 543,
+        "tariffRevision": "rev-12"
+      }
+    }
+  ],
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "cutoff": "2026-08-28T23:00:00.000Z",
+  "authorityByField": {
+    "usageKwh": "official-meter-ledger",
+    "chargeCents": "official-meter-ledger+official-tariff-register",
+    "tariffRevision": "official-tariff-register"
+  },
+  "freshnessWindowMinutes": 10080,
+  "retryLimit": 2,
+  "invariants": [
+    "Billing identity, window, and status remain unchanged",
+    "Only a final meter settlement and a signed tariff effective at the window start may control the charge"
+  ],
+  "rules": [
+    "Use the latest signed tariff whose effective time is at or before the billing-window start",
+    "Charge cents equal base charge plus the first-tier usage times its rate plus excess usage times its rate, rounded to the nearest cent"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 2,
+  "caseId": "noop-future-effective-correction",
+  "expectedAction": "NO_ACTION",
+  "evidenceAssessmentBundles": [
+    [
+      {
+        "evidenceId": "obs-levy-rev-18",
+        "factPath": "effectiveAt",
+        "disposition": "SUPPORT",
+        "reason": "Revision 18 is effective at the cutoff."
+      },
+      {
+        "evidenceId": "obs-levy-rev-18",
+        "factPath": "facts.rate",
+        "disposition": "SUPPORT",
+        "reason": "The effective rate matches canonical state."
+      },
+      {
+        "evidenceId": "obs-levy-rev-19",
+        "factPath": "effectiveAt",
+        "disposition": "REJECT",
+        "reason": "Revision 19 is future-effective and cannot control the cutoff snapshot."
+      }
+    ]
+  ],
+  "allowedEvidenceAssessments": [
+    {
+      "evidenceId": "obs-levy-rev-18",
+      "factPath": "effectiveAt",
+      "disposition": "SUPPORT",
+      "reason": "Revision 18 is effective at the cutoff."
+    },
+    {
+      "evidenceId": "obs-levy-rev-18",
+      "factPath": "facts.rate",
+      "disposition": "SUPPORT",
+      "reason": "The effective rate matches canonical state."
+    },
+    {
+      "evidenceId": "obs-levy-rev-19",
+      "factPath": "effectiveAt",
+      "disposition": "REJECT",
+      "reason": "Revision 19 is future-effective and cannot control the cutoff snapshot."
+    }
+  ],
+  "requiredChallengerEvidenceIds": [
+    "obs-levy-rev-18",
+    "obs-levy-rev-19"
+  ],
+  "allowedChangedFiles": [],
+  "expectedRecords": [],
+  "requiredChallengerVerdict": "CONFIRM",
+  "acceptableReviewRequests": [],
+  "expectedRetryPlan": null,
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null
+}
