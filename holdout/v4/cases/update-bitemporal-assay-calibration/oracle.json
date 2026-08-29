@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 3,
+  "caseId": "update-bitemporal-assay-calibration",
+  "requiredEvidenceSourceBundles": [
+    [
+      "official-assay-ledger",
+      "official-calibration-registry"
+    ]
+  ],
+  "forbiddenEvidenceClaims": [],
+  "allowedChangedFiles": [
+    "input/canonical.json"
+  ],
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null,
+  "expectedAction": "UPDATE_DATA",
+  "requiredRecordProperties": [
+    {
+      "file": "input/canonical.json",
+      "recordId": "assay-440",
+      "properties": {
+        "normalizedConcentration": 73,
+        "calibrationRevision": "cal-17"
+      }
+    }
+  ],
+  "preservedRecordProperties": [
+    {
+      "file": "input/canonical.json",
+      "recordId": "assay-440",
+      "propertyPaths": [
+        "id",
+        "sampleId",
+        "sampleClass",
+        "instrumentId",
+        "instrumentOccurrenceId",
+        "measuredAt",
+        "rawSignal",
+        "unit",
+        "status"
+      ]
+    }
+  ]
+}

@@ -20,6 +20,7 @@
     "cases": "node --experimental-strip-types scripts/generate-core-cases.ts",
     "holdout:cases": "node --experimental-strip-types scripts/generate-holdout-cases.ts",
     "holdout:v3:cases": "node --experimental-strip-types scripts/generate-holdout-v3-cases.ts",
+    "holdout:v4:cases": "node --experimental-strip-types scripts/generate-holdout-v4-cases.ts",
     "fixtures": "node --experimental-strip-types scripts/generate-recorded-fixtures.ts",
     "submission:verify": "node --experimental-strip-types scripts/verify-submission.ts",
     "engine:verify": "npm run schemas && git diff --exit-code -- schemas && npm run lint && npm test && npm run build",

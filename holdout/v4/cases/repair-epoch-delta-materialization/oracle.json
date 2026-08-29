@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 3,
+  "caseId": "repair-epoch-delta-materialization",
+  "requiredEvidenceSourceBundles": [
+    [
+      "official-delta-stream-contract"
+    ]
+  ],
+  "forbiddenEvidenceClaims": [],
+  "allowedChangedFiles": [
+    "adapter.ts"
+  ],
+  "expectedCommandExitCodes": {
+    "node --experimental-strip-types --test adapter.test.ts": 0
+  },
+  "hiddenProbePath": "verifier/hidden-probes.json",
+  "expectedAction": "REPAIR_ADAPTER",
+  "requiredPublicCommands": [
+    "node --experimental-strip-types --test adapter.test.ts"
+  ],
+  "requiresHiddenProbe": true
+}

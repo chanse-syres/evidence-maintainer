@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 3,
+  "caseId": "noop-post-cutoff-reclassification",
+  "requiredEvidenceSourceBundles": [
+    [
+      "official-classification-register"
+    ]
+  ],
+  "forbiddenEvidenceClaims": [],
+  "allowedChangedFiles": [],
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null,
+  "expectedAction": "NO_ACTION",
+  "requiredAuthoritySources": [
+    "official-classification-register"
+  ]
+}

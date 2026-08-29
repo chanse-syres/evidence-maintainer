@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "exportName": "materializeEpoch",
+  "cases": [
+    {
+      "id": "falls-back-from-incomplete-higher-epoch",
+      "args": [
+        [
+          {
+            "epoch": 8,
+            "sequence": 0,
+            "kind": "BEGIN"
+          },
+          {
+            "epoch": 8,
+            "sequence": 1,
+            "kind": "UPSERT",
+            "key": "stable",
+            "value": 8
+          },
+          {
+            "epoch": 8,
+            "sequence": 2,
+            "kind": "COMMIT"
+          },
+          {
+            "epoch": 9,
+            "sequence": 0,
+            "kind": "BEGIN"
+          },
+          {
+            "epoch": 9,
+            "sequence": 1,
+            "kind": "UPSERT",
+            "key": "partial",
+            "value": 9
+          }
+        ]
+      ],
+      "expected": [
+        {
+          "key": "stable",
+          "value": 8
+        }
+      ]
+    },
+    {
+      "id": "rejects-duplicate-sequence-in-higher-epoch",
+      "args": [
+        [
+          {
+            "epoch": 10,
+            "sequence": 0,
+            "kind": "BEGIN"
+          },
+          {
+            "epoch": 10,
+            "sequence": 1,
+            "kind": "UPSERT",
+            "key": "fallback",
+            "value": 10
+          },
+          {
+            "epoch": 10,
+            "sequence": 2,
+            "kind": "COMMIT"
+          },
+          {
+            "epoch": 11,
+            "sequence": 0,
+            "kind": "BEGIN"
+          },
+          {
+            "epoch": 11,
+            "sequence": 1,
+            "kind": "UPSERT",
+            "key": "x",
+            "value": 1
+          },
+          {
+            "epoch": 11,
+            "sequence": 1,
+            "kind": "UPSERT",
+            "key": "x",
+            "value": 2
+          },
+          {
+            "epoch": 11,
+            "sequence": 2,
+            "kind": "COMMIT"
+          }
+        ]
+      ],
+      "expected": [
+        {
+          "key": "fallback",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "applies-delete-and-key-reuse-in-sequence-order",
+      "args": [
+        [
+          {
+            "epoch": 12,
+            "sequence": 3,
+            "kind": "UPSERT",
+            "key": "a",
+            "value": 3
+          },
+          {
+            "epoch": 12,
+            "sequence": 0,
+            "kind": "BEGIN"
+          },
+          {
+            "epoch": 12,
+            "sequence": 2,
+            "kind": "DELETE",
+            "key": "a"
+          },
+          {
+            "epoch": 12,
+            "sequence": 1,
+            "kind": "UPSERT",
+            "key": "a",
+            "value": 1
+          },
+          {
+            "epoch": 12,
+            "sequence": 4,
+            "kind": "UPSERT",
+            "key": "b",
+            "value": 2
+          },
+          {
+            "epoch": 12,
+            "sequence": 5,
+            "kind": "COMMIT"
+          }
+        ]
+      ],
+      "expected": [
+        {
+          "key": "a",
+          "value": 3
+        },
+        {
+          "key": "b",
+          "value": 2
+        }
+      ]
+    }
+  ]
+}

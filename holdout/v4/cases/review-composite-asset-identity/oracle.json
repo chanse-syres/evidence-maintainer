@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 3,
+  "caseId": "review-composite-asset-identity",
+  "requiredEvidenceSourceBundles": [
+    [
+      "official-inspection-log",
+      "official-asset-registry"
+    ]
+  ],
+  "forbiddenEvidenceClaims": [],
+  "allowedChangedFiles": [],
+  "expectedCommandExitCodes": {},
+  "hiddenProbePath": null,
+  "expectedAction": "HUMAN_REVIEW",
+  "reviewRequirements": {
+    "subjectId": "inspection-882",
+    "acceptableTargetEvidenceIds": [
+      "obs-inspection-882"
+    ],
+    "requiredFactPaths": [
+      "facts.assetSerial",
+      "facts.siteCode"
+    ]
+  }
+}
