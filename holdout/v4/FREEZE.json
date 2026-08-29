@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 2,
+  "status": "FROZEN_BEFORE_MODEL_EXECUTION",
+  "frozenAt": "2026-08-29T20:45:01.429Z",
+  "freezeTag": "holdout-freeze-v4",
+  "systemFreezeCommit": "70f0c9e30b020c45d68a6fcba03101b04cc7b012",
+  "holdoutDefinitionCommit": "70f0c9e30b020c45d68a6fcba03101b04cc7b012",
+  "evaluationHarnessCommit": "70f0c9e30b020c45d68a6fcba03101b04cc7b012",
+  "holdoutTreeHash": "8ec73fd5d8d75e348619d4fe81d52bf269e852eba7d9df17c7775172692a8f22",
+  "model": "gpt-5.6-terra",
+  "mode": "live",
+  "trialsPerCase": 3,
+  "timeoutMs": 1200000,
+  "caseRoot": "holdout/v4/cases",
+  "caseSetHash": "a1a0b3c4659ed7c30af7b75fed1614f8d82ef7be2b1548261bc2d70b5ef85c01",
+  "caseDefinitionSetHash": "ff8d560bb994b83a7564b96922056d3a56bb708066913d0e0046e465a56c4987",
+  "cases": [
+    {
+      "caseId": "noop-post-cutoff-reclassification",
+      "workspaceHash": "5c7177e79e530da12b4449239fe15c9b93a61f261db65a4ab6737279c618af6c"
+    },
+    {
+      "caseId": "repair-epoch-delta-materialization",
+      "workspaceHash": "82e86f7940e54549dd75f447a3f5257916d10fe299550e8c10d5f1122d2965c8"
+    },
+    {
+      "caseId": "retry-signed-release-quorum",
+      "workspaceHash": "92c1e270ede1c9089fe89fe36efa0963c878c6c97ea7ab170752e227cf792a02"
+    },
+    {
+      "caseId": "review-composite-asset-identity",
+      "workspaceHash": "211ff5a75d8a5a2d45467813e9c440a41bdfd49912f41fcbf9d0c34e58528727"
+    },
+    {
+      "caseId": "update-bitemporal-assay-calibration",
+      "workspaceHash": "819048aae0044895cfd3ed715ee6a8ef804dca9fd2459b0e5893c40b8f0878d5"
+    }
+  ],
+  "caseDefinitions": [
+    {
+      "caseId": "noop-post-cutoff-reclassification",
+      "sha256": "662cba0e5e18e1579f95474265765f9952a24991b5510400d9d4b94511573229"
+    },
+    {
+      "caseId": "repair-epoch-delta-materialization",
+      "sha256": "87f17eb0568432f7531876b2e5518be144fd8187df7c428f67d7a383e8c781b5"
+    },
+    {
+      "caseId": "retry-signed-release-quorum",
+      "sha256": "212d91727113211b81af9f456863ae50aa1dba62a3f9b45564c860326d52b2ff"
+    },
+    {
+      "caseId": "review-composite-asset-identity",
+      "sha256": "8e723f5012f89cdb145be786bef504c2f1738970135b63e02b7e567455781fe9"
+    },
+    {
+      "caseId": "update-bitemporal-assay-calibration",
+      "sha256": "46716827131e48da68ef75091b1423ca31034a621aa572f1e5ada851f2c32ce0"
+    }
+  ],
+  "contracts": {
+    "prompts/baseline.md": "1a946187aada62d8c2b2de73b56be1b2cbbd1294ae7d2fd104f98050d0051c22",
+    "prompts/maintainer.md": "27e834a79271c047c4affdfe44b7b817af4f44711e1d6f715945ce1548eab3de",
+    "prompts/challenger.md": "bbdcb924a19d310d8b637ca0ac1c02f40952bc51a7635d25d1a2cdc6cb4cfe04",
+    "prompts/revision.md": "7b2dba35e6de4efe85db22138e4d58274f5991517b0e8267b9725bff599f6e2b",
+    "schemas/decision-package.schema.json": "e7f7a12122f44b66d0567d2ad5229607843adc64af473405d61db6e5545d575c",
+    "schemas/challenger-critique.schema.json": "5e7c789d5a06a8063571e20117124b4fdaa0eef31187fd62a9f6cfda734b6aab"
+  },
+  "metricVersion": "operational-decision-integrity-v1",
+  "errorPolicy": {
+    "typedModelExecutionFailure": "Count as an unsuccessful workflow run and preserve available usage evidence.",
+    "infrastructureOrEvaluatorFailure": "Abort the campaign; never relabel it as a model failure.",
+    "missingOrCorruptRunArtifact": "Abort aggregation as evidence corruption."
+  },
+  "statisticsPolicy": "Report this five-case holdout as descriptive evidence with three repeated runs per arm. One case per action does not support a population-generalization claim.",
+  "protocol": [
+    "Run all five cases and all three trials without inspecting intermediate results.",
+    "Do not change prompts, schemas, routing, cases, container inputs, proxy code, workflow code, or metric code after this freeze.",
+    "Keep model-caused failures separate from infrastructure and evaluator failures.",
+    "Report operational decision integrity, evidence source coverage, and exact annotation alignment separately.",
+    "Report holdout results separately from development and invalidated campaigns."
+  ]
+}
