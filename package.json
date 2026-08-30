@@ -15,7 +15,7 @@
     "case": "node --experimental-strip-types scripts/run-case.ts",
     "evaluate": "node --experimental-strip-types scripts/evaluate.ts",
     "evaluation:combine": "node --experimental-strip-types scripts/combine-evaluations.ts",
-    "demo": "node --experimental-strip-types scripts/generate-demo.ts",
+    "container:verify": "node --experimental-strip-types scripts/verify-submission.ts --skip-git",
     "reports:selected": "node --experimental-strip-types scripts/generate-selected-reports.ts",
     "schemas": "node --experimental-strip-types scripts/generate-schemas.ts",
     "cases": "node --experimental-strip-types scripts/generate-core-cases.ts",
@@ -25,7 +25,7 @@
     "fixtures": "node --experimental-strip-types scripts/generate-recorded-fixtures.ts",
     "submission:verify": "node --experimental-strip-types scripts/verify-submission.ts",
     "engine:verify": "npm run schemas && git diff --exit-code -- schemas && npm run lint && npm test && npm run build",
-    "verify": "npm run lint && npm test && npm run demo && npm run reports:selected && npm run build"
+    "verify": "npm run engine:verify && npm run submission:verify"
   },
   "dependencies": {
     "next": "16.3.3",

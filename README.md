@@ -96,6 +96,19 @@ The selected result covers four valid frozen cases and three repeated trials per
 
 The domain patterns came from public-data maintenance experience. No production repository, private task bytes, private account data, live credentials, or proprietary trajectories are included.
 
+## Agent and tool disclosure
+
+OpenAI Codex was the coding agent used to plan, implement, test, debug, and
+audit this submission. The V4 experiment separately evaluated
+`gpt-5.6-terra` through the pinned runner described in the architecture docs.
+The frozen prompts and schemas are checked in under [`prompts`](prompts) and
+[`schemas`](schemas); the selected campaign retains all 60 model-session
+trajectories and proxy usage receipts under
+[`artifacts/evaluation/holdout-v4-attempt-2`](artifacts/evaluation/holdout-v4-attempt-2).
+The human author chose the research question, approved the contracts and
+holdout freeze, adjudicated the evaluator-invalid case, and owns the final
+claims and release decision.
+
 ## License
 
 [MIT](LICENSE)

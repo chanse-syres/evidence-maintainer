@@ -190,6 +190,17 @@ async function verifyNoCredentialFiles(root: string): Promise<void> {
   }
 }
 
+async function verifyNoObsoleteDemoBundle(root: string): Promise<void> {
+  try {
+    const files = await listFiles(resolve(root, "artifacts", "demo"));
+    if (files.length === 0) return;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return;
+    throw error;
+  }
+  throw new Error("Obsolete generated demo bundle must not be submitted: artifacts/demo");
+}
+
 async function verifyCleanGit(root: string): Promise<void> {
   const { stdout } = await execFileAsync("git", ["status", "--porcelain"], {
     cwd: root,
@@ -387,6 +398,7 @@ export async function verifySubmission(
       throw new Error(`Missing required file: ${relativePath}`);
     }
   }
+  await verifyNoObsoleteDemoBundle(absoluteRoot);
 
   const config = parsePublicComparisonConfig(
     await readJson(resolve(absoluteRoot, "config", "public-comparison.json")),
@@ -417,6 +429,7 @@ export async function verifySubmission(
       absoluteRoot,
       config.selectedCampaign,
       config.selectedSummary,
+      { verifyGit: options.checkGit !== false },
     );
     comparisonState = "selected";
     selectedWorkflowRunCount = validation.workflowRunCount;

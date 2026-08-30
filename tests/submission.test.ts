@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import test from "node:test";
 import {
   verifyPublicReports,
@@ -61,6 +62,29 @@ async function writeJson(root: string, relativePath: string, value: unknown): Pr
   await write(root, relativePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+async function runCommand(command: string): Promise<{
+  code: number | null;
+  stdout: string;
+  stderr: string;
+}> {
+  return new Promise((resolveResult, reject) => {
+    const child = spawn(command, [], {
+      cwd: resolve("."),
+      shell: true,
+      windowsHide: true,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.once("error", reject);
+    child.once("close", (code) => resolveResult({ code, stdout, stderr }));
+  });
+}
+
 function pendingSelection() {
   return {
     schemaVersion: 1,
@@ -90,6 +114,21 @@ async function makePendingFixture(): Promise<string> {
     });
   }
   await writeJson(root, "config/public-comparison.json", pendingSelection());
+  return root;
+}
+
+async function makeExtractedRepositoryFixture(): Promise<string> {
+  const sourceRoot = resolve(".");
+  const root = await mkdtemp(join(tmpdir(), "evidence-extracted-v4-"));
+  const excludedRoots = new Set([".git", ".next", "node_modules"]);
+  await cp(sourceRoot, root, {
+    recursive: true,
+    filter: (source) => {
+      const relativePath = relative(sourceRoot, source);
+      if (!relativePath) return true;
+      return !excludedRoots.has(relativePath.split(sep, 1)[0] ?? "");
+    },
+  });
   return root;
 }
 
@@ -179,6 +218,33 @@ test("release rejects internal planning files from the public tree", async () =>
     () => verifySubmission(root, { checkGit: false }),
     /Forbidden internal release file/,
   );
+});
+
+test("release rejects an obsolete generated demo bundle", async () => {
+  const root = await makePendingFixture();
+  await writeJson(root, "artifacts/demo/manifest.json", {
+    schemaVersion: 1,
+    sourceMode: "recorded",
+    sourceModel: "recorded-fixture",
+  });
+
+  await assert.rejects(
+    () => verifySubmission(root, { checkGit: false }),
+    /Obsolete generated demo bundle must not be submitted: artifacts\/demo/,
+  );
+});
+
+test("container reviewer entry point verifies the extracted release without credentials", async () => {
+  const extractedRoot = await makeExtractedRepositoryFixture();
+  try {
+    const result = await runCommand(`npm run container:verify -- "${extractedRoot}"`);
+
+    assert.equal(result.code, 0, `${result.stdout}\n${result.stderr}`);
+    assert.match(result.stdout, /SUBMISSION_READY/);
+    assert.match(result.stdout, /"selectedCampaign": "holdout-v4-attempt-2"/);
+  } finally {
+    await rm(extractedRoot, { recursive: true, force: true });
+  }
 });
 
 test("selected V4 validator accepts the exact frozen attempt-2 campaign", async () => {

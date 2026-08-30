@@ -62,13 +62,20 @@ Build the image:
 docker build -t evidence-maintainer .
 ```
 
+The image build regenerates schemas, lints and builds the application, then
+verifies the extracted selected-evidence package. Run `npm run engine:verify`
+on the host for the complete test suite, including Docker isolation tests.
+
 Run its credential-free verification entry point:
 
 ```bash
 docker run --rm evidence-maintainer
 ```
 
-The container must not receive live model credentials or network access for candidate execution.
+The container runs `npm run container:verify`, which validates the selected V4
+campaign and public reports from the extracted tree without requiring `.git` or
+model credentials. It does not rerun candidate agents. The container must not
+receive live model credentials or network access for candidate execution.
 
 ## Historical campaigns
 
